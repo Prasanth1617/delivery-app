@@ -8,18 +8,15 @@ function Orders() {
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem("token");
-        console.log("TOKEN:", token);
 
         const res = await axios.get(
-          "http://localhost:5000/api/orders/myorders",
+          `${process.env.REACT_APP_API_URL}/api/orders/myorders`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-
-        console.log("Orders from backend:", res.data);
 
         setOrders(res.data);
       } catch (err) {
