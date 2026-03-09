@@ -18,6 +18,7 @@ function Orders() {
           }
         );
 
+        console.log("Orders response:", res.data);
         setOrders(res.data);
       } catch (err) {
         console.error("Orders error:", err);
