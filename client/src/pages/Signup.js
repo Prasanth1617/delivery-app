@@ -3,7 +3,6 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
 function Signup() {
-
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -12,35 +11,27 @@ function Signup() {
   const [address, setAddress] = useState("");
 
   const handleSignup = async () => {
-
     try {
-
       await axios.post(
-        "https://delivery-app.onrender.com/api/auth/register",
+        `${process.env.REACT_APP_API_URL}/api/auth/register`,
         {
           name,
           phone,
           password,
-          address
+          address,
         }
       );
 
-      alert("Account created ✅ Please login");
-
+      alert("Account created successfully ✅");
       navigate("/");
-
     } catch (err) {
-
+      console.log("Signup error:", err.response?.data || err.message);
       alert(err.response?.data?.message || "Signup failed");
-
     }
-
   };
 
   return (
-
     <div style={{ padding: "40px" }}>
-
       <h2>Signup</h2>
 
       <input
@@ -48,14 +39,16 @@ function Signup() {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
-      <br /><br />
+      <br />
+      <br />
 
       <input
         placeholder="Phone"
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
       />
-      <br /><br />
+      <br />
+      <br />
 
       <input
         type="password"
@@ -63,21 +56,23 @@ function Signup() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <br /><br />
+      <br />
+      <br />
 
       <input
         placeholder="Address"
         value={address}
         onChange={(e) => setAddress(e.target.value)}
       />
-      <br /><br />
+      <br />
+      <br />
 
       <button onClick={handleSignup}>Signup</button>
 
-      <br /><br />
+      <br />
+      <br />
 
       <Link to="/">Already have account? Login</Link>
-
     </div>
   );
 }
