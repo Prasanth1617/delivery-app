@@ -23,7 +23,9 @@ function Products() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/products");
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/products`
+        );
         setProducts(res.data);
       } catch (err) {
         console.log(err);
@@ -36,13 +38,14 @@ function Products() {
   return (
     <div style={{ padding: "40px" }}>
       
-     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-  <h2>Products</h2>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2>Products</h2>
 
-  <Link to="/cart">
-    <button>Go to Cart 🛒</button>
-  </Link>
-</div>
+        <Link to="/cart">
+          <button>Go to Cart 🛒</button>
+        </Link>
+      </div>
+
       {products.length === 0 ? (
         <p>No products found</p>
       ) : (
