@@ -9,9 +9,12 @@ function AdminOrders() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get("http://localhost:5000/api/admin/orders", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/admin/orders`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       setOrders(res.data);
     } catch (err) {
@@ -24,7 +27,7 @@ function AdminOrders() {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `http://localhost:5000/api/admin/orders/${orderId}/status`,
+        `${process.env.REACT_APP_API_URL}/api/admin/orders/${orderId}/status`,
         { status },
         {
           headers: { Authorization: `Bearer ${token}` },
