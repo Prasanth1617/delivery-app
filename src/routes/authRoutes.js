@@ -18,15 +18,23 @@ router.post("/register", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.create({
+    const newUser = await User.create({
       name,
       phone,
       password: hashedPassword,
-      address
+      address,
+      role: "user",
     });
 
-    res.status(201).json({ message: "User registered successfully" });
-
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        phone: newUser.phone,
+        role: newUser.role,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -56,11 +64,19 @@ router.post("/login", async (req, res) => {
     res.json({
       token,
       role: user.role,
+      user: {
+        id: user._id,
+        name: user.name,
+        phone: user.phone,
+        address: user.address,
+        role: user.role,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 // Protected route
 router.get("/profile", authMiddleware, async (req, res) => {
   try {

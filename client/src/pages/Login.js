@@ -29,6 +29,8 @@ function Login() {
 
       if (res.data.role) {
         localStorage.setItem("role", res.data.role);
+      } else {
+        localStorage.removeItem("role");
       }
 
       navigate("/profile");
