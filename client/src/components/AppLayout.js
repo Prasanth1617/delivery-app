@@ -5,10 +5,12 @@ function AppLayout({ children }) {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
   const isAdminPage = location.pathname.startsWith("/admin");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
     localStorage.removeItem("cart");
     navigate("/");
   };
@@ -19,12 +21,54 @@ function AppLayout({ children }) {
     return children;
   }
 
+  const navLinkStyle = (path) => ({
+    padding: "10px 14px",
+    borderRadius: "10px",
+    fontSize: "14px",
+    fontWeight: "600",
+    color: isActive(path) ? "#ffffff" : "#374151",
+    background: isActive(path) ? "#4f46e5" : "transparent",
+    border: isActive(path) ? "none" : "1px solid #e5e7eb",
+    display: "inline-flex",
+    alignItems: "center",
+    textDecoration: "none",
+  });
+
   return (
     <div>
-      <header className="app-navbar">
-        <div className="app-navbar-inner">
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 1000,
+          background: "rgba(255,255,255,0.9)",
+          backdropFilter: "blur(10px)",
+          borderBottom: "1px solid #e5e7eb",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            padding: "14px 20px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: "16px",
+            flexWrap: "wrap",
+          }}
+        >
           <div>
-            <div className="app-brand">Delivery App</div>
+            <h2
+              style={{
+                margin: 0,
+                fontSize: "22px",
+                fontWeight: "800",
+                color: "#111827",
+              }}
+            >
+              Delivery App
+            </h2>
             <p
               style={{
                 margin: "4px 0 0",
@@ -38,64 +82,56 @@ function AppLayout({ children }) {
             </p>
           </div>
 
-          <nav className="app-nav-links">
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              flexWrap: "wrap",
+              alignItems: "center",
+            }}
+          >
             {!isAdminPage ? (
               <>
-                <Link
-                  to="/profile"
-                  className={`app-nav-link ${isActive("/profile") ? "active" : ""}`}
-                >
+                <Link to="/profile" style={navLinkStyle("/profile")}>
                   Profile
                 </Link>
-                <Link
-                  to="/products"
-                  className={`app-nav-link ${isActive("/products") ? "active" : ""}`}
-                >
+                <Link to="/products" style={navLinkStyle("/products")}>
                   Products
                 </Link>
-                <Link
-                  to="/cart"
-                  className={`app-nav-link ${isActive("/cart") ? "active" : ""}`}
-                >
+                <Link to="/cart" style={navLinkStyle("/cart")}>
                   Cart
                 </Link>
-                <Link
-                  to="/orders"
-                  className={`app-nav-link ${isActive("/orders") ? "active" : ""}`}
-                >
+                <Link to="/orders" style={navLinkStyle("/orders")}>
                   Orders
                 </Link>
-                <Link
-                  to="/admin/dashboard"
-                  className={`app-nav-link ${isActive("/admin/dashboard") ? "active" : ""}`}
-                >
-                  Admin
-                </Link>
+
+                {role === "admin" && (
+                  <Link
+                    to="/admin/dashboard"
+                    style={navLinkStyle("/admin/dashboard")}
+                  >
+                    Admin
+                  </Link>
+                )}
               </>
             ) : (
               <>
                 <Link
                   to="/admin/dashboard"
-                  className={`app-nav-link ${isActive("/admin/dashboard") ? "active" : ""}`}
+                  style={navLinkStyle("/admin/dashboard")}
                 >
                   Dashboard
                 </Link>
-                <Link
-                  to="/admin/orders"
-                  className={`app-nav-link ${isActive("/admin/orders") ? "active" : ""}`}
-                >
+                <Link to="/admin/orders" style={navLinkStyle("/admin/orders")}>
                   Orders
                 </Link>
                 <Link
                   to="/admin/products"
-                  className={`app-nav-link ${isActive("/admin/products") ? "active" : ""}`}
+                  style={navLinkStyle("/admin/products")}
                 >
                   Products
                 </Link>
-                <Link
-                  to="/products"
-                  className={`app-nav-link ${isActive("/products") ? "active" : ""}`}
-                >
+                <Link to="/products" style={navLinkStyle("/products")}>
                   User View
                 </Link>
               </>
@@ -103,16 +139,24 @@ function AppLayout({ children }) {
 
             <button
               onClick={handleLogout}
-              className="secondary-btn"
-              style={{ padding: "10px 14px" }}
+              style={{
+                padding: "10px 14px",
+                borderRadius: "10px",
+                fontSize: "14px",
+                fontWeight: "700",
+                background: "#111827",
+                color: "#ffffff",
+                border: "none",
+                cursor: "pointer",
+              }}
             >
               Logout
             </button>
-          </nav>
+          </div>
         </div>
-      </header>
+      </div>
 
-      <main>{children}</main>
+      <div>{children}</div>
     </div>
   );
 }
