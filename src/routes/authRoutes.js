@@ -53,13 +53,14 @@ router.post("/login", async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.json({ token });
-
+    res.json({
+      token,
+      role: user.role,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 // Protected route
 router.get("/profile", authMiddleware, async (req, res) => {
   try {

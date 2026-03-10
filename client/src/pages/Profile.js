@@ -6,11 +6,6 @@ function Profile() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-  };
-
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -47,32 +42,6 @@ function Profile() {
             <p className="app-section-subtitle">
               Manage your profile and continue shopping
             </p>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-              flexWrap: "wrap",
-            }}
-          >
-            <button
-              className="primary-btn"
-              onClick={() => navigate("/products")}
-            >
-              Browse Products
-            </button>
-
-            <button
-              className="secondary-btn"
-              onClick={() => navigate("/orders")}
-            >
-              My Orders
-            </button>
-
-            <button className="ghost-btn" onClick={handleLogout}>
-              Logout
-            </button>
           </div>
         </div>
 

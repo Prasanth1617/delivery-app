@@ -26,6 +26,11 @@ function Login() {
       );
 
       localStorage.setItem("token", res.data.token);
+
+      if (res.data.role) {
+        localStorage.setItem("role", res.data.role);
+      }
+
       navigate("/profile");
     } catch (err) {
       alert(err.response?.data?.message || "Login Failed ❌");
