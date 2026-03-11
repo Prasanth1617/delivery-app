@@ -10,7 +10,12 @@ function AdminProducts() {
   const [stock, setStock] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const navigate = useNavigate();
+
+  const CLOUD_NAME = "dvdg5m8jn";
+  const UPLOAD_PRESET = "product_images";
 
   const fetchProducts = async () => {
     try {
@@ -18,6 +23,33 @@ function AdminProducts() {
       setProducts(res.data);
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const uploadImageToCloudinary = async () => {
+    if (!imageFile) {
+      return image;
+    }
+
+    try {
+      setUploadingImage(true);
+
+      const formData = new FormData();
+      formData.append("file", imageFile);
+      formData.append("upload_preset", UPLOAD_PRESET);
+
+      const res = await axios.post(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+        formData
+      );
+
+      return res.data.secure_url;
+    } catch (err) {
+      console.log(err);
+      alert("Image upload failed");
+      return "";
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -30,6 +62,13 @@ function AdminProducts() {
 
       const token = localStorage.getItem("token");
 
+      let finalImageUrl = image;
+
+      if (imageFile) {
+        finalImageUrl = await uploadImageToCloudinary();
+        if (!finalImageUrl) return;
+      }
+
       await axios.post(
         `${process.env.REACT_APP_API_URL}/api/products`,
         {
@@ -37,7 +76,7 @@ function AdminProducts() {
           price: Number(price),
           stock: Number(stock),
           category,
-          image,
+          image: finalImageUrl,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -49,8 +88,10 @@ function AdminProducts() {
       setStock("");
       setCategory("");
       setImage("");
+      setImageFile(null);
 
       fetchProducts();
+      alert("Product added successfully ✅");
     } catch (err) {
       console.log(err);
       alert("Failed to add product");
@@ -153,18 +194,41 @@ function AdminProducts() {
                 />
               </div>
 
-              <div style={{ marginBottom: "22px" }}>
-                <label className="label-text">Image URL</label>
+              <div style={{ marginBottom: "16px" }}>
+                <label className="label-text">Upload Product Image</label>
                 <input
                   className="input-field"
-                  placeholder="Paste product image URL"
-                  value={image}
-                  onChange={(e) => setImage(e.target.value)}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      setImageFile(file);
+                      setImage(URL.createObjectURL(file));
+                    }
+                  }}
                 />
               </div>
 
-              <button className="primary-btn" onClick={addProduct}>
-                Add Product
+              <div style={{ marginBottom: "22px" }}>
+                <label className="label-text">Or Paste Image URL</label>
+                <input
+                  className="input-field"
+                  placeholder="Paste product image URL"
+                  value={imageFile ? "" : image}
+                  onChange={(e) => {
+                    setImageFile(null);
+                    setImage(e.target.value);
+                  }}
+                />
+              </div>
+
+              <button
+                className="primary-btn"
+                onClick={addProduct}
+                disabled={uploadingImage}
+              >
+                {uploadingImage ? "Uploading Image..." : "Add Product"}
               </button>
             </div>
 
@@ -230,8 +294,7 @@ function AdminProducts() {
                       lineHeight: "1.7",
                     }}
                   >
-                    Add category and image URL also, so products look more
-                    professional on the user side.
+                    Admin can directly upload product image while adding a product.
                   </p>
                 </div>
 
@@ -274,9 +337,6 @@ function AdminProducts() {
                           width: "100%",
                           height: "100%",
                           objectFit: "cover",
-                        }}
-                        onError={(e) => {
-                          e.target.style.display = "none";
                         }}
                       />
                     </div>
@@ -333,9 +393,6 @@ function AdminProducts() {
                             width: "100%",
                             height: "100%",
                             objectFit: "cover",
-                          }}
-                          onError={(e) => {
-                            e.target.style.display = "none";
                           }}
                         />
                       ) : (
