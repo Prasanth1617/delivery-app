@@ -8,6 +8,8 @@ function AdminProducts() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
+  const [category, setCategory] = useState("");
+  const [image, setImage] = useState("");
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
@@ -22,7 +24,7 @@ function AdminProducts() {
   const addProduct = async () => {
     try {
       if (!name || !price || !stock) {
-        alert("Please fill all fields");
+        alert("Please fill product name, price and stock");
         return;
       }
 
@@ -32,8 +34,10 @@ function AdminProducts() {
         `${process.env.REACT_APP_API_URL}/api/products`,
         {
           name,
-          price,
-          stock,
+          price: Number(price),
+          stock: Number(stock),
+          category,
+          image,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -43,6 +47,9 @@ function AdminProducts() {
       setName("");
       setPrice("");
       setStock("");
+      setCategory("");
+      setImage("");
+
       fetchProducts();
     } catch (err) {
       console.log(err);
@@ -118,19 +125,41 @@ function AdminProducts() {
                 <label className="label-text">Price</label>
                 <input
                   className="input-field"
+                  type="number"
                   placeholder="Enter product price"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
                 />
               </div>
 
-              <div style={{ marginBottom: "22px" }}>
+              <div style={{ marginBottom: "16px" }}>
                 <label className="label-text">Stock</label>
                 <input
                   className="input-field"
+                  type="number"
                   placeholder="Enter available stock"
                   value={stock}
                   onChange={(e) => setStock(e.target.value)}
+                />
+              </div>
+
+              <div style={{ marginBottom: "16px" }}>
+                <label className="label-text">Category</label>
+                <input
+                  className="input-field"
+                  placeholder="Example: Grocery, Snacks, Drinks"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                />
+              </div>
+
+              <div style={{ marginBottom: "22px" }}>
+                <label className="label-text">Image URL</label>
+                <input
+                  className="input-field"
+                  placeholder="Paste product image URL"
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}
                 />
               </div>
 
@@ -201,10 +230,58 @@ function AdminProducts() {
                       lineHeight: "1.7",
                     }}
                   >
-                    Keep product names clean and prices accurate so customers can
-                    order without confusion.
+                    Add category and image URL also, so products look more
+                    professional on the user side.
                   </p>
                 </div>
+
+                {image && (
+                  <div
+                    style={{
+                      background: "#ffffff",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "14px",
+                      padding: "16px",
+                    }}
+                  >
+                    <p
+                      style={{
+                        margin: "0 0 10px",
+                        fontSize: "13px",
+                        color: "#6b7280",
+                        fontWeight: "600",
+                      }}
+                    >
+                      Image Preview
+                    </p>
+
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "180px",
+                        borderRadius: "14px",
+                        overflow: "hidden",
+                        background: "#f3f4f6",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <img
+                        src={image}
+                        alt="Preview"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -238,18 +315,50 @@ function AdminProducts() {
                     <div
                       style={{
                         width: "100%",
-                        height: "120px",
+                        height: "160px",
                         background: "#eef2ff",
                         borderRadius: "14px",
                         marginBottom: "16px",
+                        overflow: "hidden",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontSize: "34px",
                       }}
                     >
-                      📦
+                      {p.image ? (
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                          }}
+                        />
+                      ) : (
+                        <div style={{ fontSize: "34px" }}>📦</div>
+                      )}
                     </div>
+
+                    {p.category && (
+                      <div
+                        style={{
+                          display: "inline-block",
+                          padding: "6px 10px",
+                          borderRadius: "999px",
+                          background: "#ede9fe",
+                          color: "#5b21b6",
+                          fontSize: "12px",
+                          fontWeight: "700",
+                          marginBottom: "12px",
+                        }}
+                      >
+                        {p.category}
+                      </div>
+                    )}
 
                     <h4
                       style={{
