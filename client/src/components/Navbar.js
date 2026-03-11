@@ -1,11 +1,34 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [cartCount, setCartCount] = useState(0);
+
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
+
+  const updateCartCount = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+    setCartCount(total);
+  };
+
+  useEffect(() => {
+    updateCartCount();
+
+    const handleStorage = () => updateCartCount();
+    window.addEventListener("storage", handleStorage);
+
+    const interval = setInterval(updateCartCount, 500);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      clearInterval(interval);
+    };
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -23,11 +46,14 @@ function Navbar() {
     padding: "8px 12px",
     borderRadius: "8px",
     background: isActive(path) ? "#4f46e5" : "rgba(255,255,255,0.08)",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
   });
 
   const adminNavStyle = (path) => ({
     textDecoration: "none",
-    color: isActive(path) ? "#111827" : "#111827",
+    color: "#111827",
     fontWeight: "700",
     padding: "8px 12px",
     borderRadius: "8px",
@@ -88,7 +114,25 @@ function Navbar() {
             <>
               <Link to="/profile" style={navStyle("/profile")}>Profile</Link>
               <Link to="/products" style={navStyle("/products")}>Products</Link>
-              <Link to="/cart" style={navStyle("/cart")}>Cart</Link>
+
+              <Link to="/cart" style={navStyle("/cart")}>
+                Cart
+                {cartCount > 0 && (
+                  <span
+                    style={{
+                      background: "#facc15",
+                      color: "#111827",
+                      borderRadius: "999px",
+                      padding: "2px 8px",
+                      fontSize: "12px",
+                      fontWeight: "800",
+                    }}
+                  >
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+
               <Link to="/orders" style={navStyle("/orders")}>Orders</Link>
 
               {role === "admin" && (
