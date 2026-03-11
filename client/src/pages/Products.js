@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Layout from "../components/Layout";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -10,7 +9,6 @@ function Products() {
   const getCart = () => JSON.parse(localStorage.getItem("cart")) || [];
 
   const cart = useMemo(() => getCart(), [cartVersion]);
-
   const totalCartItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const getCartQuantity = (productId) => {
@@ -50,71 +48,103 @@ function Products() {
   }, []);
 
   return (
-    <Layout>
-      <div className="app-page">
-        <div className="app-container">
-          <div className="app-card topbar-card">
-            <div>
-              <h2 className="app-section-title">Products</h2>
-              <p className="app-section-subtitle">
-                Explore available items and add them to your cart
-              </p>
-            </div>
-
-            <Link to="/cart" style={{ textDecoration: "none" }}>
-              <button className="primary-btn">
-                Go to Cart 🛒 {totalCartItems > 0 ? `(${totalCartItems})` : ""}
-              </button>
-            </Link>
+    <div className="app-page">
+      <div className="app-container">
+        <div className="app-card topbar-card">
+          <div>
+            <h2 className="app-section-title">Products</h2>
+            <p className="app-section-subtitle">
+              Explore available items and add them to your cart
+            </p>
           </div>
 
-          {products.length === 0 ? (
-            <div className="app-card empty-state">
-              <div style={{ fontSize: "48px", marginBottom: "12px" }}>🛍️</div>
-              <h3 style={{ margin: 0, color: "#111827" }}>No products found</h3>
-              <p style={{ color: "#6b7280", marginTop: "10px" }}>
-                Products will appear here once they are added by admin.
-              </p>
-            </div>
-          ) : (
-            <div className="grid-cards">
-              {products.map((product) => {
-                const cartQty = getCartQuantity(product._id);
+          <Link to="/cart" style={{ textDecoration: "none" }}>
+            <button className="primary-btn">
+              Go to Cart 🛒 {totalCartItems > 0 ? `(${totalCartItems})` : ""}
+            </button>
+          </Link>
+        </div>
 
-                return (
+        {products.length === 0 ? (
+          <div className="app-card empty-state">
+            <div style={{ fontSize: "48px", marginBottom: "12px" }}>🛍️</div>
+            <h3 style={{ margin: 0, color: "#111827" }}>No products found</h3>
+            <p style={{ color: "#6b7280", marginTop: "10px" }}>
+              Products will appear here once they are added by admin.
+            </p>
+          </div>
+        ) : (
+          <div className="grid-cards">
+            {products.map((product) => {
+              const cartQty = getCartQuantity(product._id);
+
+              return (
+                <div
+                  key={product._id}
+                  className="app-card"
+                  style={{
+                    padding: "20px",
+                    transition: "0.2s ease",
+                  }}
+                >
                   <div
-                    key={product._id}
-                    className="app-card"
                     style={{
-                      padding: "20px",
-                      transition: "0.2s ease",
+                      width: "100%",
+                      height: "160px",
+                      background: "#eef2ff",
+                      borderRadius: "14px",
+                      marginBottom: "16px",
+                      overflow: "hidden",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    <div
-                      style={{
-                        width: "100%",
-                        height: "140px",
-                        background: "#eef2ff",
-                        borderRadius: "14px",
-                        marginBottom: "16px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "36px",
-                      }}
-                    >
-                      🛍️
-                    </div>
+                    {product.image ? (
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      <div style={{ fontSize: "36px" }}>🛍️</div>
+                    )}
+                  </div>
 
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        gap: "10px",
-                        marginBottom: "10px",
-                      }}
-                    >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
+                      gap: "10px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    <div>
+                      {product.category && (
+                        <div
+                          style={{
+                            display: "inline-block",
+                            padding: "6px 10px",
+                            borderRadius: "999px",
+                            background: "#ede9fe",
+                            color: "#5b21b6",
+                            fontSize: "12px",
+                            fontWeight: "700",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          {product.category}
+                        </div>
+                      )}
+
                       <h4
                         style={{
                           margin: 0,
@@ -125,81 +155,81 @@ function Products() {
                       >
                         {product.name}
                       </h4>
-
-                      {cartQty > 0 && (
-                        <span
-                          style={{
-                            whiteSpace: "nowrap",
-                            padding: "6px 10px",
-                            borderRadius: "999px",
-                            background: "#ede9fe",
-                            color: "#5b21b6",
-                            fontSize: "12px",
-                            fontWeight: "700",
-                          }}
-                        >
-                          In Cart: {cartQty}
-                        </span>
-                      )}
                     </div>
 
-                    <p
-                      style={{
-                        margin: "0 0 8px",
-                        fontSize: "18px",
-                        fontWeight: "700",
-                        color: "#4f46e5",
-                      }}
-                    >
-                      ₹{product.price}
-                    </p>
-
-                    <div
-                      style={{
-                        display: "inline-block",
-                        padding: "6px 10px",
-                        borderRadius: "999px",
-                        background: product.stock > 0 ? "#dcfce7" : "#fee2e2",
-                        color: product.stock > 0 ? "#166534" : "#991b1b",
-                        fontSize: "12px",
-                        fontWeight: "700",
-                        marginBottom: "16px",
-                      }}
-                    >
-                      {product.stock > 0
-                        ? `In Stock: ${product.stock}`
-                        : "Out of Stock"}
-                    </div>
-
-                    <button
-                      onClick={() => addToCart(product)}
-                      disabled={product.stock <= 0}
-                      style={{
-                        width: "100%",
-                        padding: "12px",
-                        border: "none",
-                        borderRadius: "12px",
-                        background: product.stock > 0 ? "#111827" : "#9ca3af",
-                        color: "#ffffff",
-                        fontWeight: "700",
-                        fontSize: "14px",
-                        cursor: product.stock > 0 ? "pointer" : "not-allowed",
-                      }}
-                    >
-                      {product.stock > 0
-                        ? cartQty > 0
-                          ? "Add One More"
-                          : "Add to Cart"
-                        : "Unavailable"}
-                    </button>
+                    {cartQty > 0 && (
+                      <span
+                        style={{
+                          whiteSpace: "nowrap",
+                          padding: "6px 10px",
+                          borderRadius: "999px",
+                          background: "#ede9fe",
+                          color: "#5b21b6",
+                          fontSize: "12px",
+                          fontWeight: "700",
+                        }}
+                      >
+                        In Cart: {cartQty}
+                      </span>
+                    )}
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+
+                  <p
+                    style={{
+                      margin: "0 0 8px",
+                      fontSize: "18px",
+                      fontWeight: "700",
+                      color: "#4f46e5",
+                    }}
+                  >
+                    ₹{product.price}
+                  </p>
+
+                  <div
+                    style={{
+                      display: "inline-block",
+                      padding: "6px 10px",
+                      borderRadius: "999px",
+                      background: product.stock > 0 ? "#dcfce7" : "#fee2e2",
+                      color: product.stock > 0 ? "#166534" : "#991b1b",
+                      fontSize: "12px",
+                      fontWeight: "700",
+                      marginBottom: "16px",
+                    }}
+                  >
+                    {product.stock > 0
+                      ? `In Stock: ${product.stock}`
+                      : "Out of Stock"}
+                  </div>
+
+                  <button
+                    onClick={() => addToCart(product)}
+                    disabled={product.stock <= 0}
+                    style={{
+                      width: "100%",
+                      padding: "12px",
+                      border: "none",
+                      borderRadius: "12px",
+                      background: product.stock > 0 ? "#111827" : "#9ca3af",
+                      color: "#ffffff",
+                      fontWeight: "700",
+                      fontSize: "14px",
+                      cursor: product.stock > 0 ? "pointer" : "not-allowed",
+                    }}
+                  >
+                    {product.stock > 0
+                      ? cartQty > 0
+                        ? "Add One More"
+                        : "Add to Cart"
+                      : "Unavailable"}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
-    </Layout>
+    </div>
   );
 }
 
