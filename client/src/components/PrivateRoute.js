@@ -1,8 +1,17 @@
 import { Navigate } from "react-router-dom";
 
-function PrivateRoute({ children }) {
+function PrivateRoute({ children, adminOnly = false }) {
   const token = localStorage.getItem("token");
-  if (!token) return <Navigate to="/" replace />;
+  const role = localStorage.getItem("role");
+
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (adminOnly && role !== "admin") {
+    return <Navigate to="/profile" replace />;
+  }
+
   return children;
 }
 

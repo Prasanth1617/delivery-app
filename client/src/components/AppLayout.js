@@ -95,12 +95,15 @@ function AppLayout({ children }) {
                 <Link to="/profile" style={navLinkStyle("/profile")}>
                   Profile
                 </Link>
+
                 <Link to="/products" style={navLinkStyle("/products")}>
                   Products
                 </Link>
+
                 <Link to="/cart" style={navLinkStyle("/cart")}>
                   Cart
                 </Link>
+
                 <Link to="/orders" style={navLinkStyle("/orders")}>
                   Orders
                 </Link>
@@ -122,15 +125,21 @@ function AppLayout({ children }) {
                 >
                   Dashboard
                 </Link>
-                <Link to="/admin/orders" style={navLinkStyle("/admin/orders")}>
+
+                <Link
+                  to="/admin/orders"
+                  style={navLinkStyle("/admin/orders")}
+                >
                   Orders
                 </Link>
+
                 <Link
                   to="/admin/products"
                   style={navLinkStyle("/admin/products")}
                 >
                   Products
                 </Link>
+
                 <Link to="/products" style={navLinkStyle("/products")}>
                   User View
                 </Link>
