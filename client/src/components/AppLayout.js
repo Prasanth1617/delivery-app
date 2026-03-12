@@ -38,14 +38,14 @@ function AppLayout({ children }) {
     <div>
       <div
         style={{
-          background: "#dc2626",
+          background: "#3482f0",
           color: "#ffffff",
           textAlign: "center",
           padding: "10px",
           fontWeight: "700",
         }}
       >
-        NAVBAR TEST IS WORKING
+        Welcome back! Explore our latest products and enjoy seamless shopping.
       </div>
 
       <div
