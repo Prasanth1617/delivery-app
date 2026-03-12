@@ -38,10 +38,22 @@ function AppLayout({ children }) {
     <div>
       <div
         style={{
+          background: "#dc2626",
+          color: "#ffffff",
+          textAlign: "center",
+          padding: "10px",
+          fontWeight: "700",
+        }}
+      >
+        NAVBAR TEST IS WORKING
+      </div>
+
+      <div
+        style={{
           position: "sticky",
           top: 0,
           zIndex: 1000,
-          background: "rgba(255,255,255,0.9)",
+          background: "rgba(255,255,255,0.95)",
           backdropFilter: "blur(10px)",
           borderBottom: "1px solid #e5e7eb",
         }}
@@ -76,9 +88,7 @@ function AppLayout({ children }) {
                 color: "#6b7280",
               }}
             >
-              {isAdminPage
-                ? "Admin control panel"
-                : "Fast, simple grocery delivery"}
+              {isAdminPage ? "Admin control panel" : "Fast, simple grocery delivery"}
             </p>
           </div>
 
@@ -92,54 +102,28 @@ function AppLayout({ children }) {
           >
             {!isAdminPage ? (
               <>
-                <Link to="/profile" style={navLinkStyle("/profile")}>
-                  Profile
-                </Link>
-
-                <Link to="/products" style={navLinkStyle("/products")}>
-                  Products
-                </Link>
-
-                <Link to="/cart" style={navLinkStyle("/cart")}>
-                  Cart
-                </Link>
-
-                <Link to="/orders" style={navLinkStyle("/orders")}>
-                  Orders
-                </Link>
+                <Link to="/profile" style={navLinkStyle("/profile")}>Profile</Link>
+                <Link to="/products" style={navLinkStyle("/products")}>Products</Link>
+                <Link to="/cart" style={navLinkStyle("/cart")}>Cart</Link>
+                <Link to="/orders" style={navLinkStyle("/orders")}>Orders</Link>
 
                 {role === "admin" && (
-                  <Link
-                    to="/admin/dashboard"
-                    style={navLinkStyle("/admin/dashboard")}
-                  >
+                  <Link to="/admin/dashboard" style={navLinkStyle("/admin/dashboard")}>
                     Admin
                   </Link>
                 )}
               </>
             ) : (
               <>
-                <Link
-                  to="/admin/dashboard"
-                  style={navLinkStyle("/admin/dashboard")}
-                >
+                <Link to="/admin/dashboard" style={navLinkStyle("/admin/dashboard")}>
                   Dashboard
                 </Link>
-
-                <Link
-                  to="/admin/orders"
-                  style={navLinkStyle("/admin/orders")}
-                >
+                <Link to="/admin/orders" style={navLinkStyle("/admin/orders")}>
                   Orders
                 </Link>
-
-                <Link
-                  to="/admin/products"
-                  style={navLinkStyle("/admin/products")}
-                >
+                <Link to="/admin/products" style={navLinkStyle("/admin/products")}>
                   Products
                 </Link>
-
                 <Link to="/products" style={navLinkStyle("/products")}>
                   User View
                 </Link>

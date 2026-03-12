@@ -9,77 +9,80 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminOrders from "./pages/AdminOrders";
 import AdminProducts from "./pages/AdminProducts";
 import PrivateRoute from "./components/PrivateRoute";
+import AppLayout from "./components/AppLayout";
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+      <AppLayout>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <Profile />
-            </PrivateRoute>
-          }
-        />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
 
-        <Route
-          path="/products"
-          element={
-            <PrivateRoute>
-              <Products />
-            </PrivateRoute>
-          }
-        />
+          <Route
+            path="/products"
+            element={
+              <PrivateRoute>
+                <Products />
+              </PrivateRoute>
+            }
+          />
 
-        <Route
-          path="/cart"
-          element={
-            <PrivateRoute>
-              <Cart />
-            </PrivateRoute>
-          }
-        />
+          <Route
+            path="/cart"
+            element={
+              <PrivateRoute>
+                <Cart />
+              </PrivateRoute>
+            }
+          />
 
-        <Route
-          path="/orders"
-          element={
-            <PrivateRoute>
-              <Orders />
-            </PrivateRoute>
-          }
-        />
+          <Route
+            path="/orders"
+            element={
+              <PrivateRoute>
+                <Orders />
+              </PrivateRoute>
+            }
+          />
 
-        <Route
-          path="/admin/dashboard"
-          element={
-            <PrivateRoute adminOnly={true}>
-              <AdminDashboard />
-            </PrivateRoute>
-          }
-        />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <PrivateRoute adminOnly={true}>
+                <AdminDashboard />
+              </PrivateRoute>
+            }
+          />
 
-        <Route
-          path="/admin/orders"
-          element={
-            <PrivateRoute adminOnly={true}>
-              <AdminOrders />
-            </PrivateRoute>
-          }
-        />
+          <Route
+            path="/admin/orders"
+            element={
+              <PrivateRoute adminOnly={true}>
+                <AdminOrders />
+              </PrivateRoute>
+            }
+          />
 
-        <Route
-          path="/admin/products"
-          element={
-            <PrivateRoute adminOnly={true}>
-              <AdminProducts />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
+          <Route
+            path="/admin/products"
+            element={
+              <PrivateRoute adminOnly={true}>
+                <AdminProducts />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </AppLayout>
     </Router>
   );
 }
