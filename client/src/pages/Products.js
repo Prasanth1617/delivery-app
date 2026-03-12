@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 function Products() {
   const [products, setProducts] = useState([]);
+  const [, setCartVersion] = useState(0);
 
   const getCart = () => JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -21,31 +22,15 @@ function Products() {
 
     const index = existingCart.findIndex((item) => item._id === product._id);
 
-    if (index > -1) {
+    if (index !== -1) {
       existingCart[index].quantity += 1;
     } else {
       existingCart.push({ ...product, quantity: 1 });
     }
 
     localStorage.setItem("cart", JSON.stringify(existingCart));
-    window.location.reload();
-  };
-
-  const decreaseCart = (product) => {
-    const existingCart = getCart();
-
-    const index = existingCart.findIndex((item) => item._id === product._id);
-
-    if (index > -1) {
-      existingCart[index].quantity -= 1;
-
-      if (existingCart[index].quantity <= 0) {
-        existingCart.splice(index, 1);
-      }
-    }
-
-    localStorage.setItem("cart", JSON.stringify(existingCart));
-    window.location.reload();
+    setCartVersion((prev) => prev + 1);
+    alert("Added to cart 🛒");
   };
 
   useEffect(() => {
@@ -56,7 +41,7 @@ function Products() {
         );
         setProducts(res.data);
       } catch (err) {
-        console.error(err);
+        console.log(err);
       }
     };
 
@@ -70,105 +55,180 @@ function Products() {
           <div>
             <h2 className="app-section-title">Products</h2>
             <p className="app-section-subtitle">
-              Browse and add items to your cart
+              Explore available items and add them to your cart
             </p>
           </div>
 
-          <Link to="/cart">
+          <Link to="/cart" style={{ textDecoration: "none" }}>
             <button className="primary-btn">
-              Cart 🛒 ({totalCartItems})
+              Go to Cart 🛒 {totalCartItems > 0 ? `(${totalCartItems})` : ""}
             </button>
           </Link>
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))",
-            gap: "20px",
-          }}
-        >
-          {products.map((product) => {
-            const qty = getCartQuantity(product._id);
+        {products.length === 0 ? (
+          <div className="app-card empty-state">
+            <div style={{ fontSize: "48px", marginBottom: "12px" }}>🛍️</div>
+            <h3 style={{ margin: 0, color: "#111827" }}>No products found</h3>
+            <p style={{ color: "#6b7280", marginTop: "10px" }}>
+              Products will appear here once they are added by admin.
+            </p>
+          </div>
+        ) : (
+          <div className="grid-cards">
+            {products.map((product) => {
+              const cartQty = getCartQuantity(product._id);
 
-            return (
-              <div key={product._id} className="app-card">
+              return (
                 <div
+                  key={product._id}
+                  className="app-card"
                   style={{
-                    height: "140px",
-                    background: "#eef2ff",
-                    borderRadius: "12px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "32px",
-                    marginBottom: "12px",
+                    padding: "20px",
+                    transition: "0.2s ease",
                   }}
                 >
-                  📦
-                </div>
-
-                <h3 style={{ margin: "0 0 6px" }}>{product.name}</h3>
-
-                <p style={{ color: "#6b7280", margin: "0 0 12px" }}>
-                  ₹{product.price}
-                </p>
-
-                {product.stock === 0 ? (
-                  <button className="secondary-btn" disabled>
-                    Unavailable
-                  </button>
-                ) : qty === 0 ? (
-                  <button
-                    className="primary-btn"
-                    onClick={() => addToCart(product)}
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "160px",
+                      background: "#eef2ff",
+                      borderRadius: "14px",
+                      marginBottom: "16px",
+                      overflow: "hidden",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
                   >
-                    Add to Cart
-                  </button>
-                ) : (
+                    {product.image ? (
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    ) : (
+                      <div style={{ fontSize: "36px" }}>🛍️</div>
+                    )}
+                  </div>
+
                   <div
                     style={{
                       display: "flex",
-                      alignItems: "center",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
                       gap: "10px",
+                      marginBottom: "10px",
                     }}
                   >
-                    <button
-                      onClick={() => decreaseCart(product)}
-                      style={{
-                        width: "30px",
-                        height: "30px",
-                        border: "none",
-                        borderRadius: "8px",
-                        background: "#e5e7eb",
-                        cursor: "pointer",
-                      }}
-                    >
-                      -
-                    </button>
+                    <div>
+                      {product.category && (
+                        <div
+                          style={{
+                            display: "inline-block",
+                            padding: "6px 10px",
+                            borderRadius: "999px",
+                            background: "#ede9fe",
+                            color: "#5b21b6",
+                            fontSize: "12px",
+                            fontWeight: "700",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          {product.category}
+                        </div>
+                      )}
 
-                    <span style={{ fontWeight: "700" }}>{qty}</span>
+                      <h4
+                        style={{
+                          margin: 0,
+                          fontSize: "18px",
+                          color: "#111827",
+                          lineHeight: "1.4",
+                        }}
+                      >
+                        {product.name}
+                      </h4>
+                    </div>
 
-                    <button
-                      onClick={() => addToCart(product)}
-                      style={{
-                        width: "30px",
-                        height: "30px",
-                        border: "none",
-                        borderRadius: "8px",
-                        background: "#4f46e5",
-                        color: "#fff",
-                        cursor: "pointer",
-                      }}
-                    >
-                      +
-                    </button>
+                    {cartQty > 0 && (
+                      <span
+                        style={{
+                          whiteSpace: "nowrap",
+                          padding: "6px 10px",
+                          borderRadius: "999px",
+                          background: "#ede9fe",
+                          color: "#5b21b6",
+                          fontSize: "12px",
+                          fontWeight: "700",
+                        }}
+                      >
+                        In Cart: {cartQty}
+                      </span>
+                    )}
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+
+                  <p
+                    style={{
+                      margin: "0 0 8px",
+                      fontSize: "18px",
+                      fontWeight: "700",
+                      color: "#4f46e5",
+                    }}
+                  >
+                    ₹{product.price}
+                  </p>
+
+                  <div
+                    style={{
+                      display: "inline-block",
+                      padding: "6px 10px",
+                      borderRadius: "999px",
+                      background: product.stock > 0 ? "#dcfce7" : "#fee2e2",
+                      color: product.stock > 0 ? "#166534" : "#991b1b",
+                      fontSize: "12px",
+                      fontWeight: "700",
+                      marginBottom: "16px",
+                    }}
+                  >
+                    {product.stock > 0
+                      ? `In Stock: ${product.stock}`
+                      : "Out of Stock"}
+                  </div>
+
+                  <button
+                    onClick={() => addToCart(product)}
+                    disabled={product.stock <= 0}
+                    style={{
+                      width: "100%",
+                      padding: "12px",
+                      border: "none",
+                      borderRadius: "12px",
+                      background: product.stock > 0 ? "#111827" : "#9ca3af",
+                      color: "#ffffff",
+                      fontWeight: "700",
+                      fontSize: "14px",
+                      cursor: product.stock > 0 ? "pointer" : "not-allowed",
+                    }}
+                  >
+                    {product.stock > 0
+                      ? cartQty > 0
+                        ? "Add One More"
+                        : "Add to Cart"
+                      : "Unavailable"}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
