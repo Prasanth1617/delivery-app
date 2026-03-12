@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
@@ -8,7 +8,8 @@ function Products() {
 
   const getCart = () => JSON.parse(localStorage.getItem("cart")) || [];
 
-  const cart = useMemo(() => getCart(), [cartVersion]);
+  const cart = getCart();
+
   const totalCartItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const getCartQuantity = (productId) => {
