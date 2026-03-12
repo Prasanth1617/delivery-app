@@ -26,6 +26,7 @@ function Profile() {
         setUser(res.data);
       } catch (err) {
         localStorage.removeItem("token");
+        localStorage.removeItem("role");
         navigate("/");
       }
     };
@@ -38,9 +39,13 @@ function Profile() {
       <div className="app-container">
         <div className="app-card topbar-card">
           <div>
-            <h2 className="app-section-title">Welcome Back</h2>
+            <h2 className="app-section-title">
+              {user?.role === "admin" ? "Admin Profile" : "Welcome Back"}
+            </h2>
             <p className="app-section-subtitle">
-              Manage your profile and continue shopping
+              {user?.role === "admin"
+                ? "Manage your admin account and control your platform"
+                : "Manage your profile and continue shopping"}
             </p>
           </div>
         </div>
@@ -67,7 +72,10 @@ function Profile() {
                     width: "84px",
                     height: "84px",
                     borderRadius: "50%",
-                    background: "linear-gradient(135deg, #4f46e5, #7c3aed)",
+                    background:
+                      user.role === "admin"
+                        ? "linear-gradient(135deg, #111827, #374151)"
+                        : "linear-gradient(135deg, #4f46e5, #7c3aed)",
                     color: "#fff",
                     display: "flex",
                     alignItems: "center",
@@ -97,7 +105,9 @@ function Profile() {
                       fontSize: "14px",
                     }}
                   >
-                    Your account details and delivery information
+                    {user.role === "admin"
+                      ? "Your admin account details and access level"
+                      : "Your account details and delivery information"}
                   </p>
                 </div>
               </div>
@@ -154,7 +164,7 @@ function Profile() {
                       fontWeight: "600",
                     }}
                   >
-                    Delivery Address
+                    {user.role === "admin" ? "Admin Address" : "Delivery Address"}
                   </p>
                   <p
                     style={{
@@ -172,15 +182,18 @@ function Profile() {
                   style={{
                     padding: "16px",
                     borderRadius: "16px",
-                    background: "#eef2ff",
-                    border: "1px solid #c7d2fe",
+                    background: user.role === "admin" ? "#f3f4f6" : "#eef2ff",
+                    border:
+                      user.role === "admin"
+                        ? "1px solid #d1d5db"
+                        : "1px solid #c7d2fe",
                   }}
                 >
                   <p
                     style={{
                       margin: "0 0 8px",
                       fontSize: "13px",
-                      color: "#4338ca",
+                      color: user.role === "admin" ? "#374151" : "#4338ca",
                       fontWeight: "600",
                     }}
                   >
@@ -191,10 +204,10 @@ function Profile() {
                       margin: 0,
                       fontSize: "16px",
                       fontWeight: "700",
-                      color: "#312e81",
+                      color: user.role === "admin" ? "#111827" : "#312e81",
                     }}
                   >
-                    Active User
+                    {user.role === "admin" ? "Admin User" : "Active User"}
                   </p>
                 </div>
               </div>
@@ -223,36 +236,73 @@ function Profile() {
                     gap: "12px",
                   }}
                 >
-                  <button
-                    className="primary-btn"
-                    onClick={() => navigate("/products")}
-                    style={{ width: "100%" }}
-                  >
-                    Shop Now
-                  </button>
+                  {user.role === "admin" ? (
+                    <>
+                      <button
+                        className="primary-btn"
+                        onClick={() => navigate("/admin/dashboard")}
+                        style={{ width: "100%" }}
+                      >
+                        Open Dashboard
+                      </button>
 
-                  <button
-                    className="secondary-btn"
-                    onClick={() => navigate("/cart")}
-                    style={{ width: "100%" }}
-                  >
-                    Open Cart
-                  </button>
+                      <button
+                        className="secondary-btn"
+                        onClick={() => navigate("/admin/products")}
+                        style={{ width: "100%" }}
+                      >
+                        Manage Products
+                      </button>
 
-                  <button
-                    className="ghost-btn"
-                    onClick={() => navigate("/orders")}
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      borderRadius: "12px",
-                      background: "#f9fafb",
-                      border: "1px solid #e5e7eb",
-                      color: "#111827",
-                    }}
-                  >
-                    View My Orders
-                  </button>
+                      <button
+                        className="ghost-btn"
+                        onClick={() => navigate("/admin/orders")}
+                        style={{
+                          width: "100%",
+                          padding: "12px",
+                          borderRadius: "12px",
+                          background: "#f9fafb",
+                          border: "1px solid #e5e7eb",
+                          color: "#111827",
+                        }}
+                      >
+                        Manage Orders
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className="primary-btn"
+                        onClick={() => navigate("/products")}
+                        style={{ width: "100%" }}
+                      >
+                        Shop Now
+                      </button>
+
+                      <button
+                        className="secondary-btn"
+                        onClick={() => navigate("/cart")}
+                        style={{ width: "100%" }}
+                      >
+                        Open Cart
+                      </button>
+
+                      <button
+                        className="ghost-btn"
+                        onClick={() => navigate("/orders")}
+                        style={{
+                          width: "100%",
+                          padding: "12px",
+                          borderRadius: "12px",
+                          background: "#f9fafb",
+                          border: "1px solid #e5e7eb",
+                          color: "#111827",
+                        }}
+                      >
+                        View My Orders
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -264,21 +314,36 @@ function Profile() {
                     color: "#111827",
                   }}
                 >
-                  Shopping Tips
+                  {user.role === "admin" ? "Admin Notes" : "Shopping Tips"}
                 </h3>
 
-                <ul
-                  style={{
-                    margin: 0,
-                    paddingLeft: "18px",
-                    color: "#6b7280",
-                    lineHeight: "1.8",
-                  }}
-                >
-                  <li>Check product availability before ordering.</li>
-                  <li>Keep your delivery address updated.</li>
-                  <li>Track your order status from the Orders page.</li>
-                </ul>
+                {user.role === "admin" ? (
+                  <ul
+                    style={{
+                      margin: 0,
+                      paddingLeft: "18px",
+                      color: "#6b7280",
+                      lineHeight: "1.8",
+                    }}
+                  >
+                    <li>Keep product stock updated regularly.</li>
+                    <li>Monitor pending orders and update statuses quickly.</li>
+                    <li>Maintain accurate product names, pricing, and images.</li>
+                  </ul>
+                ) : (
+                  <ul
+                    style={{
+                      margin: 0,
+                      paddingLeft: "18px",
+                      color: "#6b7280",
+                      lineHeight: "1.8",
+                    }}
+                  >
+                    <li>Check product availability before ordering.</li>
+                    <li>Keep your delivery address updated.</li>
+                    <li>Track your order status from the Orders page.</li>
+                  </ul>
+                )}
               </div>
             </div>
           </div>

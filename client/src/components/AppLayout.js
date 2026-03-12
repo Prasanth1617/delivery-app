@@ -6,7 +6,6 @@ function AppLayout({ children }) {
 
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
-  const isAdminPage = location.pathname.startsWith("/admin");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -38,14 +37,16 @@ function AppLayout({ children }) {
     <div>
       <div
         style={{
-          background: "#3482f0",
+          background: role === "admin" ? "#111827" : "#3482f0",
           color: "#ffffff",
           textAlign: "center",
           padding: "10px",
           fontWeight: "700",
         }}
       >
-        Welcome back! Explore our latest products and enjoy seamless shopping.
+        {role === "admin"
+          ? "Admin mode active. Manage products, orders, and platform activity."
+          : "Welcome back! Explore our latest products and enjoy seamless shopping."}
       </div>
 
       <div
@@ -88,7 +89,9 @@ function AppLayout({ children }) {
                 color: "#6b7280",
               }}
             >
-              {isAdminPage ? "Admin control panel" : "Fast, simple grocery delivery"}
+              {role === "admin"
+                ? "Admin control panel"
+                : "Fast, simple grocery delivery"}
             </p>
           </div>
 
@@ -100,32 +103,49 @@ function AppLayout({ children }) {
               alignItems: "center",
             }}
           >
-            {!isAdminPage ? (
+            {role === "admin" ? (
               <>
-                <Link to="/profile" style={navLinkStyle("/profile")}>Profile</Link>
-                <Link to="/products" style={navLinkStyle("/products")}>Products</Link>
-                <Link to="/cart" style={navLinkStyle("/cart")}>Cart</Link>
-                <Link to="/orders" style={navLinkStyle("/orders")}>Orders</Link>
+                <Link to="/profile" style={navLinkStyle("/profile")}>
+                  Profile
+                </Link>
 
-                {role === "admin" && (
-                  <Link to="/admin/dashboard" style={navLinkStyle("/admin/dashboard")}>
-                    Admin
-                  </Link>
-                )}
+                <Link
+                  to="/admin/dashboard"
+                  style={navLinkStyle("/admin/dashboard")}
+                >
+                  Dashboard
+                </Link>
+
+                <Link
+                  to="/admin/orders"
+                  style={navLinkStyle("/admin/orders")}
+                >
+                  Admin Orders
+                </Link>
+
+                <Link
+                  to="/admin/products"
+                  style={navLinkStyle("/admin/products")}
+                >
+                  Admin Products
+                </Link>
               </>
             ) : (
               <>
-                <Link to="/admin/dashboard" style={navLinkStyle("/admin/dashboard")}>
-                  Dashboard
+                <Link to="/profile" style={navLinkStyle("/profile")}>
+                  Profile
                 </Link>
-                <Link to="/admin/orders" style={navLinkStyle("/admin/orders")}>
-                  Orders
-                </Link>
-                <Link to="/admin/products" style={navLinkStyle("/admin/products")}>
+
+                <Link to="/products" style={navLinkStyle("/products")}>
                   Products
                 </Link>
-                <Link to="/products" style={navLinkStyle("/products")}>
-                  User View
+
+                <Link to="/cart" style={navLinkStyle("/cart")}>
+                  Cart
+                </Link>
+
+                <Link to="/orders" style={navLinkStyle("/orders")}>
+                  Orders
                 </Link>
               </>
             )}
