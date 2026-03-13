@@ -1,7 +1,6 @@
 const express = require("express");
 const Order = require("../models/Order");
-console.log("Order type:", typeof Order);
-console.log("Order keys:", Object.keys(Order));
+const Product = require("../models/Product");
 const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -14,20 +13,56 @@ router.get("/ping", (req, res) => {
 // Create Order
 router.post("/create", authMiddleware, async (req, res) => {
   try {
-
-    console.log("req.user =", req.user); // 👈 put it here
-
     const { items, totalAmount, address } = req.body;
+
+    if (!items || items.length === 0) {
+      return res.status(400).json({ message: "Cart is empty" });
+    }
+
+    if (!address || !address.trim()) {
+      return res.status(400).json({ message: "Delivery address is required" });
+    }
+
+    for (const item of items) {
+      const product = await Product.findById(item.productId);
+
+      if (!product) {
+        return res.status(404).json({
+          message: `${item.name} not found`,
+        });
+      }
+
+      if (product.stock <= 0) {
+        return res.status(400).json({
+          message: `${product.name} is out of stock`,
+        });
+      }
+
+      if (product.stock < item.quantity) {
+        return res.status(400).json({
+          message: `Only ${product.stock} item(s) left for ${product.name}`,
+        });
+      }
+    }
+
+    for (const item of items) {
+      const product = await Product.findById(item.productId);
+      product.stock -= item.quantity;
+      await product.save();
+    }
 
     const order = await Order.create({
       userId: req.user.id,
       items,
       totalAmount,
       deliveryAddress: address,
+      status: "Pending",
     });
 
-    res.status(201).json(order);
-
+    res.status(201).json({
+      message: "Order placed successfully",
+      order,
+    });
   } catch (error) {
     console.log("Create order error:", error);
     res.status(500).json({ message: "Server error" });
