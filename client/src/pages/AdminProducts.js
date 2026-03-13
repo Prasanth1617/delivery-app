@@ -9,6 +9,8 @@ function AdminProducts() {
   const [stock, setStock] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
@@ -17,6 +19,39 @@ function AdminProducts() {
       setProducts(res.data);
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const handleImageUpload = async () => {
+    try {
+      if (!selectedFile) {
+        alert("Please choose an image first");
+        return;
+      }
+
+      setUploadingImage(true);
+
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+      formData.append(
+        "upload_preset",
+        process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET
+      );
+
+      const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
+
+      const res = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        formData
+      );
+
+      setImage(res.data.secure_url);
+      alert("Image uploaded successfully ✅");
+    } catch (err) {
+      console.log(err);
+      alert("Image upload failed ❌");
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -48,8 +83,10 @@ function AdminProducts() {
       setStock("");
       setCategory("");
       setImage("");
+      setSelectedFile(null);
 
       fetchProducts();
+      alert("Product added successfully ✅");
     } catch (err) {
       console.log(err);
       alert("Failed to add product");
@@ -151,11 +188,32 @@ function AdminProducts() {
               />
             </div>
 
+            <div style={{ marginBottom: "14px" }}>
+              <label className="label-text">Choose Product Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                className="input-field"
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+              />
+            </div>
+
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "16px" }}>
+              <button
+                type="button"
+                className="secondary-btn"
+                onClick={handleImageUpload}
+                disabled={uploadingImage}
+              >
+                {uploadingImage ? "Uploading..." : "Upload Image"}
+              </button>
+            </div>
+
             <div style={{ marginBottom: "22px" }}>
               <label className="label-text">Image URL</label>
               <input
                 className="input-field"
-                placeholder="Paste product image URL"
+                placeholder="Uploaded image URL will appear here"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
               />
@@ -228,8 +286,8 @@ function AdminProducts() {
                     lineHeight: "1.7",
                   }}
                 >
-                  Add category and image URL also, so products look more
-                  professional on the user side.
+                  Upload product image from your system so the product cards look
+                  more professional and reliable.
                 </p>
               </div>
 
