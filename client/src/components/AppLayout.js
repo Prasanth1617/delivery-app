@@ -7,6 +7,13 @@ function AppLayout({ children }) {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
+  const getCartCount = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    return cart.reduce((sum, item) => sum + item.quantity, 0);
+  };
+
+  const cartCount = getCartCount();
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
@@ -22,26 +29,38 @@ function AppLayout({ children }) {
 
   const navLinkStyle = (path) => ({
     padding: "10px 14px",
-    borderRadius: "10px",
+    borderRadius: "12px",
     fontSize: "14px",
-    fontWeight: "600",
+    fontWeight: "700",
     color: isActive(path) ? "#ffffff" : "#374151",
-    background: isActive(path) ? "#4f46e5" : "transparent",
+    background: isActive(path)
+      ? "linear-gradient(135deg, #4f46e5, #7c3aed)"
+      : "#ffffff",
     border: isActive(path) ? "none" : "1px solid #e5e7eb",
     display: "inline-flex",
     alignItems: "center",
+    gap: "8px",
     textDecoration: "none",
+    boxShadow: isActive(path)
+      ? "0 10px 20px rgba(79, 70, 229, 0.22)"
+      : "0 4px 10px rgba(15, 23, 42, 0.04)",
+    transition: "all 0.2s ease",
   });
 
   return (
     <div>
       <div
         style={{
-          background: role === "admin" ? "#111827" : "#3482f0",
+          background:
+            role === "admin"
+              ? "linear-gradient(135deg, #111827, #1f2937)"
+              : "linear-gradient(135deg, #3482f0, #4f46e5)",
           color: "#ffffff",
           textAlign: "center",
-          padding: "10px",
+          padding: "12px 16px",
           fontWeight: "700",
+          fontSize: "14px",
+          letterSpacing: "0.2px",
         }}
       >
         {role === "admin"
@@ -54,16 +73,17 @@ function AppLayout({ children }) {
           position: "sticky",
           top: 0,
           zIndex: 1000,
-          background: "rgba(255,255,255,0.95)",
-          backdropFilter: "blur(10px)",
+          background: "rgba(255,255,255,0.92)",
+          backdropFilter: "blur(12px)",
           borderBottom: "1px solid #e5e7eb",
+          boxShadow: "0 8px 24px rgba(15, 23, 42, 0.06)",
         }}
       >
         <div
           style={{
             maxWidth: "1200px",
             margin: "0 auto",
-            padding: "14px 20px",
+            padding: "16px 20px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -75,18 +95,20 @@ function AppLayout({ children }) {
             <h2
               style={{
                 margin: 0,
-                fontSize: "22px",
+                fontSize: "24px",
                 fontWeight: "800",
                 color: "#111827",
+                letterSpacing: "-0.3px",
               }}
             >
               Delivery App
             </h2>
             <p
               style={{
-                margin: "4px 0 0",
+                margin: "6px 0 0",
                 fontSize: "12px",
                 color: "#6b7280",
+                fontWeight: "500",
               }}
             >
               {role === "admin"
@@ -142,6 +164,25 @@ function AppLayout({ children }) {
 
                 <Link to="/cart" style={navLinkStyle("/cart")}>
                   Cart
+                  {cartCount > 0 && (
+                    <span
+                      style={{
+                        minWidth: "22px",
+                        height: "22px",
+                        borderRadius: "999px",
+                        background: isActive("/cart") ? "#ffffff" : "#4f46e5",
+                        color: isActive("/cart") ? "#4f46e5" : "#ffffff",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "12px",
+                        fontWeight: "800",
+                        padding: "0 6px",
+                      }}
+                    >
+                      {cartCount}
+                    </span>
+                  )}
                 </Link>
 
                 <Link to="/orders" style={navLinkStyle("/orders")}>
@@ -153,14 +194,16 @@ function AppLayout({ children }) {
             <button
               onClick={handleLogout}
               style={{
-                padding: "10px 14px",
-                borderRadius: "10px",
+                padding: "10px 16px",
+                borderRadius: "12px",
                 fontSize: "14px",
                 fontWeight: "700",
-                background: "#111827",
+                background: "linear-gradient(135deg, #111827, #374151)",
                 color: "#ffffff",
                 border: "none",
                 cursor: "pointer",
+                boxShadow: "0 8px 18px rgba(17, 24, 39, 0.18)",
+                transition: "all 0.2s ease",
               }}
             >
               Logout
