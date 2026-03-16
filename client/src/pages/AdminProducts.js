@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -35,7 +36,7 @@ function AdminProducts() {
   const handleImageUpload = async () => {
     try {
       if (!selectedFile) {
-        alert("Please choose an image first");
+        toast.warning("Please choose an image first");
         return;
       }
 
@@ -56,10 +57,10 @@ function AdminProducts() {
       );
 
       setImage(res.data.secure_url);
-      alert("Image uploaded successfully ✅");
+      toast.success("Image uploaded successfully ✅");
     } catch (err) {
       console.log(err);
-      alert("Image upload failed ❌");
+      toast.error("Image upload failed ❌");
     } finally {
       setUploadingImage(false);
     }
@@ -68,7 +69,7 @@ function AdminProducts() {
   const handleEditImageUpload = async () => {
     try {
       if (!editSelectedFile) {
-        alert("Please choose an image first");
+        toast.warning("Please choose an image first");
         return;
       }
 
@@ -89,7 +90,7 @@ function AdminProducts() {
       );
 
       setEditImage(res.data.secure_url);
-      alert("Edit image uploaded successfully ✅");
+      toast.error("Edit image upload failed ❌");
     } catch (err) {
       console.log(err);
       alert("Edit image upload failed ❌");
@@ -101,7 +102,7 @@ function AdminProducts() {
   const addProduct = async () => {
     try {
       if (!name || !price || !stock) {
-        alert("Please fill product name, price and stock");
+        toast.warning("Please fill product name, price and stock");
         return;
       }
 
@@ -129,10 +130,10 @@ function AdminProducts() {
       setSelectedFile(null);
 
       fetchProducts();
-      alert("Product added successfully ✅");
+      toast.success("Product added successfully ✅");
     } catch (err) {
       console.log(err);
-      alert("Failed to add product");
+      toast.error("Failed to add product");
     }
   };
 
@@ -145,10 +146,10 @@ function AdminProducts() {
       });
 
       fetchProducts();
-      alert("Product deleted successfully ✅");
+      toast.success("Product deleted successfully ✅");
     } catch (err) {
       console.log(err);
-      alert("Failed to delete product");
+      toast.error("Failed to delete product");
     }
   };
 
@@ -175,7 +176,7 @@ function AdminProducts() {
   const updateProduct = async () => {
     try {
       if (!editName || !editPrice || !editStock) {
-        alert("Please fill product name, price and stock");
+        toast.success("Product deleted successfully ✅");
         return;
       }
 
@@ -197,10 +198,10 @@ function AdminProducts() {
 
       closeEditModal();
       fetchProducts();
-      alert("Product updated successfully ✅");
+      toast.success("Product updated successfully ✅");
     } catch (err) {
       console.log(err);
-      alert(err.response?.data?.message || "Failed to update product");
+      toast.error(err.response?.data?.message || "Failed to update product");
     }
   };
 
