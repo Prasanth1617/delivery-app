@@ -60,13 +60,64 @@ function Orders() {
   };
 
   return (
-    <div className="app-page">
+    <div
+      className="app-page"
+      style={{
+        background:
+          "linear-gradient(180deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%)",
+        minHeight: "100vh",
+      }}
+    >
       <div className="app-container">
-        <div className="app-card topbar-card">
+        <div
+          className="app-card topbar-card"
+          style={{
+            padding: "28px",
+            borderRadius: "24px",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 20px 45px rgba(15, 23, 42, 0.08)",
+            background:
+              "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(238,242,255,0.92))",
+          }}
+        >
           <div>
-            <h2 className="app-section-title">My Orders</h2>
-            <p className="app-section-subtitle">
-              Track your placed orders and delivery status
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "8px 12px",
+                borderRadius: "999px",
+                background: "#eef2ff",
+                color: "#4338ca",
+                fontWeight: "700",
+                fontSize: "12px",
+                marginBottom: "14px",
+              }}
+            >
+              📦 Order Tracking Center
+            </div>
+
+            <h2
+              className="app-section-title"
+              style={{
+                marginBottom: "8px",
+                fontSize: "34px",
+                letterSpacing: "-0.4px",
+              }}
+            >
+              My Orders
+            </h2>
+            <p
+              className="app-section-subtitle"
+              style={{
+                fontSize: "15px",
+                maxWidth: "560px",
+                lineHeight: "1.7",
+              }}
+            >
+              Track your placed orders, monitor delivery progress and review
+              item details in one clean view.
             </p>
           </div>
 
@@ -74,12 +125,21 @@ function Orders() {
             <button
               className="primary-btn"
               onClick={() => navigate("/products")}
+              style={{
+                padding: "14px 18px",
+                borderRadius: "14px",
+                boxShadow: "0 14px 28px rgba(79, 70, 229, 0.24)",
+              }}
             >
               Shop More
             </button>
             <button
               className="secondary-btn"
               onClick={() => navigate("/profile")}
+              style={{
+                padding: "14px 18px",
+                borderRadius: "14px",
+              }}
             >
               Back to Profile
             </button>
@@ -87,10 +147,33 @@ function Orders() {
         </div>
 
         {orders.length === 0 ? (
-          <div className="app-card empty-state">
-            <div style={{ fontSize: "48px", marginBottom: "12px" }}>📦</div>
-            <h3 style={{ margin: 0, color: "#111827" }}>No orders yet</h3>
-            <p style={{ color: "#6b7280", marginTop: "10px" }}>
+          <div
+            className="app-card empty-state"
+            style={{
+              borderRadius: "24px",
+              padding: "56px 24px",
+              boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
+            }}
+          >
+            <div style={{ fontSize: "56px", marginBottom: "14px" }}>📦</div>
+            <h3
+              style={{
+                margin: 0,
+                color: "#111827",
+                fontSize: "24px",
+              }}
+            >
+              No orders yet
+            </h3>
+            <p
+              style={{
+                color: "#6b7280",
+                marginTop: "12px",
+                fontSize: "15px",
+                maxWidth: "460px",
+                marginInline: "auto",
+              }}
+            >
               Your placed orders will appear here once you complete checkout.
             </p>
           </div>
@@ -98,14 +181,20 @@ function Orders() {
           <div
             style={{
               display: "grid",
-              gap: "20px",
+              gap: "24px",
             }}
           >
             {orders.map((order) => (
               <div
                 key={order._id}
                 className="app-card"
-                style={{ padding: "24px" }}
+                style={{
+                  padding: "26px",
+                  borderRadius: "24px",
+                  border: "1px solid #e5e7eb",
+                  boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
+                  background: "#ffffff",
+                }}
               >
                 <div
                   style={{
@@ -114,18 +203,37 @@ function Orders() {
                     alignItems: "flex-start",
                     flexWrap: "wrap",
                     gap: "16px",
-                    marginBottom: "18px",
+                    marginBottom: "20px",
                   }}
                 >
                   <div>
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        padding: "7px 11px",
+                        borderRadius: "999px",
+                        background: "#f8fafc",
+                        color: "#475569",
+                        fontSize: "12px",
+                        fontWeight: "700",
+                        border: "1px solid #e5e7eb",
+                        marginBottom: "12px",
+                      }}
+                    >
+                      🧾 Order Summary
+                    </div>
+
                     <h3
                       style={{
                         margin: 0,
-                        fontSize: "20px",
+                        fontSize: "22px",
                         color: "#111827",
+                        letterSpacing: "-0.2px",
                       }}
                     >
-                      Order Summary
+                      Order Details
                     </h3>
                     <p
                       style={{
@@ -133,6 +241,7 @@ function Orders() {
                         color: "#6b7280",
                         fontSize: "14px",
                         wordBreak: "break-all",
+                        lineHeight: "1.6",
                       }}
                     >
                       Order ID: {order._id}
@@ -142,10 +251,11 @@ function Orders() {
                   <span
                     style={{
                       ...getStatusStyle(order.status),
-                      padding: "8px 14px",
+                      padding: "9px 15px",
                       borderRadius: "999px",
                       fontSize: "13px",
-                      fontWeight: "700",
+                      fontWeight: "800",
+                      boxShadow: "0 8px 16px rgba(15, 23, 42, 0.05)",
                     }}
                   >
                     {order.status}
@@ -155,17 +265,18 @@ function Orders() {
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-                    gap: "14px",
-                    marginBottom: "18px",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+                    gap: "16px",
+                    marginBottom: "20px",
                   }}
                 >
                   <div
                     style={{
-                      background: "#f9fafb",
+                      background:
+                        "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                       border: "1px solid #e5e7eb",
-                      borderRadius: "14px",
-                      padding: "14px",
+                      borderRadius: "18px",
+                      padding: "16px",
                     }}
                   >
                     <p
@@ -173,7 +284,7 @@ function Orders() {
                         margin: "0 0 8px",
                         fontSize: "13px",
                         color: "#6b7280",
-                        fontWeight: "600",
+                        fontWeight: "700",
                       }}
                     >
                       Total Amount
@@ -181,9 +292,10 @@ function Orders() {
                     <p
                       style={{
                         margin: 0,
-                        fontSize: "18px",
-                        fontWeight: "700",
+                        fontSize: "24px",
+                        fontWeight: "800",
                         color: "#4f46e5",
+                        letterSpacing: "-0.2px",
                       }}
                     >
                       ₹{order.totalAmount}
@@ -192,10 +304,11 @@ function Orders() {
 
                   <div
                     style={{
-                      background: "#f9fafb",
+                      background:
+                        "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                       border: "1px solid #e5e7eb",
-                      borderRadius: "14px",
-                      padding: "14px",
+                      borderRadius: "18px",
+                      padding: "16px",
                     }}
                   >
                     <p
@@ -203,7 +316,7 @@ function Orders() {
                         margin: "0 0 8px",
                         fontSize: "13px",
                         color: "#6b7280",
-                        fontWeight: "600",
+                        fontWeight: "700",
                       }}
                     >
                       Items Count
@@ -211,9 +324,10 @@ function Orders() {
                     <p
                       style={{
                         margin: 0,
-                        fontSize: "18px",
-                        fontWeight: "700",
+                        fontSize: "24px",
+                        fontWeight: "800",
                         color: "#111827",
+                        letterSpacing: "-0.2px",
                       }}
                     >
                       {order.items.length}
@@ -225,9 +339,9 @@ function Orders() {
                   style={{
                     background: "#f9fafb",
                     border: "1px solid #e5e7eb",
-                    borderRadius: "14px",
-                    padding: "14px",
-                    marginBottom: "18px",
+                    borderRadius: "18px",
+                    padding: "16px",
+                    marginBottom: "20px",
                   }}
                 >
                   <p
@@ -235,7 +349,7 @@ function Orders() {
                       margin: "0 0 8px",
                       fontSize: "13px",
                       color: "#6b7280",
-                      fontWeight: "600",
+                      fontWeight: "700",
                     }}
                   >
                     Delivery Address
@@ -246,6 +360,7 @@ function Orders() {
                       fontSize: "15px",
                       color: "#111827",
                       fontWeight: "600",
+                      lineHeight: "1.7",
                     }}
                   >
                     {order.deliveryAddress}
@@ -255,16 +370,16 @@ function Orders() {
                 <div>
                   <p
                     style={{
-                      margin: "0 0 12px",
-                      fontSize: "14px",
-                      fontWeight: "700",
+                      margin: "0 0 14px",
+                      fontSize: "15px",
+                      fontWeight: "800",
                       color: "#374151",
                     }}
                   >
                     Ordered Items
                   </p>
 
-                  <div style={{ display: "grid", gap: "10px" }}>
+                  <div style={{ display: "grid", gap: "12px" }}>
                     {order.items.map((item, index) => (
                       <div
                         key={index}
@@ -272,19 +387,21 @@ function Orders() {
                           display: "flex",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          background: "#ffffff",
+                          background:
+                            "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                           border: "1px solid #e5e7eb",
-                          borderRadius: "12px",
-                          padding: "12px 14px",
-                          gap: "12px",
+                          borderRadius: "16px",
+                          padding: "14px 16px",
+                          gap: "14px",
                         }}
                       >
                         <div>
                           <p
                             style={{
                               margin: 0,
-                              fontWeight: "700",
+                              fontWeight: "800",
                               color: "#111827",
+                              fontSize: "15px",
                             }}
                           >
                             {item.name}
@@ -294,6 +411,7 @@ function Orders() {
                               margin: "6px 0 0",
                               fontSize: "13px",
                               color: "#6b7280",
+                              fontWeight: "500",
                             }}
                           >
                             Qty: {item.quantity}
@@ -303,8 +421,10 @@ function Orders() {
                         <p
                           style={{
                             margin: 0,
-                            fontWeight: "700",
+                            fontWeight: "800",
                             color: "#4f46e5",
+                            fontSize: "16px",
+                            whiteSpace: "nowrap",
                           }}
                         >
                           ₹{item.price}

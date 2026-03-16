@@ -32,11 +32,9 @@ function AdminDashboard() {
       <div className="app-page">
         <div className="app-container">
           <div className="app-card empty-state">
-            <div style={{ fontSize: "48px", marginBottom: "12px" }}>📊</div>
-            <h3 style={{ margin: 0, color: "#111827" }}>Loading dashboard...</h3>
-            <p style={{ color: "#6b7280", marginTop: "10px" }}>
-              Please wait while we fetch admin statistics.
-            </p>
+            <div style={{ fontSize: "52px", marginBottom: "14px" }}>📊</div>
+            <h3 style={{ margin: 0 }}>Loading dashboard...</h3>
+            <p>Please wait while we fetch admin statistics.</p>
           </div>
         </div>
       </div>
@@ -49,46 +47,75 @@ function AdminDashboard() {
       value: stats.totalOrders,
       icon: "📦",
       bg: "#eef2ff",
-      color: "#4338ca",
     },
     {
       title: "Pending Orders",
       value: stats.pendingOrders,
       icon: "⏳",
       bg: "#fef3c7",
-      color: "#92400e",
     },
     {
       title: "Delivered Orders",
       value: stats.deliveredOrders,
       icon: "✅",
       bg: "#dcfce7",
-      color: "#166534",
     },
     {
       title: "Total Products",
       value: stats.totalProducts,
       icon: "🛍️",
       bg: "#ede9fe",
-      color: "#6d28d9",
     },
     {
       title: "Total Revenue",
       value: `₹${stats.totalRevenue}`,
       icon: "💰",
       bg: "#dbeafe",
-      color: "#1d4ed8",
     },
   ];
 
   return (
-    <div className="app-page">
+    <div
+      className="app-page"
+      style={{
+        background:
+          "linear-gradient(180deg,#f8fafc 0%,#eef2ff 40%,#f8fafc 100%)",
+        minHeight: "100vh",
+      }}
+    >
       <div className="app-container">
-        <div className="app-card topbar-card">
+        {/* HEADER */}
+        <div
+          className="app-card topbar-card"
+          style={{
+            padding: "28px",
+            borderRadius: "24px",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.05)",
+          }}
+        >
           <div>
-            <h2 className="app-section-title">Admin Dashboard</h2>
-            <p className="app-section-subtitle">
-              Overview of orders, revenue, and product performance
+            <div
+              style={{
+                background: "#eef2ff",
+                padding: "6px 12px",
+                borderRadius: "999px",
+                display: "inline-block",
+                fontSize: "12px",
+                fontWeight: "700",
+                color: "#4338ca",
+                marginBottom: "12px",
+              }}
+            >
+              ⚡ Admin Control Panel
+            </div>
+
+            <h2 style={{ margin: 0, fontSize: "32px", color: "#111827" }}>
+              Admin Dashboard
+            </h2>
+
+            <p style={{ marginTop: "8px", color: "#6b7280" }}>
+              Overview of orders, revenue and platform activity
             </p>
           </div>
 
@@ -109,24 +136,31 @@ function AdminDashboard() {
           </div>
         </div>
 
-        <div className="grid-cards" style={{ marginBottom: "24px" }}>
+        {/* STATS */}
+        <div
+          className="grid-cards"
+          style={{ marginTop: "24px", marginBottom: "28px" }}
+        >
           {statsCards.map((card, index) => (
             <div
               key={index}
               className="app-card"
-              style={{ padding: "24px" }}
+              style={{
+                padding: "24px",
+                borderRadius: "20px",
+                boxShadow: "0 12px 25px rgba(0,0,0,0.04)",
+              }}
             >
               <div
                 style={{
-                  width: "56px",
-                  height: "56px",
+                  width: "54px",
+                  height: "54px",
                   borderRadius: "16px",
                   background: card.bg,
-                  color: card.color,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: "28px",
+                  fontSize: "26px",
                   marginBottom: "16px",
                 }}
               >
@@ -135,8 +169,8 @@ function AdminDashboard() {
 
               <h3
                 style={{
-                  margin: "0 0 8px",
-                  fontSize: "16px",
+                  margin: "0 0 6px",
+                  fontSize: "14px",
                   color: "#6b7280",
                   fontWeight: "600",
                 }}
@@ -158,19 +192,21 @@ function AdminDashboard() {
           ))}
         </div>
 
+        {/* PANELS */}
         <div className="grid-2">
-          <div className="app-card" style={{ padding: "24px" }}>
-            <h3
-              style={{
-                marginTop: 0,
-                marginBottom: "16px",
-                color: "#111827",
-              }}
-            >
+          {/* QUICK ACTIONS */}
+          <div
+            className="app-card"
+            style={{
+              padding: "26px",
+              borderRadius: "20px",
+            }}
+          >
+            <h3 style={{ marginTop: 0, marginBottom: "18px" }}>
               Quick Actions
             </h3>
 
-            <div style={{ display: "grid", gap: "12px" }}>
+            <div style={{ display: "grid", gap: "14px" }}>
               <button
                 className="primary-btn"
                 onClick={() => navigate("/admin/orders")}
@@ -188,77 +224,58 @@ function AdminDashboard() {
               </button>
 
               <button
-                className="ghost-btn"
-                onClick={() => navigate("/products")}
                 style={{
                   width: "100%",
                   padding: "12px",
                   borderRadius: "12px",
                   background: "#f9fafb",
                   border: "1px solid #e5e7eb",
-                  color: "#111827",
+                  fontWeight: "600",
+                  cursor: "pointer",
                 }}
+                onClick={() => navigate("/products")}
               >
                 Switch to User View
               </button>
             </div>
           </div>
 
-          <div className="app-card" style={{ padding: "24px" }}>
-            <h3
-              style={{
-                marginTop: 0,
-                marginBottom: "16px",
-                color: "#111827",
-              }}
-            >
-              Admin Notes
-            </h3>
+          {/* ADMIN NOTES */}
+          <div
+            className="app-card"
+            style={{
+              padding: "26px",
+              borderRadius: "20px",
+            }}
+          >
+            <h3 style={{ marginTop: 0, marginBottom: "18px" }}>Admin Notes</h3>
 
-            <div
-              style={{
-                display: "grid",
-                gap: "12px",
-              }}
-            >
+            <div style={{ display: "grid", gap: "14px" }}>
               <div
                 style={{
                   background: "#f9fafb",
-                  border: "1px solid #e5e7eb",
                   borderRadius: "14px",
                   padding: "14px",
+                  border: "1px solid #e5e7eb",
                 }}
               >
-                <p
-                  style={{
-                    margin: 0,
-                    color: "#374151",
-                    lineHeight: "1.7",
-                    fontWeight: "500",
-                  }}
-                >
-                  Check pending orders regularly and update status quickly for
-                  a better customer experience.
+                <p style={{ margin: 0, lineHeight: "1.7" }}>
+                  Check pending orders regularly and update delivery status for
+                  better customer satisfaction.
                 </p>
               </div>
 
               <div
                 style={{
                   background: "#eef2ff",
-                  border: "1px solid #c7d2fe",
                   borderRadius: "14px",
                   padding: "14px",
+                  border: "1px solid #c7d2fe",
                 }}
               >
-                <p
-                  style={{
-                    margin: 0,
-                    color: "#312e81",
-                    lineHeight: "1.7",
-                    fontWeight: "600",
-                  }}
-                >
-                  Keep product stock updated so users only see available items.
+                <p style={{ margin: 0, lineHeight: "1.7", fontWeight: "600" }}>
+                  Keep product stock updated so customers only see available
+                  items.
                 </p>
               </div>
             </div>

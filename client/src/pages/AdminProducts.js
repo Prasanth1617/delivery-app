@@ -200,7 +200,7 @@ function AdminProducts() {
       alert("Product updated successfully ✅");
     } catch (err) {
       console.log(err);
-      alert("Failed to update product");
+      alert(err.response?.data?.message || "Failed to update product");
     }
   };
 
@@ -209,13 +209,64 @@ function AdminProducts() {
   }, []);
 
   return (
-    <div className="app-page">
+    <div
+      className="app-page"
+      style={{
+        background:
+          "linear-gradient(180deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%)",
+        minHeight: "100vh",
+      }}
+    >
       <div className="app-container">
-        <div className="app-card topbar-card">
+        <div
+          className="app-card topbar-card"
+          style={{
+            padding: "28px",
+            borderRadius: "24px",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 20px 45px rgba(15, 23, 42, 0.08)",
+            background:
+              "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(238,242,255,0.92))",
+          }}
+        >
           <div>
-            <h2 className="app-section-title">Admin Product Manager</h2>
-            <p className="app-section-subtitle">
-              Add, view, edit and manage products in your catalog
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "8px 12px",
+                borderRadius: "999px",
+                background: "#eef2ff",
+                color: "#4338ca",
+                fontWeight: "700",
+                fontSize: "12px",
+                marginBottom: "14px",
+              }}
+            >
+              ⚡ Premium Admin Control
+            </div>
+
+            <h2
+              className="app-section-title"
+              style={{
+                marginBottom: "8px",
+                fontSize: "34px",
+                letterSpacing: "-0.4px",
+              }}
+            >
+              Admin Product Manager
+            </h2>
+            <p
+              className="app-section-subtitle"
+              style={{
+                fontSize: "15px",
+                maxWidth: "620px",
+                lineHeight: "1.7",
+              }}
+            >
+              Add, edit, organize and maintain your product catalog with a
+              cleaner and more premium management experience.
             </p>
           </div>
 
@@ -223,6 +274,11 @@ function AdminProducts() {
             <button
               className="primary-btn"
               onClick={() => navigate("/admin/dashboard")}
+              style={{
+                padding: "14px 18px",
+                borderRadius: "14px",
+                boxShadow: "0 14px 28px rgba(79, 70, 229, 0.24)",
+              }}
             >
               Dashboard
             </button>
@@ -230,17 +286,53 @@ function AdminProducts() {
             <button
               className="secondary-btn"
               onClick={() => navigate("/admin/orders")}
+              style={{
+                padding: "14px 18px",
+                borderRadius: "14px",
+              }}
             >
               Orders
             </button>
           </div>
         </div>
 
-        <div className="grid-2">
-          <div className="app-card" style={{ padding: "24px" }}>
-            <h3 style={{ marginTop: 0, marginBottom: "18px", color: "#111827" }}>
+        <div
+          className="grid-2"
+          style={{
+            gap: "24px",
+          }}
+        >
+          <div
+            className="app-card"
+            style={{
+              padding: "26px",
+              borderRadius: "24px",
+              border: "1px solid #e5e7eb",
+              boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
+              background: "#ffffff",
+            }}
+          >
+            <h3
+              style={{
+                marginTop: 0,
+                marginBottom: "6px",
+                color: "#111827",
+                fontSize: "24px",
+              }}
+            >
               Add Product
             </h3>
+            <p
+              style={{
+                marginTop: 0,
+                marginBottom: "20px",
+                color: "#6b7280",
+                fontSize: "14px",
+              }}
+            >
+              Create new products with pricing, stock, category and product
+              images.
+            </p>
 
             <div style={{ marginBottom: "16px" }}>
               <label className="label-text">Product Name</label>
@@ -249,6 +341,7 @@ function AdminProducts() {
                 placeholder="Enter product name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                style={{ borderRadius: "14px", background: "#f9fafb" }}
               />
             </div>
 
@@ -260,6 +353,7 @@ function AdminProducts() {
                 placeholder="Enter product price"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
+                style={{ borderRadius: "14px", background: "#f9fafb" }}
               />
             </div>
 
@@ -271,6 +365,7 @@ function AdminProducts() {
                 placeholder="Enter available stock"
                 value={stock}
                 onChange={(e) => setStock(e.target.value)}
+                style={{ borderRadius: "14px", background: "#f9fafb" }}
               />
             </div>
 
@@ -281,6 +376,7 @@ function AdminProducts() {
                 placeholder="Example: Grocery, Snacks, Drinks"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
+                style={{ borderRadius: "14px", background: "#f9fafb" }}
               />
             </div>
 
@@ -291,6 +387,7 @@ function AdminProducts() {
                 accept="image/*"
                 className="input-field"
                 onChange={(e) => setSelectedFile(e.target.files[0])}
+                style={{ borderRadius: "14px", background: "#f9fafb" }}
               />
             </div>
 
@@ -307,6 +404,10 @@ function AdminProducts() {
                 className="secondary-btn"
                 onClick={handleImageUpload}
                 disabled={uploadingImage}
+                style={{
+                  borderRadius: "14px",
+                  padding: "12px 16px",
+                }}
               >
                 {uploadingImage ? "Uploading..." : "Upload Image"}
               </button>
@@ -319,26 +420,64 @@ function AdminProducts() {
                 placeholder="Uploaded image URL will appear here"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
+                style={{ borderRadius: "14px", background: "#f9fafb" }}
               />
             </div>
 
-            <button className="primary-btn" onClick={addProduct}>
+            <button
+              className="primary-btn"
+              onClick={addProduct}
+              style={{
+                width: "100%",
+                padding: "14px",
+                borderRadius: "14px",
+                boxShadow: "0 14px 28px rgba(79, 70, 229, 0.24)",
+              }}
+            >
               Add Product
             </button>
           </div>
 
-          <div className="app-card" style={{ padding: "24px" }}>
-            <h3 style={{ marginTop: 0, marginBottom: "18px", color: "#111827" }}>
+          <div
+            className="app-card"
+            style={{
+              padding: "26px",
+              borderRadius: "24px",
+              border: "1px solid #e5e7eb",
+              boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
+              background: "#ffffff",
+            }}
+          >
+            <h3
+              style={{
+                marginTop: 0,
+                marginBottom: "6px",
+                color: "#111827",
+                fontSize: "24px",
+              }}
+            >
               Product Summary
             </h3>
+            <p
+              style={{
+                marginTop: 0,
+                marginBottom: "20px",
+                color: "#6b7280",
+                fontSize: "14px",
+              }}
+            >
+              Keep your catalog polished, visual and updated for a better user
+              experience.
+            </p>
 
             <div style={{ display: "grid", gap: "14px" }}>
               <div
                 style={{
-                  background: "#f9fafb",
+                  background:
+                    "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                   border: "1px solid #e5e7eb",
-                  borderRadius: "14px",
-                  padding: "16px",
+                  borderRadius: "18px",
+                  padding: "18px",
                 }}
               >
                 <p
@@ -346,7 +485,7 @@ function AdminProducts() {
                     margin: "0 0 8px",
                     fontSize: "13px",
                     color: "#6b7280",
-                    fontWeight: "600",
+                    fontWeight: "700",
                   }}
                 >
                   Total Products
@@ -354,9 +493,10 @@ function AdminProducts() {
                 <p
                   style={{
                     margin: 0,
-                    fontSize: "24px",
-                    fontWeight: "700",
+                    fontSize: "30px",
+                    fontWeight: "800",
                     color: "#111827",
+                    letterSpacing: "-0.3px",
                   }}
                 >
                   {products.length}
@@ -367,8 +507,8 @@ function AdminProducts() {
                 style={{
                   background: "#eef2ff",
                   border: "1px solid #c7d2fe",
-                  borderRadius: "14px",
-                  padding: "16px",
+                  borderRadius: "18px",
+                  padding: "18px",
                 }}
               >
                 <p
@@ -376,7 +516,7 @@ function AdminProducts() {
                     margin: "0 0 8px",
                     fontSize: "13px",
                     color: "#4338ca",
-                    fontWeight: "600",
+                    fontWeight: "700",
                   }}
                 >
                   Quick Note
@@ -386,11 +526,13 @@ function AdminProducts() {
                     margin: 0,
                     color: "#312e81",
                     fontWeight: "600",
-                    lineHeight: "1.7",
+                    lineHeight: "1.8",
+                    fontSize: "14px",
                   }}
                 >
-                  Upload product images from your system and keep stock, price,
-                  category and product details updated regularly.
+                  Upload quality product images, maintain accurate stock and
+                  keep categories clean so the storefront feels more reliable
+                  and premium.
                 </p>
               </div>
 
@@ -399,7 +541,7 @@ function AdminProducts() {
                   style={{
                     background: "#ffffff",
                     border: "1px solid #e5e7eb",
-                    borderRadius: "14px",
+                    borderRadius: "18px",
                     padding: "16px",
                   }}
                 >
@@ -408,7 +550,7 @@ function AdminProducts() {
                       margin: "0 0 10px",
                       fontSize: "13px",
                       color: "#6b7280",
-                      fontWeight: "600",
+                      fontWeight: "700",
                     }}
                   >
                     Image Preview
@@ -417,13 +559,14 @@ function AdminProducts() {
                   <div
                     style={{
                       width: "100%",
-                      height: "180px",
-                      borderRadius: "14px",
+                      height: "220px",
+                      borderRadius: "16px",
                       overflow: "hidden",
                       background: "#f3f4f6",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
+                      border: "1px solid #eef2ff",
                     }}
                   >
                     <img
@@ -445,43 +588,105 @@ function AdminProducts() {
           </div>
         </div>
 
-        <div className="app-card" style={{ padding: "24px", marginTop: "24px" }}>
-          <h3 style={{ marginTop: 0, marginBottom: "18px", color: "#111827" }}>
-            Products
-          </h3>
+        <div
+          className="app-card"
+          style={{
+            padding: "26px",
+            marginTop: "26px",
+            borderRadius: "24px",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
+            background: "#ffffff",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "14px",
+              marginBottom: "18px",
+            }}
+          >
+            <div>
+              <h3
+                style={{
+                  marginTop: 0,
+                  marginBottom: "6px",
+                  color: "#111827",
+                  fontSize: "24px",
+                }}
+              >
+                Products
+              </h3>
+              <p
+                style={{
+                  margin: 0,
+                  color: "#6b7280",
+                  fontSize: "14px",
+                }}
+              >
+                Manage your live product catalog from one place.
+              </p>
+            </div>
+
+            <div
+              style={{
+                padding: "8px 12px",
+                borderRadius: "999px",
+                background: "#f8fafc",
+                color: "#475569",
+                fontWeight: "700",
+                fontSize: "13px",
+                border: "1px solid #e5e7eb",
+              }}
+            >
+              Total Items: {products.length}
+            </div>
+          </div>
 
           {products.length === 0 ? (
             <div className="empty-state">
-              <div style={{ fontSize: "48px", marginBottom: "12px" }}>🛍️</div>
-              <h3 style={{ margin: 0, color: "#111827" }}>No products found</h3>
-              <p style={{ color: "#6b7280", marginTop: "10px" }}>
+              <div style={{ fontSize: "52px", marginBottom: "12px" }}>🛍️</div>
+              <h3 style={{ margin: 0, color: "#111827", fontSize: "24px" }}>
+                No products found
+              </h3>
+              <p style={{ color: "#6b7280", marginTop: "10px", fontSize: "15px" }}>
                 Add your first product to start building the catalog.
               </p>
             </div>
           ) : (
-            <div className="grid-cards">
+            <div
+              className="grid-cards"
+              style={{
+                gap: "24px",
+              }}
+            >
               {products.map((p) => (
                 <div
                   key={p._id}
                   style={{
                     background: "#ffffff",
-                    borderRadius: "18px",
-                    padding: "20px",
+                    borderRadius: "22px",
+                    padding: "18px",
                     border: "1px solid #e5e7eb",
-                    boxShadow: "0 12px 30px rgba(15, 23, 42, 0.06)",
+                    boxShadow: "0 14px 30px rgba(15, 23, 42, 0.06)",
                   }}
                 >
                   <div
                     style={{
                       width: "100%",
-                      height: "160px",
-                      background: "#eef2ff",
-                      borderRadius: "14px",
+                      height: "190px",
+                      background:
+                        "linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%)",
+                      borderRadius: "18px",
                       marginBottom: "16px",
                       overflow: "hidden",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
+                      border: "1px solid #eef2ff",
                     }}
                   >
                     {p.image ? (
@@ -498,7 +703,7 @@ function AdminProducts() {
                         }}
                       />
                     ) : (
-                      <div style={{ fontSize: "34px" }}>📦</div>
+                      <div style={{ fontSize: "38px" }}>📦</div>
                     )}
                   </div>
 
@@ -508,10 +713,10 @@ function AdminProducts() {
                         display: "inline-block",
                         padding: "6px 10px",
                         borderRadius: "999px",
-                        background: "#ede9fe",
-                        color: "#5b21b6",
+                        background: "#f3e8ff",
+                        color: "#6d28d9",
                         fontSize: "12px",
-                        fontWeight: "700",
+                        fontWeight: "800",
                         marginBottom: "12px",
                       }}
                     >
@@ -522,8 +727,9 @@ function AdminProducts() {
                   <h4
                     style={{
                       margin: "0 0 10px",
-                      fontSize: "18px",
+                      fontSize: "20px",
                       color: "#111827",
+                      lineHeight: "1.35",
                     }}
                   >
                     {p.name}
@@ -531,9 +737,9 @@ function AdminProducts() {
 
                   <p
                     style={{
-                      margin: "0 0 8px",
-                      fontSize: "18px",
-                      fontWeight: "700",
+                      margin: "0 0 10px",
+                      fontSize: "24px",
+                      fontWeight: "800",
                       color: "#4f46e5",
                     }}
                   >
@@ -543,13 +749,13 @@ function AdminProducts() {
                   <div
                     style={{
                       display: "inline-block",
-                      padding: "6px 10px",
+                      padding: "7px 12px",
                       borderRadius: "999px",
                       background: p.stock > 0 ? "#dcfce7" : "#fee2e2",
                       color: p.stock > 0 ? "#166534" : "#991b1b",
                       fontSize: "12px",
-                      fontWeight: "700",
-                      marginBottom: "16px",
+                      fontWeight: "800",
+                      marginBottom: "18px",
                     }}
                   >
                     {p.stock > 0 ? `Stock: ${p.stock}` : "Out of Stock"}
@@ -560,14 +766,15 @@ function AdminProducts() {
                       onClick={() => openEditModal(p)}
                       style={{
                         width: "100%",
-                        padding: "12px",
+                        padding: "13px",
                         border: "none",
-                        borderRadius: "12px",
-                        background: "#111827",
+                        borderRadius: "14px",
+                        background: "linear-gradient(135deg, #111827, #1f2937)",
                         color: "#ffffff",
-                        fontWeight: "700",
+                        fontWeight: "800",
                         fontSize: "14px",
                         cursor: "pointer",
+                        boxShadow: "0 12px 22px rgba(17, 24, 39, 0.16)",
                       }}
                     >
                       Edit Product
@@ -577,14 +784,15 @@ function AdminProducts() {
                       onClick={() => deleteProduct(p._id)}
                       style={{
                         width: "100%",
-                        padding: "12px",
+                        padding: "13px",
                         border: "none",
-                        borderRadius: "12px",
-                        background: "#dc2626",
+                        borderRadius: "14px",
+                        background: "linear-gradient(135deg, #dc2626, #b91c1c)",
                         color: "#ffffff",
-                        fontWeight: "700",
+                        fontWeight: "800",
                         fontSize: "14px",
                         cursor: "pointer",
+                        boxShadow: "0 12px 22px rgba(220, 38, 38, 0.18)",
                       }}
                     >
                       Delete Product
@@ -601,7 +809,8 @@ function AdminProducts() {
             style={{
               position: "fixed",
               inset: 0,
-              background: "rgba(17, 24, 39, 0.55)",
+              background: "rgba(15, 23, 42, 0.55)",
+              backdropFilter: "blur(6px)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -613,22 +822,36 @@ function AdminProducts() {
               className="app-card"
               style={{
                 width: "100%",
-                maxWidth: "560px",
-                padding: "24px",
-                borderRadius: "20px",
+                maxWidth: "620px",
+                padding: "26px",
+                borderRadius: "24px",
                 maxHeight: "90vh",
                 overflowY: "auto",
+                border: "1px solid #e5e7eb",
+                boxShadow: "0 24px 50px rgba(15, 23, 42, 0.18)",
+                background: "#ffffff",
               }}
             >
               <h3
                 style={{
                   marginTop: 0,
-                  marginBottom: "18px",
+                  marginBottom: "6px",
                   color: "#111827",
+                  fontSize: "26px",
                 }}
               >
                 Edit Product
               </h3>
+              <p
+                style={{
+                  marginTop: 0,
+                  marginBottom: "18px",
+                  color: "#6b7280",
+                  fontSize: "14px",
+                }}
+              >
+                Update stock, price, image and category details instantly.
+              </p>
 
               <div style={{ display: "grid", gap: "14px" }}>
                 <div>
@@ -637,6 +860,7 @@ function AdminProducts() {
                     className="input-field"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
+                    style={{ borderRadius: "14px", background: "#f9fafb" }}
                   />
                 </div>
 
@@ -647,6 +871,7 @@ function AdminProducts() {
                     type="number"
                     value={editPrice}
                     onChange={(e) => setEditPrice(e.target.value)}
+                    style={{ borderRadius: "14px", background: "#f9fafb" }}
                   />
                 </div>
 
@@ -657,6 +882,7 @@ function AdminProducts() {
                     type="number"
                     value={editStock}
                     onChange={(e) => setEditStock(e.target.value)}
+                    style={{ borderRadius: "14px", background: "#f9fafb" }}
                   />
                 </div>
 
@@ -666,6 +892,7 @@ function AdminProducts() {
                     className="input-field"
                     value={editCategory}
                     onChange={(e) => setEditCategory(e.target.value)}
+                    style={{ borderRadius: "14px", background: "#f9fafb" }}
                   />
                 </div>
 
@@ -676,6 +903,7 @@ function AdminProducts() {
                     accept="image/*"
                     className="input-field"
                     onChange={(e) => setEditSelectedFile(e.target.files[0])}
+                    style={{ borderRadius: "14px", background: "#f9fafb" }}
                   />
                 </div>
 
@@ -685,6 +913,10 @@ function AdminProducts() {
                     className="secondary-btn"
                     onClick={handleEditImageUpload}
                     disabled={uploadingEditImage}
+                    style={{
+                      borderRadius: "14px",
+                      padding: "12px 16px",
+                    }}
                   >
                     {uploadingEditImage ? "Uploading..." : "Upload New Image"}
                   </button>
@@ -696,6 +928,7 @@ function AdminProducts() {
                     className="input-field"
                     value={editImage}
                     onChange={(e) => setEditImage(e.target.value)}
+                    style={{ borderRadius: "14px", background: "#f9fafb" }}
                   />
                 </div>
 
@@ -703,10 +936,11 @@ function AdminProducts() {
                   <div
                     style={{
                       width: "100%",
-                      height: "180px",
-                      borderRadius: "14px",
+                      height: "230px",
+                      borderRadius: "18px",
                       overflow: "hidden",
                       background: "#f3f4f6",
+                      border: "1px solid #eef2ff",
                     }}
                   >
                     <img
@@ -728,7 +962,12 @@ function AdminProducts() {
                   <button
                     className="primary-btn"
                     onClick={updateProduct}
-                    style={{ flex: 1 }}
+                    style={{
+                      flex: 1,
+                      padding: "14px",
+                      borderRadius: "14px",
+                      boxShadow: "0 14px 28px rgba(79, 70, 229, 0.24)",
+                    }}
                   >
                     Save Changes
                   </button>
@@ -736,7 +975,11 @@ function AdminProducts() {
                   <button
                     className="secondary-btn"
                     onClick={closeEditModal}
-                    style={{ flex: 1 }}
+                    style={{
+                      flex: 1,
+                      padding: "14px",
+                      borderRadius: "14px",
+                    }}
                   >
                     Cancel
                   </button>
