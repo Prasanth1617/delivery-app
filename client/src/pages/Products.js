@@ -7,6 +7,7 @@ function Products() {
   const [, setCartVersion] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [sortOption, setSortOption] = useState("default");
 
   const getCart = () => JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -79,6 +80,13 @@ function Products() {
 
     return matchesSearch && matchesCategory;
   });
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+  if (sortOption === "priceLow") return a.price - b.price;
+  if (sortOption === "priceHigh") return b.price - a.price;
+  if (sortOption === "name") return a.name.localeCompare(b.name);
+  if (sortOption === "stock") return b.stock - a.stock;
+  return 0;
+});
 
   return (
     <div className="app-page">
@@ -141,6 +149,21 @@ function Products() {
                   ))}
                 </div>
               </div>
+              <div>
+  <label className="label-text">Sort Products</label>
+
+  <select
+    className="input-field"
+    value={sortOption}
+    onChange={(e) => setSortOption(e.target.value)}
+  >
+    <option value="default">Default</option>
+    <option value="priceLow">Price: Low → High</option>
+    <option value="priceHigh">Price: High → Low</option>
+    <option value="name">Name: A → Z</option>
+    <option value="stock">Stock Available</option>
+  </select>
+</div>
             </div>
           </div>
         )}
@@ -165,7 +188,7 @@ function Products() {
           </div>
         ) : (
           <div className="grid-cards">
-            {filteredProducts.map((product) => {
+            {sortedProducts.map((product) => {
               const cartQty = getCartQuantity(product._id);
               const isOutOfStock = product.stock <= 0;
 
