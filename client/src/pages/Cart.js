@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Cart() {
   const navigate = useNavigate();
@@ -39,11 +40,13 @@ function Cart() {
   const removeItem = (id) => {
     const updatedCart = cart.filter((item) => item._id !== id);
     saveCart(updatedCart);
+    toast.success("Item removed from cart");
   };
 
   const clearCart = () => {
     localStorage.removeItem("cart");
     setCart([]);
+    toast.success("Cart cleared successfully");
   };
 
   const totalAmount = cart.reduce(
@@ -56,15 +59,18 @@ function Cart() {
   const handleCheckout = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) return navigate("/");
+      if (!token) {
+        navigate("/");
+        return;
+      }
 
       if (cart.length === 0) {
-        alert("Cart is empty 🛒");
+        toast.warning("Cart is empty 🛒");
         return;
       }
 
       if (!address.trim()) {
-        alert("Please enter delivery address");
+        toast.warning("Please enter delivery address");
         return;
       }
 
@@ -91,44 +97,104 @@ function Cart() {
 
       localStorage.removeItem("cart");
       setCart([]);
-      alert("Order placed ✅");
+      toast.success("Order placed successfully ✅");
       navigate("/orders");
     } catch (err) {
       console.log(err);
-      alert("Checkout failed ❌");
+      toast.error(err.response?.data?.message || "Checkout failed ❌");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="app-page">
+    <div
+      className="app-page"
+      style={{
+        background:
+          "linear-gradient(180deg, #f8fafc 0%, #eef2ff 45%, #f8fafc 100%)",
+        minHeight: "100vh",
+      }}
+    >
       <div className="app-container">
-        <div className="app-card topbar-card">
+        <div
+          className="app-card topbar-card"
+          style={{
+            padding: "28px",
+            borderRadius: "24px",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 20px 45px rgba(15, 23, 42, 0.08)",
+            background:
+              "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(238,242,255,0.92))",
+          }}
+        >
           <div>
-            <h2 className="app-section-title">Your Cart</h2>
-            <p className="app-section-subtitle">
-              Review your selected items before checkout
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "8px 12px",
+                borderRadius: "999px",
+                background: "#eef2ff",
+                color: "#4338ca",
+                fontWeight: "700",
+                fontSize: "12px",
+                marginBottom: "14px",
+              }}
+            >
+              🛒 Premium Cart Experience
+            </div>
+
+            <h2
+              className="app-section-title"
+              style={{
+                marginBottom: "8px",
+                fontSize: "34px",
+                letterSpacing: "-0.4px",
+              }}
+            >
+              Your Cart
+            </h2>
+            <p
+              className="app-section-subtitle"
+              style={{
+                fontSize: "15px",
+                maxWidth: "560px",
+                lineHeight: "1.7",
+              }}
+            >
+              Review your selected items, update quantities and proceed to a
+              smooth checkout experience.
             </p>
           </div>
 
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
             <Link to="/products">
-              <button className="secondary-btn">Back to Products</button>
+              <button
+                className="secondary-btn"
+                style={{
+                  padding: "14px 18px",
+                  borderRadius: "14px",
+                }}
+              >
+                Back to Products
+              </button>
             </Link>
 
             {cart.length > 0 && (
               <button
                 onClick={clearCart}
                 style={{
-                  background: "#dc2626",
+                  background: "linear-gradient(135deg, #dc2626, #b91c1c)",
                   color: "#ffffff",
                   border: "none",
-                  borderRadius: "12px",
-                  padding: "12px 18px",
+                  borderRadius: "14px",
+                  padding: "14px 18px",
                   fontSize: "14px",
-                  fontWeight: "700",
+                  fontWeight: "800",
                   cursor: "pointer",
+                  boxShadow: "0 12px 22px rgba(220, 38, 38, 0.18)",
                 }}
               >
                 Clear Cart
@@ -138,30 +204,60 @@ function Cart() {
         </div>
 
         {cart.length === 0 ? (
-          <div className="app-card empty-state">
-            <div style={{ fontSize: "48px", marginBottom: "12px" }}>🛒</div>
-            <h3 style={{ margin: 0, color: "#111827" }}>Your cart is empty</h3>
-            <p style={{ color: "#6b7280", marginTop: "10px" }}>
-              Add some products to continue shopping.
+          <div
+            className="app-card empty-state"
+            style={{
+              borderRadius: "24px",
+              padding: "56px 24px",
+              boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
+            }}
+          >
+            <div style={{ fontSize: "56px", marginBottom: "14px" }}>🛒</div>
+            <h3
+              style={{
+                margin: 0,
+                color: "#111827",
+                fontSize: "24px",
+              }}
+            >
+              Your cart is empty
+            </h3>
+            <p
+              style={{
+                color: "#6b7280",
+                marginTop: "12px",
+                fontSize: "15px",
+                maxWidth: "460px",
+                marginInline: "auto",
+              }}
+            >
+              Add some amazing products to continue your shopping journey.
             </p>
 
-            <div style={{ marginTop: "18px" }}>
+            <div style={{ marginTop: "20px" }}>
               <Link to="/products">
                 <button className="primary-btn">Browse Products</button>
               </Link>
             </div>
           </div>
         ) : (
-          <div className="grid-2">
+          <div className="grid-2" style={{ gap: "24px" }}>
             <div
-              className="app-card"
-              style={{ padding: "24px" }}
+              className="app-card fade-card"
+              style={{
+                padding: "26px",
+                borderRadius: "24px",
+                border: "1px solid #e5e7eb",
+                boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
+                background: "#ffffff",
+              }}
             >
               <h3
                 style={{
                   marginTop: 0,
                   marginBottom: "18px",
                   color: "#111827",
+                  fontSize: "24px",
                 }}
               >
                 Cart Items
@@ -174,29 +270,44 @@ function Cart() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: "16px",
+                    padding: "18px",
                     border: "1px solid #e5e7eb",
-                    borderRadius: "16px",
-                    marginBottom: "14px",
-                    background: "#fafafa",
+                    borderRadius: "20px",
+                    marginBottom: "16px",
+                    background:
+                      "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                     gap: "16px",
                     flexWrap: "wrap",
                   }}
                 >
                   <div
                     style={{
-                      width: "72px",
-                      height: "72px",
-                      borderRadius: "14px",
-                      background: "#eef2ff",
+                      width: "82px",
+                      height: "82px",
+                      borderRadius: "18px",
+                      background: "linear-gradient(135deg, #eef2ff, #f5f3ff)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      fontSize: "26px",
+                      fontSize: "30px",
                       flexShrink: 0,
+                      border: "1px solid #e0e7ff",
+                      overflow: "hidden",
                     }}
                   >
-                    📦
+                    {item.image ? (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
+                      "📦"
+                    )}
                   </div>
 
                   <div style={{ flex: 1, minWidth: "180px" }}>
@@ -204,21 +315,29 @@ function Cart() {
                       style={{
                         margin: "0 0 8px",
                         color: "#111827",
-                        fontSize: "17px",
+                        fontSize: "18px",
+                        fontWeight: "800",
                       }}
                     >
                       {item.name}
                     </h4>
 
-                    <p style={{ margin: "0 0 6px", color: "#6b7280" }}>
+                    <p
+                      style={{
+                        margin: "0 0 6px",
+                        color: "#6b7280",
+                        fontSize: "14px",
+                      }}
+                    >
                       Price: ₹{item.price}
                     </p>
 
                     <p
                       style={{
                         margin: 0,
-                        fontWeight: "700",
+                        fontWeight: "800",
                         color: "#4f46e5",
+                        fontSize: "15px",
                       }}
                     >
                       Subtotal: ₹{item.price * item.quantity}
@@ -230,7 +349,7 @@ function Cart() {
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "flex-end",
-                      gap: "10px",
+                      gap: "12px",
                     }}
                   >
                     <div
@@ -240,8 +359,9 @@ function Cart() {
                         gap: "10px",
                         background: "#ffffff",
                         border: "1px solid #e5e7eb",
-                        borderRadius: "12px",
-                        padding: "6px 10px",
+                        borderRadius: "14px",
+                        padding: "7px 10px",
+                        boxShadow: "0 8px 18px rgba(15, 23, 42, 0.04)",
                       }}
                     >
                       <button
@@ -249,11 +369,12 @@ function Cart() {
                         style={{
                           border: "none",
                           background: "#e5e7eb",
-                          width: "30px",
-                          height: "30px",
-                          borderRadius: "8px",
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "10px",
                           cursor: "pointer",
-                          fontWeight: "700",
+                          fontWeight: "800",
+                          color: "#111827",
                         }}
                       >
                         -
@@ -261,10 +382,11 @@ function Cart() {
 
                       <span
                         style={{
-                          minWidth: "22px",
+                          minWidth: "26px",
                           textAlign: "center",
-                          fontWeight: "700",
+                          fontWeight: "800",
                           color: "#111827",
+                          fontSize: "15px",
                         }}
                       >
                         {item.quantity}
@@ -274,13 +396,16 @@ function Cart() {
                         onClick={() => increaseQuantity(item._id)}
                         style={{
                           border: "none",
-                          background: "#4f46e5",
+                          background:
+                            "linear-gradient(135deg, #4f46e5, #7c3aed)",
                           color: "#ffffff",
-                          width: "30px",
-                          height: "30px",
-                          borderRadius: "8px",
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "10px",
                           cursor: "pointer",
-                          fontWeight: "700",
+                          fontWeight: "800",
+                          boxShadow:
+                            "0 8px 16px rgba(79, 70, 229, 0.18)",
                         }}
                       >
                         +
@@ -293,10 +418,10 @@ function Cart() {
                         border: "none",
                         background: "#fee2e2",
                         color: "#b91c1c",
-                        padding: "8px 12px",
-                        borderRadius: "10px",
+                        padding: "9px 14px",
+                        borderRadius: "12px",
                         cursor: "pointer",
-                        fontWeight: "700",
+                        fontWeight: "800",
                       }}
                     >
                       Remove
@@ -307,10 +432,14 @@ function Cart() {
             </div>
 
             <div
-              className="app-card"
+              className="app-card fade-card"
               style={{
-                padding: "24px",
+                padding: "26px",
                 height: "fit-content",
+                borderRadius: "24px",
+                border: "1px solid #e5e7eb",
+                boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
+                background: "#ffffff",
               }}
             >
               <h3
@@ -318,6 +447,7 @@ function Cart() {
                   marginTop: 0,
                   marginBottom: "18px",
                   color: "#111827",
+                  fontSize: "24px",
                 }}
               >
                 Order Summary
@@ -325,40 +455,52 @@ function Cart() {
 
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: "12px",
-                  color: "#374151",
-                }}
-              >
-                <span>Total Unique Items</span>
-                <span>{cart.length}</span>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: "12px",
-                  color: "#374151",
-                }}
-              >
-                <span>Total Quantity</span>
-                <span>{totalItems}</span>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
+                  background:
+                    "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "18px",
+                  padding: "18px",
                   marginBottom: "18px",
-                  color: "#374151",
                 }}
               >
-                <span>Total Amount</span>
-                <span style={{ fontWeight: "700", color: "#111827" }}>
-                  ₹{totalAmount}
-                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "12px",
+                    color: "#374151",
+                    fontWeight: "600",
+                  }}
+                >
+                  <span>Total Unique Items</span>
+                  <span>{cart.length}</span>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "12px",
+                    color: "#374151",
+                    fontWeight: "600",
+                  }}
+                >
+                  <span>Total Quantity</span>
+                  <span>{totalItems}</span>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    color: "#111827",
+                    fontWeight: "800",
+                    fontSize: "18px",
+                  }}
+                >
+                  <span>Total Amount</span>
+                  <span style={{ color: "#4f46e5" }}>₹{totalAmount}</span>
+                </div>
               </div>
 
               <label className="label-text">Delivery Address</label>
@@ -372,6 +514,8 @@ function Cart() {
                 style={{
                   resize: "none",
                   marginBottom: "18px",
+                  borderRadius: "14px",
+                  background: "#f9fafb",
                 }}
               />
 
@@ -381,7 +525,14 @@ function Cart() {
                 className="primary-btn"
                 style={{
                   width: "100%",
-                  background: loading ? "#9ca3af" : "#4f46e5",
+                  padding: "14px",
+                  borderRadius: "14px",
+                  background: loading
+                    ? "#9ca3af"
+                    : "linear-gradient(135deg, #4f46e5, #7c3aed)",
+                  boxShadow: loading
+                    ? "none"
+                    : "0 14px 28px rgba(79, 70, 229, 0.24)",
                 }}
               >
                 {loading ? "Placing Order..." : "Checkout ✅"}

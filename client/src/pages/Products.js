@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Products() {
   const [products, setProducts] = useState([]);
@@ -26,13 +27,13 @@ function Products() {
     const index = existingCart.findIndex((item) => item._id === product._id);
 
     if (product.stock <= 0) {
-      alert(`${product.name} is out of stock`);
+      toast.error(`${product.name} is out of stock`);
       return;
     }
 
     if (index !== -1) {
       if (existingCart[index].quantity >= product.stock) {
-        alert(`Only ${product.stock} item(s) available for ${product.name}`);
+        toast.warning(`Only ${product.stock} item(s) available for ${product.name}`);
         return;
       }
 
@@ -43,7 +44,7 @@ function Products() {
 
     localStorage.setItem("cart", JSON.stringify(existingCart));
     setCartVersion((prev) => prev + 1);
-    alert("Added to cart 🛒");
+    toast.success("Added to cart 🛒");
   };
 
   useEffect(() => {
@@ -55,6 +56,7 @@ function Products() {
         setProducts(res.data);
       } catch (err) {
         console.log(err);
+        toast.error("Failed to load products");
       }
     };
 

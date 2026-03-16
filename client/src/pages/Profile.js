@@ -35,17 +35,67 @@ function Profile() {
   }, [navigate]);
 
   return (
-    <div className="app-page">
+    <div
+      className="app-page"
+      style={{
+        background:
+          "linear-gradient(180deg, #f8fafc 0%, #eef2ff 45%, #f8fafc 100%)",
+        minHeight: "100vh",
+      }}
+    >
       <div className="app-container">
-        <div className="app-card topbar-card">
+        <div
+          className="app-card topbar-card"
+          style={{
+            padding: "28px",
+            borderRadius: "24px",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 20px 45px rgba(15, 23, 42, 0.08)",
+            background:
+              user?.role === "admin"
+                ? "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(243,244,246,0.92))"
+                : "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(238,242,255,0.92))",
+          }}
+        >
           <div>
-            <h2 className="app-section-title">
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "8px 12px",
+                borderRadius: "999px",
+                background: user?.role === "admin" ? "#f3f4f6" : "#eef2ff",
+                color: user?.role === "admin" ? "#374151" : "#4338ca",
+                fontWeight: "700",
+                fontSize: "12px",
+                marginBottom: "14px",
+              }}
+            >
+              {user?.role === "admin" ? "⚙️ Admin Account" : "✨ My Account"}
+            </div>
+
+            <h2
+              className="app-section-title"
+              style={{
+                marginBottom: "8px",
+                fontSize: "34px",
+                letterSpacing: "-0.4px",
+              }}
+            >
               {user?.role === "admin" ? "Admin Profile" : "Welcome Back"}
             </h2>
-            <p className="app-section-subtitle">
+            <p
+              className="app-section-subtitle"
+              style={{
+                fontSize: "15px",
+                maxWidth: "620px",
+                lineHeight: "1.7",
+              }}
+            >
               {user?.role === "admin"
-                ? "Manage your admin account and control your platform"
-                : "Manage your profile and continue shopping"}
+                ? "Manage your admin account, platform access and operational actions from one place."
+                : "Manage your profile, review account details and continue your shopping journey smoothly."}
             </p>
           </div>
         </div>
@@ -58,20 +108,30 @@ function Profile() {
               gap: "24px",
             }}
           >
-            <div className="app-card" style={{ padding: "28px" }}>
+            <div
+              className="app-card fade-card"
+              style={{
+                padding: "30px",
+                borderRadius: "24px",
+                border: "1px solid #e5e7eb",
+                boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
+                background: "#ffffff",
+              }}
+            >
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
                   gap: "18px",
-                  marginBottom: "24px",
+                  marginBottom: "28px",
+                  flexWrap: "wrap",
                 }}
               >
                 <div
                   style={{
-                    width: "84px",
-                    height: "84px",
-                    borderRadius: "50%",
+                    width: "88px",
+                    height: "88px",
+                    borderRadius: "28px",
                     background:
                       user.role === "admin"
                         ? "linear-gradient(135deg, #111827, #374151)"
@@ -80,9 +140,13 @@ function Profile() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "30px",
-                    fontWeight: "700",
+                    fontSize: "32px",
+                    fontWeight: "800",
                     flexShrink: 0,
+                    boxShadow:
+                      user.role === "admin"
+                        ? "0 16px 28px rgba(17, 24, 39, 0.18)"
+                        : "0 16px 28px rgba(79, 70, 229, 0.24)",
                   }}
                 >
                   {user.name ? user.name.charAt(0).toUpperCase() : "U"}
@@ -92,8 +156,9 @@ function Profile() {
                   <h3
                     style={{
                       margin: 0,
-                      fontSize: "24px",
+                      fontSize: "28px",
                       color: "#111827",
+                      letterSpacing: "-0.3px",
                     }}
                   >
                     {user.name}
@@ -103,26 +168,23 @@ function Profile() {
                       margin: "8px 0 0",
                       color: "#6b7280",
                       fontSize: "14px",
+                      lineHeight: "1.7",
                     }}
                   >
                     {user.role === "admin"
-                      ? "Your admin account details and access level"
-                      : "Your account details and delivery information"}
+                      ? "Your admin account details and platform access overview."
+                      : "Your account details, saved delivery info and shopping access."}
                   </p>
                 </div>
               </div>
 
-              <div
-                style={{
-                  display: "grid",
-                  gap: "16px",
-                }}
-              >
+              <div style={{ display: "grid", gap: "16px" }}>
                 <div
                   style={{
-                    padding: "16px",
-                    borderRadius: "16px",
-                    background: "#f9fafb",
+                    padding: "18px",
+                    borderRadius: "18px",
+                    background:
+                      "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                     border: "1px solid #e5e7eb",
                   }}
                 >
@@ -131,7 +193,7 @@ function Profile() {
                       margin: "0 0 8px",
                       fontSize: "13px",
                       color: "#6b7280",
-                      fontWeight: "600",
+                      fontWeight: "700",
                     }}
                   >
                     Phone Number
@@ -139,8 +201,8 @@ function Profile() {
                   <p
                     style={{
                       margin: 0,
-                      fontSize: "16px",
-                      fontWeight: "700",
+                      fontSize: "17px",
+                      fontWeight: "800",
                       color: "#111827",
                     }}
                   >
@@ -150,9 +212,10 @@ function Profile() {
 
                 <div
                   style={{
-                    padding: "16px",
-                    borderRadius: "16px",
-                    background: "#f9fafb",
+                    padding: "18px",
+                    borderRadius: "18px",
+                    background:
+                      "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                     border: "1px solid #e5e7eb",
                   }}
                 >
@@ -161,7 +224,7 @@ function Profile() {
                       margin: "0 0 8px",
                       fontSize: "13px",
                       color: "#6b7280",
-                      fontWeight: "600",
+                      fontWeight: "700",
                     }}
                   >
                     {user.role === "admin" ? "Admin Address" : "Delivery Address"}
@@ -172,6 +235,7 @@ function Profile() {
                       fontSize: "16px",
                       fontWeight: "700",
                       color: "#111827",
+                      lineHeight: "1.7",
                     }}
                   >
                     {user.address}
@@ -180,9 +244,12 @@ function Profile() {
 
                 <div
                   style={{
-                    padding: "16px",
-                    borderRadius: "16px",
-                    background: user.role === "admin" ? "#f3f4f6" : "#eef2ff",
+                    padding: "18px",
+                    borderRadius: "18px",
+                    background:
+                      user.role === "admin"
+                        ? "#f3f4f6"
+                        : "linear-gradient(135deg, #eef2ff, #f5f3ff)",
                     border:
                       user.role === "admin"
                         ? "1px solid #d1d5db"
@@ -194,7 +261,7 @@ function Profile() {
                       margin: "0 0 8px",
                       fontSize: "13px",
                       color: user.role === "admin" ? "#374151" : "#4338ca",
-                      fontWeight: "600",
+                      fontWeight: "700",
                     }}
                   >
                     Account Status
@@ -202,8 +269,8 @@ function Profile() {
                   <p
                     style={{
                       margin: 0,
-                      fontSize: "16px",
-                      fontWeight: "700",
+                      fontSize: "17px",
+                      fontWeight: "800",
                       color: user.role === "admin" ? "#111827" : "#312e81",
                     }}
                   >
@@ -219,12 +286,22 @@ function Profile() {
                 gap: "24px",
               }}
             >
-              <div className="app-card" style={{ padding: "24px" }}>
+              <div
+                className="app-card fade-card"
+                style={{
+                  padding: "26px",
+                  borderRadius: "24px",
+                  border: "1px solid #e5e7eb",
+                  boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
+                  background: "#ffffff",
+                }}
+              >
                 <h3
                   style={{
                     marginTop: 0,
                     marginBottom: "16px",
                     color: "#111827",
+                    fontSize: "22px",
                   }}
                 >
                   Quick Actions
@@ -241,7 +318,7 @@ function Profile() {
                       <button
                         className="primary-btn"
                         onClick={() => navigate("/admin/dashboard")}
-                        style={{ width: "100%" }}
+                        style={{ width: "100%", padding: "14px", borderRadius: "14px" }}
                       >
                         Open Dashboard
                       </button>
@@ -249,7 +326,7 @@ function Profile() {
                       <button
                         className="secondary-btn"
                         onClick={() => navigate("/admin/products")}
-                        style={{ width: "100%" }}
+                        style={{ width: "100%", padding: "14px", borderRadius: "14px" }}
                       >
                         Manage Products
                       </button>
@@ -259,11 +336,12 @@ function Profile() {
                         onClick={() => navigate("/admin/orders")}
                         style={{
                           width: "100%",
-                          padding: "12px",
-                          borderRadius: "12px",
+                          padding: "14px",
+                          borderRadius: "14px",
                           background: "#f9fafb",
                           border: "1px solid #e5e7eb",
                           color: "#111827",
+                          fontWeight: "700",
                         }}
                       >
                         Manage Orders
@@ -274,7 +352,7 @@ function Profile() {
                       <button
                         className="primary-btn"
                         onClick={() => navigate("/products")}
-                        style={{ width: "100%" }}
+                        style={{ width: "100%", padding: "14px", borderRadius: "14px" }}
                       >
                         Shop Now
                       </button>
@@ -282,7 +360,7 @@ function Profile() {
                       <button
                         className="secondary-btn"
                         onClick={() => navigate("/cart")}
-                        style={{ width: "100%" }}
+                        style={{ width: "100%", padding: "14px", borderRadius: "14px" }}
                       >
                         Open Cart
                       </button>
@@ -292,11 +370,12 @@ function Profile() {
                         onClick={() => navigate("/orders")}
                         style={{
                           width: "100%",
-                          padding: "12px",
-                          borderRadius: "12px",
+                          padding: "14px",
+                          borderRadius: "14px",
                           background: "#f9fafb",
                           border: "1px solid #e5e7eb",
                           color: "#111827",
+                          fontWeight: "700",
                         }}
                       >
                         View My Orders
@@ -306,12 +385,22 @@ function Profile() {
                 </div>
               </div>
 
-              <div className="app-card" style={{ padding: "24px" }}>
+              <div
+                className="app-card fade-card"
+                style={{
+                  padding: "26px",
+                  borderRadius: "24px",
+                  border: "1px solid #e5e7eb",
+                  boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
+                  background: "#ffffff",
+                }}
+              >
                 <h3
                   style={{
                     marginTop: 0,
-                    marginBottom: "12px",
+                    marginBottom: "14px",
                     color: "#111827",
+                    fontSize: "22px",
                   }}
                 >
                   {user.role === "admin" ? "Admin Notes" : "Shopping Tips"}
@@ -323,12 +412,13 @@ function Profile() {
                       margin: 0,
                       paddingLeft: "18px",
                       color: "#6b7280",
-                      lineHeight: "1.8",
+                      lineHeight: "1.9",
+                      fontSize: "14px",
                     }}
                   >
                     <li>Keep product stock updated regularly.</li>
                     <li>Monitor pending orders and update statuses quickly.</li>
-                    <li>Maintain accurate product names, pricing, and images.</li>
+                    <li>Maintain accurate product names, pricing and images.</li>
                   </ul>
                 ) : (
                   <ul
@@ -336,7 +426,8 @@ function Profile() {
                       margin: 0,
                       paddingLeft: "18px",
                       color: "#6b7280",
-                      lineHeight: "1.8",
+                      lineHeight: "1.9",
+                      fontSize: "14px",
                     }}
                   >
                     <li>Check product availability before ordering.</li>
@@ -348,9 +439,31 @@ function Profile() {
             </div>
           </div>
         ) : (
-          <div className="app-card empty-state">
-            <h3 style={{ margin: 0, color: "#111827" }}>Loading profile...</h3>
-            <p style={{ color: "#6b7280", marginTop: "10px" }}>
+          <div
+            className="app-card empty-state"
+            style={{
+              borderRadius: "24px",
+              padding: "56px 24px",
+              boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
+            }}
+          >
+            <div style={{ fontSize: "56px", marginBottom: "14px" }}>👤</div>
+            <h3
+              style={{
+                margin: 0,
+                color: "#111827",
+                fontSize: "24px",
+              }}
+            >
+              Loading profile...
+            </h3>
+            <p
+              style={{
+                color: "#6b7280",
+                marginTop: "12px",
+                fontSize: "15px",
+              }}
+            >
               Please wait while we fetch your details.
             </p>
           </div>
