@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 function Products() {
   const [products, setProducts] = useState([]);
   const [, setCartVersion] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   const getCart = () => JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -58,6 +60,26 @@ function Products() {
     fetchProducts();
   }, []);
 
+  const categories = [
+    "All",
+    ...new Set(
+      products
+        .map((product) => product.category)
+        .filter((category) => category && category.trim() !== "")
+    ),
+  ];
+
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const matchesCategory =
+      selectedCategory === "All" || product.category === selectedCategory;
+
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <div className="app-page">
       <div className="app-container">
@@ -76,6 +98,53 @@ function Products() {
           </Link>
         </div>
 
+        {products.length > 0 && (
+          <div
+            className="app-card"
+            style={{
+              padding: "20px",
+              marginBottom: "24px",
+            }}
+          >
+            <div style={{ display: "grid", gap: "16px" }}>
+              <div>
+                <label className="label-text">Search Products</label>
+                <input
+                  className="input-field"
+                  placeholder="Search by product name..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="label-text">Filter by Category</label>
+                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => setSelectedCategory(category)}
+                      style={{
+                        padding: "10px 14px",
+                        borderRadius: "999px",
+                        border: "none",
+                        cursor: "pointer",
+                        fontWeight: "700",
+                        background:
+                          selectedCategory === category ? "#4f46e5" : "#eef2ff",
+                        color:
+                          selectedCategory === category ? "#ffffff" : "#4338ca",
+                      }}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {products.length === 0 ? (
           <div className="app-card empty-state">
             <div style={{ fontSize: "48px", marginBottom: "12px" }}>🛍️</div>
@@ -84,9 +153,19 @@ function Products() {
               Products will appear here once they are added by admin.
             </p>
           </div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="app-card empty-state">
+            <div style={{ fontSize: "48px", marginBottom: "12px" }}>🔎</div>
+            <h3 style={{ margin: 0, color: "#111827" }}>
+              No matching products found
+            </h3>
+            <p style={{ color: "#6b7280", marginTop: "10px" }}>
+              Try a different search term or category.
+            </p>
+          </div>
         ) : (
           <div className="grid-cards">
-            {products.map((product) => {
+            {filteredProducts.map((product) => {
               const cartQty = getCartQuantity(product._id);
               const isOutOfStock = product.stock <= 0;
 
