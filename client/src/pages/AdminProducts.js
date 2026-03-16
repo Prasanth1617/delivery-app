@@ -11,6 +11,16 @@ function AdminProducts() {
   const [image, setImage] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [editName, setEditName] = useState("");
+  const [editPrice, setEditPrice] = useState("");
+  const [editStock, setEditStock] = useState("");
+  const [editCategory, setEditCategory] = useState("");
+  const [editImage, setEditImage] = useState("");
+  const [editSelectedFile, setEditSelectedFile] = useState(null);
+  const [uploadingEditImage, setUploadingEditImage] = useState(false);
+
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
@@ -52,6 +62,39 @@ function AdminProducts() {
       alert("Image upload failed ❌");
     } finally {
       setUploadingImage(false);
+    }
+  };
+
+  const handleEditImageUpload = async () => {
+    try {
+      if (!editSelectedFile) {
+        alert("Please choose an image first");
+        return;
+      }
+
+      setUploadingEditImage(true);
+
+      const formData = new FormData();
+      formData.append("file", editSelectedFile);
+      formData.append(
+        "upload_preset",
+        process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET
+      );
+
+      const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
+
+      const res = await axios.post(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        formData
+      );
+
+      setEditImage(res.data.secure_url);
+      alert("Edit image uploaded successfully ✅");
+    } catch (err) {
+      console.log(err);
+      alert("Edit image upload failed ❌");
+    } finally {
+      setUploadingEditImage(false);
     }
   };
 
@@ -102,9 +145,62 @@ function AdminProducts() {
       });
 
       fetchProducts();
+      alert("Product deleted successfully ✅");
     } catch (err) {
       console.log(err);
       alert("Failed to delete product");
+    }
+  };
+
+  const openEditModal = (product) => {
+    setEditingProduct(product);
+    setEditName(product.name || "");
+    setEditPrice(product.price || "");
+    setEditStock(product.stock || "");
+    setEditCategory(product.category || "");
+    setEditImage(product.image || "");
+    setEditSelectedFile(null);
+  };
+
+  const closeEditModal = () => {
+    setEditingProduct(null);
+    setEditName("");
+    setEditPrice("");
+    setEditStock("");
+    setEditCategory("");
+    setEditImage("");
+    setEditSelectedFile(null);
+  };
+
+  const updateProduct = async () => {
+    try {
+      if (!editName || !editPrice || !editStock) {
+        alert("Please fill product name, price and stock");
+        return;
+      }
+
+      const token = localStorage.getItem("token");
+
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/api/products/${editingProduct._id}`,
+        {
+          name: editName,
+          price: Number(editPrice),
+          stock: Number(editStock),
+          category: editCategory,
+          image: editImage,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      closeEditModal();
+      fetchProducts();
+      alert("Product updated successfully ✅");
+    } catch (err) {
+      console.log(err);
+      alert("Failed to update product");
     }
   };
 
@@ -119,7 +215,7 @@ function AdminProducts() {
           <div>
             <h2 className="app-section-title">Admin Product Manager</h2>
             <p className="app-section-subtitle">
-              Add, view and manage products in your catalog
+              Add, view, edit and manage products in your catalog
             </p>
           </div>
 
@@ -198,7 +294,14 @@ function AdminProducts() {
               />
             </div>
 
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "16px" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                flexWrap: "wrap",
+                marginBottom: "16px",
+              }}
+            >
               <button
                 type="button"
                 className="secondary-btn"
@@ -286,8 +389,8 @@ function AdminProducts() {
                     lineHeight: "1.7",
                   }}
                 >
-                  Upload product image from your system so the product cards look
-                  more professional and reliable.
+                  Upload product images from your system and keep stock, price,
+                  category and product details updated regularly.
                 </p>
               </div>
 
@@ -452,27 +555,196 @@ function AdminProducts() {
                     {p.stock > 0 ? `Stock: ${p.stock}` : "Out of Stock"}
                   </div>
 
-                  <button
-                    onClick={() => deleteProduct(p._id)}
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      border: "none",
-                      borderRadius: "12px",
-                      background: "#dc2626",
-                      color: "#ffffff",
-                      fontWeight: "700",
-                      fontSize: "14px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Delete Product
-                  </button>
+                  <div style={{ display: "grid", gap: "10px" }}>
+                    <button
+                      onClick={() => openEditModal(p)}
+                      style={{
+                        width: "100%",
+                        padding: "12px",
+                        border: "none",
+                        borderRadius: "12px",
+                        background: "#111827",
+                        color: "#ffffff",
+                        fontWeight: "700",
+                        fontSize: "14px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Edit Product
+                    </button>
+
+                    <button
+                      onClick={() => deleteProduct(p._id)}
+                      style={{
+                        width: "100%",
+                        padding: "12px",
+                        border: "none",
+                        borderRadius: "12px",
+                        background: "#dc2626",
+                        color: "#ffffff",
+                        fontWeight: "700",
+                        fontSize: "14px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Delete Product
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           )}
         </div>
+
+        {editingProduct && (
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(17, 24, 39, 0.55)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "20px",
+              zIndex: 2000,
+            }}
+          >
+            <div
+              className="app-card"
+              style={{
+                width: "100%",
+                maxWidth: "560px",
+                padding: "24px",
+                borderRadius: "20px",
+                maxHeight: "90vh",
+                overflowY: "auto",
+              }}
+            >
+              <h3
+                style={{
+                  marginTop: 0,
+                  marginBottom: "18px",
+                  color: "#111827",
+                }}
+              >
+                Edit Product
+              </h3>
+
+              <div style={{ display: "grid", gap: "14px" }}>
+                <div>
+                  <label className="label-text">Product Name</label>
+                  <input
+                    className="input-field"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="label-text">Price</label>
+                  <input
+                    className="input-field"
+                    type="number"
+                    value={editPrice}
+                    onChange={(e) => setEditPrice(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="label-text">Stock</label>
+                  <input
+                    className="input-field"
+                    type="number"
+                    value={editStock}
+                    onChange={(e) => setEditStock(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="label-text">Category</label>
+                  <input
+                    className="input-field"
+                    value={editCategory}
+                    onChange={(e) => setEditCategory(e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="label-text">Choose New Image</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="input-field"
+                    onChange={(e) => setEditSelectedFile(e.target.files[0])}
+                  />
+                </div>
+
+                <div>
+                  <button
+                    type="button"
+                    className="secondary-btn"
+                    onClick={handleEditImageUpload}
+                    disabled={uploadingEditImage}
+                  >
+                    {uploadingEditImage ? "Uploading..." : "Upload New Image"}
+                  </button>
+                </div>
+
+                <div>
+                  <label className="label-text">Image URL</label>
+                  <input
+                    className="input-field"
+                    value={editImage}
+                    onChange={(e) => setEditImage(e.target.value)}
+                  />
+                </div>
+
+                {editImage && (
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "180px",
+                      borderRadius: "14px",
+                      overflow: "hidden",
+                      background: "#f3f4f6",
+                    }}
+                  >
+                    <img
+                      src={editImage}
+                      alt="Edit Preview"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                      }}
+                    />
+                  </div>
+                )}
+
+                <div style={{ display: "flex", gap: "12px", marginTop: "8px" }}>
+                  <button
+                    className="primary-btn"
+                    onClick={updateProduct}
+                    style={{ flex: 1 }}
+                  >
+                    Save Changes
+                  </button>
+
+                  <button
+                    className="secondary-btn"
+                    onClick={closeEditModal}
+                    style={{ flex: 1 }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
