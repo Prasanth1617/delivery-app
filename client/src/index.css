@@ -74,6 +74,19 @@ button:active {
   box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
 }
 
+.app-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+  transition: all 0.25s ease;
+}
+
+.app-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 22px 55px rgba(15, 23, 42, 0.12);
+}
+
 .app-section-title {
   margin: 0;
   font-size: 28px;
@@ -151,10 +164,15 @@ button:active {
 .input-field {
   width: 100%;
   padding: 14px 16px;
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1px solid #d1d5db;
   background: #f9fafb;
   font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.input-field:hover {
+  border-color: #c7d2fe;
 }
 
 .label-text {
@@ -340,4 +358,23 @@ button:active {
   .empty-state {
     padding: 28px 20px;
   }
+}
+
+/* Smooth Scrollbar */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c7d2fe;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a5b4fc;
 }
