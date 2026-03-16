@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 
 function AdminProducts() {
   const [products, setProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
@@ -12,6 +14,7 @@ function AdminProducts() {
   const [image, setImage] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [addingProduct, setAddingProduct] = useState(false);
 
   const [editingProduct, setEditingProduct] = useState(null);
   const [editName, setEditName] = useState("");
@@ -21,15 +24,20 @@ function AdminProducts() {
   const [editImage, setEditImage] = useState("");
   const [editSelectedFile, setEditSelectedFile] = useState(null);
   const [uploadingEditImage, setUploadingEditImage] = useState(false);
+  const [updatingProduct, setUpdatingProduct] = useState(false);
 
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
     try {
+      setLoadingProducts(true);
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/products`);
       setProducts(res.data);
     } catch (err) {
       console.log(err);
+      toast.error("Failed to fetch products");
+    } finally {
+      setLoadingProducts(false);
     }
   };
 
@@ -90,10 +98,10 @@ function AdminProducts() {
       );
 
       setEditImage(res.data.secure_url);
-      toast.error("Edit image upload failed ❌");
+      toast.success("Edit image uploaded successfully ✅");
     } catch (err) {
       console.log(err);
-      alert("Edit image upload failed ❌");
+      toast.error("Edit image upload failed ❌");
     } finally {
       setUploadingEditImage(false);
     }
@@ -105,6 +113,8 @@ function AdminProducts() {
         toast.warning("Please fill product name, price and stock");
         return;
       }
+
+      setAddingProduct(true);
 
       const token = localStorage.getItem("token");
 
@@ -129,11 +139,13 @@ function AdminProducts() {
       setImage("");
       setSelectedFile(null);
 
-      fetchProducts();
+      await fetchProducts();
       toast.success("Product added successfully ✅");
     } catch (err) {
       console.log(err);
       toast.error("Failed to add product");
+    } finally {
+      setAddingProduct(false);
     }
   };
 
@@ -145,7 +157,7 @@ function AdminProducts() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      fetchProducts();
+      await fetchProducts();
       toast.success("Product deleted successfully ✅");
     } catch (err) {
       console.log(err);
@@ -176,9 +188,11 @@ function AdminProducts() {
   const updateProduct = async () => {
     try {
       if (!editName || !editPrice || !editStock) {
-        toast.success("Product deleted successfully ✅");
+        toast.warning("Please fill product name, price and stock");
         return;
       }
+
+      setUpdatingProduct(true);
 
       const token = localStorage.getItem("token");
 
@@ -197,11 +211,13 @@ function AdminProducts() {
       );
 
       closeEditModal();
-      fetchProducts();
+      await fetchProducts();
       toast.success("Product updated successfully ✅");
     } catch (err) {
       console.log(err);
       toast.error(err.response?.data?.message || "Failed to update product");
+    } finally {
+      setUpdatingProduct(false);
     }
   };
 
@@ -220,7 +236,7 @@ function AdminProducts() {
     >
       <div className="app-container">
         <div
-          className="app-card topbar-card"
+          className="app-card topbar-card fade-card"
           style={{
             padding: "28px",
             borderRadius: "24px",
@@ -297,14 +313,9 @@ function AdminProducts() {
           </div>
         </div>
 
-        <div
-          className="grid-2"
-          style={{
-            gap: "24px",
-          }}
-        >
+        <div className="grid-2" style={{ gap: "24px" }}>
           <div
-            className="app-card"
+            className="app-card fade-card"
             style={{
               padding: "26px",
               borderRadius: "24px",
@@ -428,6 +439,7 @@ function AdminProducts() {
             <button
               className="primary-btn"
               onClick={addProduct}
+              disabled={addingProduct}
               style={{
                 width: "100%",
                 padding: "14px",
@@ -435,12 +447,12 @@ function AdminProducts() {
                 boxShadow: "0 14px 28px rgba(79, 70, 229, 0.24)",
               }}
             >
-              Add Product
+              {addingProduct ? "Adding Product..." : "Add Product"}
             </button>
           </div>
 
           <div
-            className="app-card"
+            className="app-card fade-card"
             style={{
               padding: "26px",
               borderRadius: "24px",
@@ -590,7 +602,7 @@ function AdminProducts() {
         </div>
 
         <div
-          className="app-card"
+          className="app-card fade-card"
           style={{
             padding: "26px",
             marginTop: "26px",
@@ -647,7 +659,85 @@ function AdminProducts() {
             </div>
           </div>
 
-          {products.length === 0 ? (
+          {loadingProducts ? (
+            <div className="grid-cards" style={{ gap: "24px" }}>
+              {[1, 2, 3].map((item) => (
+                <div
+                  key={item}
+                  className="app-card"
+                  style={{
+                    padding: "18px",
+                    borderRadius: "22px",
+                    border: "1px solid #e5e7eb",
+                    boxShadow: "0 14px 30px rgba(15, 23, 42, 0.06)",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "190px",
+                      borderRadius: "18px",
+                      background: "#f3f4f6",
+                      marginBottom: "16px",
+                    }}
+                  />
+                  <div
+                    style={{
+                      width: "80px",
+                      height: "26px",
+                      borderRadius: "999px",
+                      background: "#f3f4f6",
+                      marginBottom: "12px",
+                    }}
+                  />
+                  <div
+                    style={{
+                      width: "70%",
+                      height: "22px",
+                      borderRadius: "8px",
+                      background: "#f3f4f6",
+                      marginBottom: "10px",
+                    }}
+                  />
+                  <div
+                    style={{
+                      width: "40%",
+                      height: "24px",
+                      borderRadius: "8px",
+                      background: "#f3f4f6",
+                      marginBottom: "12px",
+                    }}
+                  />
+                  <div
+                    style={{
+                      width: "50%",
+                      height: "28px",
+                      borderRadius: "999px",
+                      background: "#f3f4f6",
+                      marginBottom: "18px",
+                    }}
+                  />
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "44px",
+                      borderRadius: "14px",
+                      background: "#f3f4f6",
+                      marginBottom: "10px",
+                    }}
+                  />
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "44px",
+                      borderRadius: "14px",
+                      background: "#f3f4f6",
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : products.length === 0 ? (
             <div className="empty-state">
               <div style={{ fontSize: "52px", marginBottom: "12px" }}>🛍️</div>
               <h3 style={{ margin: 0, color: "#111827", fontSize: "24px" }}>
@@ -658,15 +748,11 @@ function AdminProducts() {
               </p>
             </div>
           ) : (
-            <div
-              className="grid-cards"
-              style={{
-                gap: "24px",
-              }}
-            >
+            <div className="grid-cards" style={{ gap: "24px" }}>
               {products.map((p) => (
                 <div
                   key={p._id}
+                  className="fade-card"
                   style={{
                     background: "#ffffff",
                     borderRadius: "22px",
@@ -963,6 +1049,7 @@ function AdminProducts() {
                   <button
                     className="primary-btn"
                     onClick={updateProduct}
+                    disabled={updatingProduct}
                     style={{
                       flex: 1,
                       padding: "14px",
@@ -970,7 +1057,7 @@ function AdminProducts() {
                       boxShadow: "0 14px 28px rgba(79, 70, 229, 0.24)",
                     }}
                   >
-                    Save Changes
+                    {updatingProduct ? "Saving..." : "Save Changes"}
                   </button>
 
                   <button
