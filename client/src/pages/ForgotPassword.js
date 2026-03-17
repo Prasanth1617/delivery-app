@@ -1,201 +1,98 @@
 import { useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 
 function ForgotPassword() {
   const [phone, setPhone] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [step, setStep] = useState(1); // 1 = enter phone, 2 = set new password
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const isValidIndianPhone = (value) => /^[6-9]\d{9}$/.test(value);
-
-  const handleResetRequest = async () => {
-    if (!phone.trim()) {
-      toast.warning("Please enter your phone number");
-      return;
+  const checkPhone = async () => {
+    if (!phone) return alert("Enter your phone number");
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/auth/check-phone`,
+        { phone }
+      );
+      if (res.data.exists) {
+        setStep(2);
+      } else {
+        alert("Phone number not registered");
+      }
+    } catch (error) {
+      alert("Error checking phone");
     }
+  };
 
-    if (!isValidIndianPhone(phone)) {
-      toast.warning("Enter a valid 10-digit Indian mobile number");
-      return;
-    }
+  const resetPassword = async () => {
+    if (!newPassword || !confirmPassword)
+      return alert("Fill both password fields");
+    if (newPassword !== confirmPassword)
+      return alert("Passwords do not match");
+    if (newPassword.length < 6)
+      return alert("Password must be at least 6 characters");
 
     try {
-      setLoading(true);
-
-      // TEMP (no backend yet)
-      setTimeout(() => {
-        toast.success("Reset link sent (demo) 📩");
-        navigate("/");
-      }, 1200);
-
-      // 🔥 Later replace with API:
-      // await axios.post("/api/auth/forgot-password", { phone });
-
-    } catch (err) {
-      toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/auth/reset-password`,
+        { phone, newPassword }
+      );
+      setMessage("Password reset successful!");
+      setTimeout(() => navigate("/login"), 2000);
+    } catch (error) {
+      alert("Error resetting password");
     }
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background:
-          "radial-gradient(circle at top left, rgba(99,102,241,0.35), transparent 28%), radial-gradient(circle at bottom right, rgba(168,85,247,0.28), transparent 30%), linear-gradient(135deg, #eef2ff 0%, #f8fafc 45%, #f5f3ff 100%)",
-        padding: "24px",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "420px",
-          background: "rgba(255,255,255,0.85)",
-          backdropFilter: "blur(18px)",
-          borderRadius: "30px",
-          border: "1px solid rgba(255,255,255,0.5)",
-          boxShadow: "0 30px 60px rgba(15, 23, 42, 0.12)",
-          padding: "36px",
-        }}
-      >
-        <div style={{ marginBottom: "28px", textAlign: "center" }}>
-          <div
-            style={{
-              width: "60px",
-              height: "60px",
-              borderRadius: "18px",
-              background: "linear-gradient(135deg, #4f46e5, #7c3aed)",
-              color: "#ffffff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "28px",
-              margin: "0 auto 18px",
-              boxShadow: "0 14px 28px rgba(79, 70, 229, 0.22)",
-            }}
-          >
-            🔐
-          </div>
+    <div style={{ padding: "40px", maxWidth: "400px", margin: "auto" }}>
+      <h2>Forgot Password</h2>
 
-          <h2
-            style={{
-              margin: 0,
-              fontSize: "30px",
-              fontWeight: "900",
-              color: "#111827",
-            }}
-          >
-            Forgot Password
-          </h2>
-
-          <p
-            style={{
-              marginTop: "10px",
-              fontSize: "14px",
-              color: "#6b7280",
-              lineHeight: "1.7",
-            }}
-          >
-            Enter your registered phone number to reset your password.
-          </p>
-        </div>
-
-        <div style={{ marginBottom: "20px" }}>
-          <label
-            style={{
-              display: "block",
-              marginBottom: "8px",
-              fontSize: "14px",
-              fontWeight: "700",
-              color: "#374151",
-            }}
-          >
-            Phone Number
-          </label>
-
+      {step === 1 && (
+        <>
           <input
-            placeholder="Enter 10-digit mobile number"
+            type="text"
+            placeholder="Enter your phone number"
             value={phone}
-            maxLength={10}
-            onChange={(e) =>
-              setPhone(e.target.value.replace(/\D/g, ""))
-            }
-            style={{
-              width: "100%",
-              padding: "14px 16px",
-              borderRadius: "16px",
-              border: "1px solid #d1d5db",
-              fontSize: "15px",
-              outline: "none",
-              background: "#f9fafb",
-            }}
+            onChange={(e) => setPhone(e.target.value)}
+            style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
           />
-
-          {phone && (
-            <p
-              style={{
-                marginTop: "8px",
-                fontSize: "13px",
-                fontWeight: "700",
-                color: isValidIndianPhone(phone)
-                  ? "#166534"
-                  : "#b91c1c",
-              }}
-            >
-              {isValidIndianPhone(phone)
-                ? "Valid mobile number"
-                : "Enter a valid number"}
-            </p>
-          )}
-        </div>
-
-        <button
-          onClick={handleResetRequest}
-          disabled={loading}
-          style={{
-            width: "100%",
-            padding: "14px",
-            borderRadius: "16px",
-            border: "none",
-            background: loading
-              ? "#9ca3af"
-              : "linear-gradient(135deg, #4f46e5, #7c3aed)",
-            color: "#ffffff",
-            fontSize: "15px",
-            fontWeight: "800",
-            cursor: loading ? "not-allowed" : "pointer",
-            boxShadow: "0 14px 28px rgba(79, 70, 229, 0.24)",
-          }}
-        >
-          {loading ? "Sending..." : "Send Reset Link"}
-        </button>
-
-        <div
-          style={{
-            marginTop: "18px",
-            textAlign: "center",
-          }}
-        >
-          <button
-            onClick={() => navigate("/")}
-            style={{
-              background: "transparent",
-              border: "none",
-              color: "#4f46e5",
-              fontWeight: "800",
-              fontSize: "14px",
-              cursor: "pointer",
-            }}
-          >
-            ← Back to Login
+          <button onClick={checkPhone} style={{ width: "100%", padding: "10px" }}>
+            Check Account
           </button>
-        </div>
-      </div>
+        </>
+      )}
+
+      {step === 2 && (
+        <>
+          <input
+            type="password"
+            placeholder="New Password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+          />
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
+          />
+          <button onClick={resetPassword} style={{ width: "100%", padding: "10px" }}>
+            Reset Password
+          </button>
+        </>
+      )}
+
+      {message && <p style={{ color: "green", marginTop: "15px" }}>{message}</p>}
+
+      <p style={{ marginTop: "20px" }}>
+        <a href="/login">Back to Login</a>
+      </p>
     </div>
   );
 }
