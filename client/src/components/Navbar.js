@@ -51,79 +51,108 @@ function Navbar() {
 
   const navStyle = (path) => ({
     textDecoration: "none",
-    color: isActive(path) ? "#fff" : "#d1d5db",
-    fontWeight: "600",
-    padding: "10px 14px",
-    borderRadius: "10px",
+    color: isActive(path) ? "#ffffff" : "#d1d5db",
+    fontWeight: "700",
+    padding: isMobile ? "12px 14px" : "10px 14px",
+    borderRadius: "12px",
     background: isActive(path)
       ? "linear-gradient(135deg, #4f46e5, #7c3aed)"
       : "rgba(255,255,255,0.05)",
     border: "1px solid rgba(255,255,255,0.08)",
     display: "inline-flex",
     alignItems: "center",
-    gap: "6px",
+    justifyContent: isMobile ? "space-between" : "center",
+    gap: "8px",
     transition: "0.25s ease",
+    width: isMobile ? "100%" : "auto",
+    boxSizing: "border-box",
   });
 
   const adminNavStyle = (path) => ({
     textDecoration: "none",
-    color: "#111827",
-    fontWeight: "700",
-    padding: "10px 14px",
-    borderRadius: "10px",
+    color: isActive(path) ? "#111827" : "#111827",
+    fontWeight: "800",
+    padding: isMobile ? "12px 14px" : "10px 14px",
+    borderRadius: "12px",
     background: isActive(path)
       ? "linear-gradient(135deg, #fde68a, #f59e0b)"
       : "#facc15",
     display: "inline-flex",
     alignItems: "center",
+    justifyContent: isMobile ? "space-between" : "center",
+    width: isMobile ? "100%" : "auto",
     transition: "0.25s ease",
+    boxSizing: "border-box",
   });
 
   const renderLinks = () => (
     <>
       {!token ? (
         <>
-          <Link to="/" style={navStyle("/")}>Login</Link>
-          <Link to="/signup" style={navStyle("/signup")}>Signup</Link>
+          <Link to="/" style={navStyle("/")}>
+            Login
+          </Link>
+          <Link to="/signup" style={navStyle("/signup")}>
+            Signup
+          </Link>
         </>
       ) : (
         <>
-          <Link to="/profile" style={navStyle("/profile")}>Profile</Link>
-          <Link to="/products" style={navStyle("/products")}>Products</Link>
+          <Link to="/profile" style={navStyle("/profile")}>
+            Profile
+          </Link>
+
+          <Link to="/products" style={navStyle("/products")}>
+            Products
+          </Link>
+
           <Link to="/cart" style={navStyle("/cart")}>
-            Cart
+            <span>Cart</span>
             {cartCount > 0 && (
               <span
                 style={{
                   background: "#facc15",
                   color: "#111827",
                   borderRadius: "999px",
-                  padding: "2px 8px",
+                  padding: "3px 8px",
                   fontSize: "12px",
                   fontWeight: "800",
+                  minWidth: "24px",
+                  textAlign: "center",
                 }}
               >
                 {cartCount}
               </span>
             )}
           </Link>
-          <Link to="/orders" style={navStyle("/orders")}>Orders</Link>
+
+          <Link to="/orders" style={navStyle("/orders")}>
+            Orders
+          </Link>
 
           {role === "admin" && (
             <>
-              <Link to="/admin/dashboard" style={adminNavStyle("/admin/dashboard")}>
+              <Link
+                to="/admin/dashboard"
+                style={adminNavStyle("/admin/dashboard")}
+              >
                 Admin Dashboard
               </Link>
+
               <Link to="/admin/orders" style={adminNavStyle("/admin/orders")}>
                 Admin Orders
               </Link>
-              <Link to="/admin/products" style={adminNavStyle("/admin/products")}>
+
+              <Link
+                to="/admin/products"
+                style={adminNavStyle("/admin/products")}
+              >
                 Admin Products
               </Link>
             </>
           )}
 
-          <button onClick={handleLogout} style={logoutBtn}>
+          <button onClick={handleLogout} style={logoutBtn(isMobile)}>
             Logout
           </button>
         </>
@@ -138,7 +167,7 @@ function Navbar() {
         background: "rgba(17, 24, 39, 0.96)",
         backdropFilter: "blur(12px)",
         color: "#fff",
-        padding: "14px 20px",
+        padding: isMobile ? "12px 14px" : "14px 20px",
         boxSizing: "border-box",
         position: "sticky",
         top: 0,
@@ -151,6 +180,7 @@ function Navbar() {
         style={{
           maxWidth: "1200px",
           margin: "0 auto",
+          width: "100%",
         }}
       >
         <div
@@ -161,15 +191,24 @@ function Navbar() {
             gap: "12px",
           }}
         >
-          <div>
-            <h2 style={{ margin: 0, fontSize: "24px", fontWeight: "800" }}>
+          <div style={{ minWidth: 0 }}>
+            <h2
+              style={{
+                margin: 0,
+                fontSize: isMobile ? "18px" : "24px",
+                fontWeight: "800",
+                lineHeight: "1.2",
+                wordBreak: "break-word",
+              }}
+            >
               Theni Retail Platform
             </h2>
             <p
               style={{
                 margin: "4px 0 0",
-                fontSize: "12px",
+                fontSize: isMobile ? "11px" : "12px",
                 color: "#9ca3af",
+                lineHeight: "1.4",
               }}
             >
               Fast, simple grocery delivery
@@ -203,8 +242,9 @@ function Navbar() {
               gap: "10px",
               background: "rgba(255,255,255,0.04)",
               padding: "14px",
-              borderRadius: "14px",
+              borderRadius: "16px",
               border: "1px solid rgba(255,255,255,0.08)",
+              boxShadow: "0 12px 28px rgba(0,0,0,0.14)",
             }}
           >
             {renderLinks()}
@@ -215,15 +255,17 @@ function Navbar() {
   );
 }
 
-const logoutBtn = {
+const logoutBtn = (isMobile) => ({
   border: "none",
   background: "linear-gradient(135deg, #dc2626, #ef4444)",
   color: "#fff",
-  padding: "10px 16px",
-  borderRadius: "10px",
+  padding: isMobile ? "12px 14px" : "10px 16px",
+  borderRadius: "12px",
   cursor: "pointer",
-  fontWeight: "700",
-};
+  fontWeight: "800",
+  width: isMobile ? "100%" : "auto",
+  boxSizing: "border-box",
+});
 
 const menuBtn = {
   border: "1px solid rgba(255,255,255,0.1)",
@@ -231,10 +273,11 @@ const menuBtn = {
   color: "#fff",
   width: "42px",
   height: "42px",
-  borderRadius: "10px",
+  borderRadius: "12px",
   cursor: "pointer",
   fontSize: "20px",
   fontWeight: "700",
+  flexShrink: 0,
 };
 
 export default Navbar;
