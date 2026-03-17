@@ -14,10 +14,22 @@ function Login() {
     if (token) navigate("/profile");
   }, [navigate]);
 
+  const isValidIndianPhone = (value) => /^[6-9]\d{9}$/.test(value);
+
   const handleLogin = async () => {
     try {
       if (!phone.trim() || !password.trim()) {
         toast.warning("Please enter phone number and password");
+        return;
+      }
+
+      if (!/^\d+$/.test(phone)) {
+        toast.warning("Phone number should contain only digits");
+        return;
+      }
+
+      if (!isValidIndianPhone(phone)) {
+        toast.warning("Enter a valid 10-digit Indian mobile number");
         return;
       }
 
@@ -26,7 +38,7 @@ function Login() {
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/auth/login`,
         {
-          phone,
+          phone: phone.trim(),
           password,
         }
       );
@@ -46,6 +58,10 @@ function Login() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleForgotPassword = () => {
+    toast.info("Forgot password feature is the next auth upgrade");
   };
 
   const featureCardStyle = {
@@ -70,6 +86,7 @@ function Login() {
       }}
     >
       <div
+        className="login-grid-responsive"
         style={{
           width: "100%",
           maxWidth: "1180px",
@@ -177,13 +194,7 @@ function Login() {
           >
             <div style={featureCardStyle}>
               <div style={{ fontSize: "24px", marginBottom: "10px" }}>⚡</div>
-              <h3
-                style={{
-                  margin: "0 0 6px",
-                  fontSize: "17px",
-                  fontWeight: "800",
-                }}
-              >
+              <h3 style={{ margin: "0 0 6px", fontSize: "17px", fontWeight: "800" }}>
                 Fast Ordering
               </h3>
               <p
@@ -194,20 +205,13 @@ function Login() {
                   color: "rgba(255,255,255,0.84)",
                 }}
               >
-                Add products in seconds with a clean and responsive shopping
-                flow.
+                Add products in seconds with a clean and responsive shopping flow.
               </p>
             </div>
 
             <div style={featureCardStyle}>
               <div style={{ fontSize: "24px", marginBottom: "10px" }}>📦</div>
-              <h3
-                style={{
-                  margin: "0 0 6px",
-                  fontSize: "17px",
-                  fontWeight: "800",
-                }}
-              >
+              <h3 style={{ margin: "0 0 6px", fontSize: "17px", fontWeight: "800" }}>
                 Live Order Tracking
               </h3>
               <p
@@ -224,13 +228,7 @@ function Login() {
 
             <div style={featureCardStyle}>
               <div style={{ fontSize: "24px", marginBottom: "10px" }}>🛍️</div>
-              <h3
-                style={{
-                  margin: "0 0 6px",
-                  fontSize: "17px",
-                  fontWeight: "800",
-                }}
-              >
+              <h3 style={{ margin: "0 0 6px", fontSize: "17px", fontWeight: "800" }}>
                 Curated Products
               </h3>
               <p
@@ -247,13 +245,7 @@ function Login() {
 
             <div style={featureCardStyle}>
               <div style={{ fontSize: "24px", marginBottom: "10px" }}>🔒</div>
-              <h3
-                style={{
-                  margin: "0 0 6px",
-                  fontSize: "17px",
-                  fontWeight: "800",
-                }}
-              >
+              <h3 style={{ margin: "0 0 6px", fontSize: "17px", fontWeight: "800" }}>
                 Secure Access
               </h3>
               <p
@@ -343,9 +335,10 @@ function Login() {
                 Phone Number
               </label>
               <input
-                placeholder="Enter phone number"
+                placeholder="Enter 10-digit mobile number"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                maxLength={10}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                 style={{
                   width: "100%",
                   padding: "15px 16px",
@@ -357,9 +350,23 @@ function Login() {
                   background: "#f9fafb",
                 }}
               />
+              {phone && (
+                <p
+                  style={{
+                    margin: "8px 0 0",
+                    fontSize: "13px",
+                    color: isValidIndianPhone(phone) ? "#166534" : "#b91c1c",
+                    fontWeight: "700",
+                  }}
+                >
+                  {isValidIndianPhone(phone)
+                    ? "Valid mobile number"
+                    : "Enter a valid 10-digit Indian mobile number"}
+                </p>
+              )}
             </div>
 
-            <div style={{ marginBottom: "24px" }}>
+            <div style={{ marginBottom: "10px" }}>
               <label
                 style={{
                   display: "block",
@@ -387,6 +394,29 @@ function Login() {
                   background: "#f9fafb",
                 }}
               />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                marginBottom: "20px",
+              }}
+            >
+              <button
+                onClick={handleForgotPassword}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#4f46e5",
+                  fontSize: "14px",
+                  fontWeight: "800",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
+              >
+                Forgot Password?
+              </button>
             </div>
 
             <button

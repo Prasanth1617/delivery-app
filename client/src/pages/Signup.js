@@ -12,6 +12,18 @@ function Signup() {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const isValidIndianPhone = (value) => /^[6-9]\d{9}$/.test(value);
+
+  const passwordChecks = {
+    minLength: password.length >= 8,
+    upper: /[A-Z]/.test(password),
+    lower: /[a-z]/.test(password),
+    number: /\d/.test(password),
+    special: /[!@#$%^&*(),.?":{}|<>_\-\\/[\]=+;']/g.test(password),
+  };
+
+  const isStrongPassword = Object.values(passwordChecks).every(Boolean);
+
   const handleSignup = async () => {
     try {
       if (!name.trim() || !phone.trim() || !password.trim() || !address.trim()) {
@@ -19,13 +31,38 @@ function Signup() {
         return;
       }
 
+      if (name.trim().length < 3) {
+        toast.warning("Name should be at least 3 characters");
+        return;
+      }
+
+      if (!/^\d+$/.test(phone)) {
+        toast.warning("Phone number should contain only digits");
+        return;
+      }
+
+      if (!isValidIndianPhone(phone)) {
+        toast.warning("Enter a valid 10-digit Indian mobile number");
+        return;
+      }
+
+      if (!isStrongPassword) {
+        toast.warning("Please create a stronger password");
+        return;
+      }
+
+      if (address.trim().length < 5) {
+        toast.warning("Please enter a valid address");
+        return;
+      }
+
       setLoading(true);
 
       await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
-        name,
-        phone,
+        name: name.trim(),
+        phone: phone.trim(),
         password,
-        address,
+        address: address.trim(),
       });
 
       toast.success("Account created successfully ✅");
@@ -46,6 +83,19 @@ function Signup() {
     backdropFilter: "blur(14px)",
     boxShadow: "0 12px 30px rgba(15, 23, 42, 0.12)",
   };
+
+  const passwordRuleStyle = (passed) => ({
+    fontSize: "13px",
+    fontWeight: "700",
+    color: passed ? "#166534" : "#6b7280",
+    background: passed ? "#dcfce7" : "#f3f4f6",
+    border: passed ? "1px solid #bbf7d0" : "1px solid #e5e7eb",
+    borderRadius: "999px",
+    padding: "7px 10px",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "6px",
+  });
 
   return (
     <div
@@ -167,13 +217,7 @@ function Signup() {
           >
             <div style={featureCardStyle}>
               <div style={{ fontSize: "24px", marginBottom: "10px" }}>🛒</div>
-              <h3
-                style={{
-                  margin: "0 0 6px",
-                  fontSize: "17px",
-                  fontWeight: "800",
-                }}
-              >
+              <h3 style={{ margin: "0 0 6px", fontSize: "17px", fontWeight: "800" }}>
                 Easy Shopping
               </h3>
               <p
@@ -190,13 +234,7 @@ function Signup() {
 
             <div style={featureCardStyle}>
               <div style={{ fontSize: "24px", marginBottom: "10px" }}>⚡</div>
-              <h3
-                style={{
-                  margin: "0 0 6px",
-                  fontSize: "17px",
-                  fontWeight: "800",
-                }}
-              >
+              <h3 style={{ margin: "0 0 6px", fontSize: "17px", fontWeight: "800" }}>
                 Faster Orders
               </h3>
               <p
@@ -213,13 +251,7 @@ function Signup() {
 
             <div style={featureCardStyle}>
               <div style={{ fontSize: "24px", marginBottom: "10px" }}>📦</div>
-              <h3
-                style={{
-                  margin: "0 0 6px",
-                  fontSize: "17px",
-                  fontWeight: "800",
-                }}
-              >
+              <h3 style={{ margin: "0 0 6px", fontSize: "17px", fontWeight: "800" }}>
                 Order Tracking
               </h3>
               <p
@@ -236,13 +268,7 @@ function Signup() {
 
             <div style={featureCardStyle}>
               <div style={{ fontSize: "24px", marginBottom: "10px" }}>🔒</div>
-              <h3
-                style={{
-                  margin: "0 0 6px",
-                  fontSize: "17px",
-                  fontWeight: "800",
-                }}
-              >
+              <h3 style={{ margin: "0 0 6px", fontSize: "17px", fontWeight: "800" }}>
                 Secure Access
               </h3>
               <p
@@ -361,9 +387,12 @@ function Signup() {
                 Phone Number
               </label>
               <input
-                placeholder="Enter phone number"
+                placeholder="Enter 10-digit mobile number"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                maxLength={10}
+                onChange={(e) =>
+                  setPhone(e.target.value.replace(/\D/g, ""))
+                }
                 style={{
                   width: "100%",
                   padding: "15px 16px",
@@ -375,6 +404,20 @@ function Signup() {
                   background: "#f9fafb",
                 }}
               />
+              {phone && (
+                <p
+                  style={{
+                    margin: "8px 0 0",
+                    fontSize: "13px",
+                    color: isValidIndianPhone(phone) ? "#166534" : "#b91c1c",
+                    fontWeight: "700",
+                  }}
+                >
+                  {isValidIndianPhone(phone)
+                    ? "Valid mobile number"
+                    : "Enter a valid 10-digit Indian mobile number"}
+                </p>
+              )}
             </div>
 
             <div style={{ marginBottom: "16px" }}>
@@ -391,7 +434,7 @@ function Signup() {
               </label>
               <input
                 type="password"
-                placeholder="Create password"
+                placeholder="Create strong password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 style={{
@@ -405,6 +448,31 @@ function Signup() {
                   background: "#f9fafb",
                 }}
               />
+
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "8px",
+                  marginTop: "10px",
+                }}
+              >
+                <span style={passwordRuleStyle(passwordChecks.minLength)}>
+                  {passwordChecks.minLength ? "✓" : "•"} 8+ chars
+                </span>
+                <span style={passwordRuleStyle(passwordChecks.upper)}>
+                  {passwordChecks.upper ? "✓" : "•"} Uppercase
+                </span>
+                <span style={passwordRuleStyle(passwordChecks.lower)}>
+                  {passwordChecks.lower ? "✓" : "•"} Lowercase
+                </span>
+                <span style={passwordRuleStyle(passwordChecks.number)}>
+                  {passwordChecks.number ? "✓" : "•"} Number
+                </span>
+                <span style={passwordRuleStyle(passwordChecks.special)}>
+                  {passwordChecks.special ? "✓" : "•"} Special char
+                </span>
+              </div>
             </div>
 
             <div style={{ marginBottom: "24px" }}>

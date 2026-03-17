@@ -59,6 +59,153 @@ function Orders() {
     }
   };
 
+  const orderSteps = ["Pending", "Packed", "Out for Delivery", "Delivered"];
+
+  const getStepIndex = (status) => {
+    return orderSteps.indexOf(status);
+  };
+
+  const renderOrderTimeline = (status) => {
+    if (status === "Cancelled") {
+      return (
+        <div
+          style={{
+            background: "#fff1f2",
+            border: "1px solid #fecdd3",
+            borderRadius: "18px",
+            padding: "16px",
+            marginBottom: "20px",
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              fontWeight: "800",
+              color: "#be123c",
+              fontSize: "15px",
+            }}
+          >
+            ❌ This order was cancelled
+          </p>
+          <p
+            style={{
+              margin: "8px 0 0",
+              color: "#9f1239",
+              fontSize: "14px",
+              lineHeight: "1.7",
+            }}
+          >
+            This order is no longer being processed. You can place a new order
+            anytime from the products page.
+          </p>
+        </div>
+      );
+    }
+
+    const activeIndex = getStepIndex(status);
+
+    return (
+      <div
+        style={{
+          background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+          border: "1px solid #e5e7eb",
+          borderRadius: "20px",
+          padding: "18px",
+          marginBottom: "20px",
+        }}
+      >
+        <p
+          style={{
+            margin: "0 0 16px",
+            fontSize: "14px",
+            fontWeight: "800",
+            color: "#374151",
+          }}
+        >
+          Delivery Progress
+        </p>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: "12px",
+          }}
+        >
+          {orderSteps.map((step, index) => {
+            const isCompleted = index <= activeIndex;
+            const isCurrent = index === activeIndex;
+
+            return (
+              <div
+                key={step}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  textAlign: "center",
+                  gap: "10px",
+                }}
+              >
+                <div
+                  style={{
+                    width: "42px",
+                    height: "42px",
+                    borderRadius: "999px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "16px",
+                    fontWeight: "800",
+                    color: isCompleted ? "#ffffff" : "#6b7280",
+                    background: isCompleted
+                      ? isCurrent
+                        ? "linear-gradient(135deg, #4f46e5, #7c3aed)"
+                        : "#111827"
+                      : "#e5e7eb",
+                    boxShadow: isCurrent
+                      ? "0 12px 22px rgba(79, 70, 229, 0.20)"
+                      : "none",
+                  }}
+                >
+                  {index + 1}
+                </div>
+
+                <div>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: "13px",
+                      fontWeight: "800",
+                      color: isCompleted ? "#111827" : "#6b7280",
+                      lineHeight: "1.5",
+                    }}
+                  >
+                    {step}
+                  </p>
+                  <p
+                    style={{
+                      margin: "4px 0 0",
+                      fontSize: "12px",
+                      color: isCurrent ? "#4f46e5" : "#9ca3af",
+                      fontWeight: "700",
+                    }}
+                  >
+                    {isCurrent
+                      ? "Current"
+                      : isCompleted
+                      ? "Done"
+                      : "Waiting"}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div
       className="app-page"
@@ -261,6 +408,8 @@ function Orders() {
                     {order.status}
                   </span>
                 </div>
+
+                {renderOrderTimeline(order.status)}
 
                 <div
                   style={{
