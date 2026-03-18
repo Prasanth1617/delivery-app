@@ -27,23 +27,22 @@ function Navbar() {
     window.addEventListener("storage", handleStorage);
     window.addEventListener("resize", handleResize);
 
-    const interval = setInterval(updateCartCount, 500);
-
     return () => {
       window.removeEventListener("storage", handleStorage);
       window.removeEventListener("resize", handleResize);
-      clearInterval(interval);
     };
   }, []);
 
   useEffect(() => {
     setMenuOpen(false);
+    updateCartCount();
   }, [location.pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
     localStorage.removeItem("cart");
+    setCartCount(0);
     navigate("/");
   };
 
@@ -66,11 +65,12 @@ function Navbar() {
     transition: "0.25s ease",
     width: isMobile ? "100%" : "auto",
     boxSizing: "border-box",
+    minHeight: "44px",
   });
 
   const adminNavStyle = (path) => ({
     textDecoration: "none",
-    color: isActive(path) ? "#111827" : "#111827",
+    color: "#111827",
     fontWeight: "800",
     padding: isMobile ? "12px 14px" : "10px 14px",
     borderRadius: "12px",
@@ -83,6 +83,7 @@ function Navbar() {
     width: isMobile ? "100%" : "auto",
     transition: "0.25s ease",
     boxSizing: "border-box",
+    minHeight: "44px",
   });
 
   const renderLinks = () => (
@@ -92,6 +93,7 @@ function Navbar() {
           <Link to="/" style={navStyle("/")}>
             Login
           </Link>
+
           <Link to="/signup" style={navStyle("/signup")}>
             Signup
           </Link>
@@ -139,7 +141,10 @@ function Navbar() {
                 Admin Dashboard
               </Link>
 
-              <Link to="/admin/orders" style={adminNavStyle("/admin/orders")}>
+              <Link
+                to="/admin/orders"
+                style={adminNavStyle("/admin/orders")}
+              >
                 Admin Orders
               </Link>
 
@@ -191,7 +196,7 @@ function Navbar() {
             gap: "12px",
           }}
         >
-          <div style={{ minWidth: 0 }}>
+          <div style={{ minWidth: 0, flex: 1 }}>
             <h2
               style={{
                 margin: 0,
@@ -203,6 +208,7 @@ function Navbar() {
             >
               Theni Retail Platform
             </h2>
+
             <p
               style={{
                 margin: "4px 0 0",
@@ -225,6 +231,7 @@ function Navbar() {
                 display: "flex",
                 gap: "10px",
                 alignItems: "center",
+                justifyContent: "flex-end",
                 flexWrap: "wrap",
               }}
             >
@@ -265,6 +272,7 @@ const logoutBtn = (isMobile) => ({
   fontWeight: "800",
   width: isMobile ? "100%" : "auto",
   boxSizing: "border-box",
+  minHeight: "44px",
 });
 
 const menuBtn = {
