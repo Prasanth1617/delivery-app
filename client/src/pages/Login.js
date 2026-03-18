@@ -7,12 +7,19 @@ function Login() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) navigate("/profile");
   }, [navigate]);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 640);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const isValidIndianPhone = (value) => /^[6-9]\d{9}$/.test(value);
 
@@ -61,14 +68,14 @@ function Login() {
   };
 
   const handleForgotPassword = () => {
-    toast.info("Forgot password feature is the next auth upgrade");
+    navigate("/forgot-password");
   };
 
   const featureCardStyle = {
     background: "rgba(255,255,255,0.12)",
     border: "1px solid rgba(255,255,255,0.18)",
     borderRadius: "18px",
-    padding: "16px",
+    padding: isMobile ? "14px" : "16px",
     backdropFilter: "blur(14px)",
     boxShadow: "0 12px 30px rgba(15, 23, 42, 0.12)",
   };
@@ -82,7 +89,7 @@ function Login() {
         justifyContent: "center",
         background:
           "radial-gradient(circle at top left, rgba(99,102,241,0.35), transparent 28%), radial-gradient(circle at bottom right, rgba(168,85,247,0.28), transparent 30%), linear-gradient(135deg, #eef2ff 0%, #f8fafc 45%, #f5f3ff 100%)",
-        padding: "24px",
+        padding: isMobile ? "12px" : "24px",
       }}
     >
       <div
@@ -91,8 +98,8 @@ function Login() {
           width: "100%",
           maxWidth: "1180px",
           display: "grid",
-          gridTemplateColumns: "1.05fr 0.95fr",
-          gap: "24px",
+          gridTemplateColumns: isMobile ? "1fr" : "1.05fr 0.95fr",
+          gap: isMobile ? "16px" : "24px",
           alignItems: "stretch",
         }}
       >
@@ -100,39 +107,40 @@ function Login() {
           style={{
             position: "relative",
             overflow: "hidden",
-            borderRadius: "30px",
-            padding: "40px",
+            borderRadius: isMobile ? "22px" : "30px",
+            padding: isMobile ? "22px 18px" : "40px",
             background:
               "linear-gradient(135deg, #312e81 0%, #4f46e5 35%, #7c3aed 100%)",
             color: "#ffffff",
             boxShadow: "0 28px 60px rgba(79, 70, 229, 0.25)",
-            minHeight: "640px",
+            minHeight: isMobile ? "auto" : "640px",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
+            gap: isMobile ? "20px" : "28px",
           }}
         >
           <div
             style={{
               position: "absolute",
-              width: "220px",
-              height: "220px",
+              width: isMobile ? "140px" : "220px",
+              height: isMobile ? "140px" : "220px",
               borderRadius: "50%",
               background: "rgba(255,255,255,0.10)",
-              top: "-60px",
-              right: "-60px",
+              top: "-40px",
+              right: "-40px",
               filter: "blur(4px)",
             }}
           />
           <div
             style={{
               position: "absolute",
-              width: "170px",
-              height: "170px",
+              width: isMobile ? "110px" : "170px",
+              height: isMobile ? "110px" : "170px",
               borderRadius: "50%",
               background: "rgba(255,255,255,0.08)",
-              bottom: "40px",
-              left: "-30px",
+              bottom: "30px",
+              left: "-20px",
             }}
           />
 
@@ -150,6 +158,7 @@ function Login() {
                 fontWeight: "800",
                 marginBottom: "20px",
                 letterSpacing: "0.2px",
+                flexWrap: "wrap",
               }}
             >
               ✨ Smarter Grocery Experience
@@ -158,9 +167,9 @@ function Login() {
             <h1
               style={{
                 margin: 0,
-                fontSize: "54px",
-                lineHeight: "1.04",
-                letterSpacing: "-1.2px",
+                fontSize: isMobile ? "32px" : "54px",
+                lineHeight: isMobile ? "1.15" : "1.04",
+                letterSpacing: isMobile ? "-0.6px" : "-1.2px",
                 fontWeight: "900",
                 maxWidth: "520px",
               }}
@@ -173,7 +182,7 @@ function Login() {
                 marginTop: "18px",
                 marginBottom: 0,
                 maxWidth: "520px",
-                fontSize: "17px",
+                fontSize: isMobile ? "14px" : "17px",
                 lineHeight: "1.8",
                 color: "rgba(255,255,255,0.88)",
               }}
@@ -188,7 +197,7 @@ function Login() {
               position: "relative",
               zIndex: 1,
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
+              gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
               gap: "16px",
             }}
           >
@@ -264,31 +273,31 @@ function Login() {
 
         <div
           style={{
-            borderRadius: "30px",
+            borderRadius: isMobile ? "22px" : "30px",
             background: "rgba(255,255,255,0.78)",
             backdropFilter: "blur(18px)",
             border: "1px solid rgba(255,255,255,0.55)",
             boxShadow: "0 28px 60px rgba(15, 23, 42, 0.10)",
-            padding: "36px",
+            padding: isMobile ? "22px 16px" : "36px",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            minHeight: "640px",
+            minHeight: isMobile ? "auto" : "640px",
           }}
         >
           <div style={{ maxWidth: "420px", width: "100%", margin: "0 auto" }}>
             <div style={{ marginBottom: "28px" }}>
               <div
                 style={{
-                  width: "60px",
-                  height: "60px",
+                  width: isMobile ? "52px" : "60px",
+                  height: isMobile ? "52px" : "60px",
                   borderRadius: "18px",
                   background: "linear-gradient(135deg, #4f46e5, #7c3aed)",
                   color: "#ffffff",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: "28px",
+                  fontSize: isMobile ? "24px" : "28px",
                   boxShadow: "0 14px 28px rgba(79, 70, 229, 0.22)",
                   marginBottom: "18px",
                 }}
@@ -299,7 +308,7 @@ function Login() {
               <h2
                 style={{
                   margin: 0,
-                  fontSize: "34px",
+                  fontSize: isMobile ? "28px" : "34px",
                   fontWeight: "900",
                   color: "#111827",
                   letterSpacing: "-0.6px",
@@ -312,7 +321,7 @@ function Login() {
                 style={{
                   marginTop: "10px",
                   marginBottom: 0,
-                  fontSize: "15px",
+                  fontSize: isMobile ? "14px" : "15px",
                   color: "#6b7280",
                   lineHeight: "1.7",
                 }}
@@ -338,13 +347,14 @@ function Login() {
                 placeholder="Enter 10-digit mobile number"
                 value={phone}
                 maxLength={10}
+                inputMode="numeric"
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                 style={{
                   width: "100%",
                   padding: "15px 16px",
                   borderRadius: "16px",
                   border: "1px solid #d1d5db",
-                  fontSize: "15px",
+                  fontSize: "16px",
                   outline: "none",
                   boxSizing: "border-box",
                   background: "#f9fafb",
@@ -388,7 +398,7 @@ function Login() {
                   padding: "15px 16px",
                   borderRadius: "16px",
                   border: "1px solid #d1d5db",
-                  fontSize: "15px",
+                  fontSize: "16px",
                   outline: "none",
                   boxSizing: "border-box",
                   background: "#f9fafb",
@@ -448,7 +458,7 @@ function Login() {
                 marginTop: "18px",
                 padding: "14px 16px",
                 borderRadius: "16px",
-                background: "#f8fafc",
+                background: "#f8fafb",
                 border: "1px solid #e5e7eb",
                 textAlign: "center",
               }}
@@ -481,14 +491,6 @@ function Login() {
           </div>
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 960px) {
-          .login-grid-responsive {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }
