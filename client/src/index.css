@@ -8,15 +8,14 @@ body,
   margin: 0;
   padding: 0;
   min-height: 100%;
+  width: 100%;
+  overflow-x: hidden;
   font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
   background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f5f3ff 100%);
   color: #111827;
-  width: 100%;
-  overflow-x: hidden;
 }
 
 body {
-  margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -441,28 +440,4 @@ textarea.input-field {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a5b4fc;
-}
-* {
-  box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
 }

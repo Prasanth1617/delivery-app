@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -10,12 +10,25 @@ function Cart() {
     return JSON.parse(localStorage.getItem("cart")) || [];
   });
 
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState(localStorage.getItem("address") || "");
   const [loading, setLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("address", address);
+  }, [address]);
 
   const saveCart = (updatedCart) => {
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
+    window.dispatchEvent(new Event("storage"));
   };
 
   const increaseQuantity = (id) => {
@@ -26,14 +39,11 @@ function Cart() {
   };
 
   const decreaseQuantity = (id) => {
-    const updatedCart = cart
-      .map((item) =>
-        item._id === id
-          ? { ...item, quantity: Math.max(1, item.quantity - 1) }
-          : item
-      )
-      .filter((item) => item.quantity > 0);
-
+    const updatedCart = cart.map((item) =>
+      item._id === id
+        ? { ...item, quantity: Math.max(1, item.quantity - 1) }
+        : item
+    );
     saveCart(updatedCart);
   };
 
@@ -46,6 +56,7 @@ function Cart() {
   const clearCart = () => {
     localStorage.removeItem("cart");
     setCart([]);
+    window.dispatchEvent(new Event("storage"));
     toast.success("Cart cleared successfully");
   };
 
@@ -59,6 +70,7 @@ function Cart() {
   const handleCheckout = async () => {
     try {
       const token = localStorage.getItem("token");
+
       if (!token) {
         navigate("/");
         return;
@@ -97,6 +109,7 @@ function Cart() {
 
       localStorage.removeItem("cart");
       setCart([]);
+      window.dispatchEvent(new Event("storage"));
       toast.success("Order placed successfully ✅");
       navigate("/orders");
     } catch (err) {
@@ -114,92 +127,129 @@ function Cart() {
         background:
           "linear-gradient(180deg, #f8fafc 0%, #eef2ff 45%, #f8fafc 100%)",
         minHeight: "100vh",
+        padding: isMobile ? "14px" : "20px",
       }}
     >
-      <div className="app-container">
+      <div
+        className="app-container"
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          width: "100%",
+        }}
+      >
         <div
           className="app-card topbar-card"
           style={{
-            padding: "28px",
+            padding: isMobile ? "18px" : "28px",
             borderRadius: "24px",
             border: "1px solid #e5e7eb",
             boxShadow: "0 20px 45px rgba(15, 23, 42, 0.08)",
             background:
               "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(238,242,255,0.92))",
+            marginBottom: "22px",
           }}
         >
-          <div>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "8px 12px",
-                borderRadius: "999px",
-                background: "#eef2ff",
-                color: "#4338ca",
-                fontWeight: "700",
-                fontSize: "12px",
-                marginBottom: "14px",
-              }}
-            >
-              🛒 Premium Cart Experience
+          <div
+            style={{
+              display: "flex",
+              flexDirection: isMobile ? "column" : "row",
+              justifyContent: "space-between",
+              alignItems: isMobile ? "stretch" : "center",
+              gap: "18px",
+            }}
+          >
+            <div>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "8px 12px",
+                  borderRadius: "999px",
+                  background: "#eef2ff",
+                  color: "#4338ca",
+                  fontWeight: "700",
+                  fontSize: "12px",
+                  marginBottom: "14px",
+                  flexWrap: "wrap",
+                }}
+              >
+                🛒 Premium Cart Experience
+              </div>
+
+              <h2
+                className="app-section-title"
+                style={{
+                  marginBottom: "8px",
+                  marginTop: 0,
+                  fontSize: isMobile ? "26px" : "34px",
+                  letterSpacing: "-0.4px",
+                  lineHeight: "1.2",
+                }}
+              >
+                Your Cart
+              </h2>
+
+              <p
+                className="app-section-subtitle"
+                style={{
+                  fontSize: isMobile ? "14px" : "15px",
+                  maxWidth: "560px",
+                  lineHeight: "1.7",
+                  margin: 0,
+                  color: "#4b5563",
+                }}
+              >
+                Review your selected items, update quantities and proceed to a
+                smooth checkout experience.
+              </p>
             </div>
 
-            <h2
-              className="app-section-title"
+            <div
               style={{
-                marginBottom: "8px",
-                fontSize: "34px",
-                letterSpacing: "-0.4px",
+                display: "flex",
+                gap: "10px",
+                flexWrap: "wrap",
+                width: isMobile ? "100%" : "auto",
               }}
             >
-              Your Cart
-            </h2>
-            <p
-              className="app-section-subtitle"
-              style={{
-                fontSize: "15px",
-                maxWidth: "560px",
-                lineHeight: "1.7",
-              }}
-            >
-              Review your selected items, update quantities and proceed to a
-              smooth checkout experience.
-            </p>
-          </div>
-
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-            <Link to="/products">
-              <button
-                className="secondary-btn"
-                style={{
-                  padding: "14px 18px",
-                  borderRadius: "14px",
-                }}
+              <Link
+                to="/products"
+                style={{ width: isMobile ? "100%" : "auto" }}
               >
-                Back to Products
-              </button>
-            </Link>
+                <button
+                  className="secondary-btn"
+                  style={{
+                    padding: "14px 18px",
+                    borderRadius: "14px",
+                    width: isMobile ? "100%" : "auto",
+                  }}
+                >
+                  Back to Products
+                </button>
+              </Link>
 
-            {cart.length > 0 && (
-              <button
-                onClick={clearCart}
-                style={{
-                  background: "linear-gradient(135deg, #dc2626, #b91c1c)",
-                  color: "#ffffff",
-                  border: "none",
-                  borderRadius: "14px",
-                  padding: "14px 18px",
-                  fontSize: "14px",
-                  fontWeight: "800",
-                  cursor: "pointer",
-                  boxShadow: "0 12px 22px rgba(220, 38, 38, 0.18)",
-                }}
-              >
-                Clear Cart
-              </button>
-            )}
+              {cart.length > 0 && (
+                <button
+                  onClick={clearCart}
+                  style={{
+                    background: "linear-gradient(135deg, #dc2626, #b91c1c)",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "14px",
+                    padding: "14px 18px",
+                    fontSize: "14px",
+                    fontWeight: "800",
+                    cursor: "pointer",
+                    boxShadow: "0 12px 22px rgba(220, 38, 38, 0.18)",
+                    width: isMobile ? "100%" : "auto",
+                  }}
+                >
+                  Clear Cart
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -208,20 +258,24 @@ function Cart() {
             className="app-card empty-state"
             style={{
               borderRadius: "24px",
-              padding: "56px 24px",
+              padding: isMobile ? "40px 18px" : "56px 24px",
               boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
+              background: "#fff",
+              textAlign: "center",
             }}
           >
             <div style={{ fontSize: "56px", marginBottom: "14px" }}>🛒</div>
+
             <h3
               style={{
                 margin: 0,
                 color: "#111827",
-                fontSize: "24px",
+                fontSize: isMobile ? "22px" : "24px",
               }}
             >
               Your cart is empty
             </h3>
+
             <p
               style={{
                 color: "#6b7280",
@@ -241,11 +295,19 @@ function Cart() {
             </div>
           </div>
         ) : (
-          <div className="grid-2" style={{ gap: "24px" }}>
+          <div
+            className="grid-2"
+            style={{
+              display: "grid",
+              gridTemplateColumns: isMobile ? "1fr" : "1.6fr 1fr",
+              gap: "24px",
+              alignItems: "start",
+            }}
+          >
             <div
               className="app-card fade-card"
               style={{
-                padding: "26px",
+                padding: isMobile ? "18px" : "26px",
                 borderRadius: "24px",
                 border: "1px solid #e5e7eb",
                 boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
@@ -257,7 +319,7 @@ function Cart() {
                   marginTop: 0,
                   marginBottom: "18px",
                   color: "#111827",
-                  fontSize: "24px",
+                  fontSize: isMobile ? "20px" : "24px",
                 }}
               >
                 Cart Items
@@ -268,88 +330,102 @@ function Cart() {
                   key={item._id}
                   style={{
                     display: "flex",
-                    alignItems: "center",
+                    flexDirection: isMobile ? "column" : "row",
+                    alignItems: isMobile ? "stretch" : "center",
                     justifyContent: "space-between",
-                    padding: "18px",
+                    padding: isMobile ? "14px" : "18px",
                     border: "1px solid #e5e7eb",
                     borderRadius: "20px",
                     marginBottom: "16px",
                     background:
                       "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                     gap: "16px",
-                    flexWrap: "wrap",
                   }}
                 >
                   <div
                     style={{
-                      width: "82px",
-                      height: "82px",
-                      borderRadius: "18px",
-                      background: "linear-gradient(135deg, #eef2ff, #f5f3ff)",
                       display: "flex",
+                      gap: "14px",
                       alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "30px",
-                      flexShrink: 0,
-                      border: "1px solid #e0e7ff",
-                      overflow: "hidden",
+                      width: "100%",
+                      minWidth: 0,
                     }}
                   >
-                    {item.image ? (
-                      <img
-                        src={item.image}
-                        alt={item.name}
+                    <div
+                      style={{
+                        width: isMobile ? "68px" : "82px",
+                        height: isMobile ? "68px" : "82px",
+                        borderRadius: "18px",
+                        background: "linear-gradient(135deg, #eef2ff, #f5f3ff)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "30px",
+                        flexShrink: 0,
+                        border: "1px solid #e0e7ff",
+                        overflow: "hidden",
+                      }}
+                    >
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      ) : (
+                        "📦"
+                      )}
+                    </div>
+
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <h4
                         style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
+                          margin: "0 0 8px",
+                          color: "#111827",
+                          fontSize: isMobile ? "16px" : "18px",
+                          fontWeight: "800",
+                          wordBreak: "break-word",
                         }}
-                      />
-                    ) : (
-                      "📦"
-                    )}
-                  </div>
+                      >
+                        {item.name}
+                      </h4>
 
-                  <div style={{ flex: 1, minWidth: "180px" }}>
-                    <h4
-                      style={{
-                        margin: "0 0 8px",
-                        color: "#111827",
-                        fontSize: "18px",
-                        fontWeight: "800",
-                      }}
-                    >
-                      {item.name}
-                    </h4>
+                      <p
+                        style={{
+                          margin: "0 0 6px",
+                          color: "#6b7280",
+                          fontSize: "14px",
+                        }}
+                      >
+                        Price: ₹{item.price}
+                      </p>
 
-                    <p
-                      style={{
-                        margin: "0 0 6px",
-                        color: "#6b7280",
-                        fontSize: "14px",
-                      }}
-                    >
-                      Price: ₹{item.price}
-                    </p>
-
-                    <p
-                      style={{
-                        margin: 0,
-                        fontWeight: "800",
-                        color: "#4f46e5",
-                        fontSize: "15px",
-                      }}
-                    >
-                      Subtotal: ₹{item.price * item.quantity}
-                    </p>
+                      <p
+                        style={{
+                          margin: 0,
+                          fontWeight: "800",
+                          color: "#4f46e5",
+                          fontSize: "15px",
+                        }}
+                      >
+                        Subtotal: ₹{item.price * item.quantity}
+                      </p>
+                    </div>
                   </div>
 
                   <div
                     style={{
                       display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-end",
+                      flexDirection: isMobile ? "row" : "column",
+                      alignItems: "center",
+                      justifyContent: "space-between",
                       gap: "12px",
+                      width: isMobile ? "100%" : "auto",
+                      flexWrap: "wrap",
                     }}
                   >
                     <div
@@ -404,8 +480,7 @@ function Cart() {
                           borderRadius: "10px",
                           cursor: "pointer",
                           fontWeight: "800",
-                          boxShadow:
-                            "0 8px 16px rgba(79, 70, 229, 0.18)",
+                          boxShadow: "0 8px 16px rgba(79, 70, 229, 0.18)",
                         }}
                       >
                         +
@@ -418,10 +493,11 @@ function Cart() {
                         border: "none",
                         background: "#fee2e2",
                         color: "#b91c1c",
-                        padding: "9px 14px",
+                        padding: "10px 14px",
                         borderRadius: "12px",
                         cursor: "pointer",
                         fontWeight: "800",
+                        width: isMobile ? "100%" : "auto",
                       }}
                     >
                       Remove
@@ -434,12 +510,14 @@ function Cart() {
             <div
               className="app-card fade-card"
               style={{
-                padding: "26px",
+                padding: isMobile ? "18px" : "26px",
                 height: "fit-content",
                 borderRadius: "24px",
                 border: "1px solid #e5e7eb",
                 boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
                 background: "#ffffff",
+                position: isMobile ? "static" : "sticky",
+                top: isMobile ? "auto" : "90px",
               }}
             >
               <h3
@@ -447,7 +525,7 @@ function Cart() {
                   marginTop: 0,
                   marginBottom: "18px",
                   color: "#111827",
-                  fontSize: "24px",
+                  fontSize: isMobile ? "20px" : "24px",
                 }}
               >
                 Order Summary
@@ -470,6 +548,7 @@ function Cart() {
                     marginBottom: "12px",
                     color: "#374151",
                     fontWeight: "600",
+                    gap: "12px",
                   }}
                 >
                   <span>Total Unique Items</span>
@@ -483,6 +562,7 @@ function Cart() {
                     marginBottom: "12px",
                     color: "#374151",
                     fontWeight: "600",
+                    gap: "12px",
                   }}
                 >
                   <span>Total Quantity</span>
@@ -496,6 +576,7 @@ function Cart() {
                     color: "#111827",
                     fontWeight: "800",
                     fontSize: "18px",
+                    gap: "12px",
                   }}
                 >
                   <span>Total Amount</span>
@@ -516,6 +597,8 @@ function Cart() {
                   marginBottom: "18px",
                   borderRadius: "14px",
                   background: "#f9fafb",
+                  width: "100%",
+                  boxSizing: "border-box",
                 }}
               />
 

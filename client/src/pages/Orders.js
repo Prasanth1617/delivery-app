@@ -4,12 +4,25 @@ import { useNavigate } from "react-router-dom";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 640);
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem("token");
+
+        if (!token) {
+          navigate("/");
+          return;
+        }
 
         const res = await axios.get(
           `${process.env.REACT_APP_API_URL}/api/orders/myorders`,
@@ -20,14 +33,14 @@ function Orders() {
           }
         );
 
-        setOrders(res.data);
+        setOrders(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Orders error:", err);
       }
     };
 
     fetchOrders();
-  }, []);
+  }, [navigate]);
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -73,7 +86,7 @@ function Orders() {
             background: "#fff1f2",
             border: "1px solid #fecdd3",
             borderRadius: "18px",
-            padding: "16px",
+            padding: isMobile ? "14px" : "16px",
             marginBottom: "20px",
           }}
         >
@@ -87,6 +100,7 @@ function Orders() {
           >
             ❌ This order was cancelled
           </p>
+
           <p
             style={{
               margin: "8px 0 0",
@@ -110,7 +124,7 @@ function Orders() {
           background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
           border: "1px solid #e5e7eb",
           borderRadius: "20px",
-          padding: "18px",
+          padding: isMobile ? "14px" : "18px",
           marginBottom: "20px",
         }}
       >
@@ -128,7 +142,7 @@ function Orders() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
+            gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)",
             gap: "12px",
           }}
         >
@@ -145,6 +159,7 @@ function Orders() {
                   alignItems: "center",
                   textAlign: "center",
                   gap: "10px",
+                  padding: isMobile ? "8px" : "0",
                 }}
               >
                 <div
@@ -183,6 +198,7 @@ function Orders() {
                   >
                     {step}
                   </p>
+
                   <p
                     style={{
                       margin: "4px 0 0",
@@ -213,13 +229,14 @@ function Orders() {
         background:
           "linear-gradient(180deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%)",
         minHeight: "100vh",
+        padding: isMobile ? "16px 12px" : "32px 20px",
       }}
     >
       <div className="app-container">
         <div
           className="app-card topbar-card"
           style={{
-            padding: "28px",
+            padding: isMobile ? "18px" : "28px",
             borderRadius: "24px",
             border: "1px solid #e5e7eb",
             boxShadow: "0 20px 45px rgba(15, 23, 42, 0.08)",
@@ -227,7 +244,7 @@ function Orders() {
               "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(238,242,255,0.92))",
           }}
         >
-          <div>
+          <div style={{ minWidth: 0 }}>
             <div
               style={{
                 display: "inline-flex",
@@ -240,6 +257,7 @@ function Orders() {
                 fontWeight: "700",
                 fontSize: "12px",
                 marginBottom: "14px",
+                flexWrap: "wrap",
               }}
             >
               📦 Order Tracking Center
@@ -249,16 +267,18 @@ function Orders() {
               className="app-section-title"
               style={{
                 marginBottom: "8px",
-                fontSize: "34px",
+                fontSize: isMobile ? "26px" : "34px",
                 letterSpacing: "-0.4px",
+                lineHeight: "1.2",
               }}
             >
               My Orders
             </h2>
+
             <p
               className="app-section-subtitle"
               style={{
-                fontSize: "15px",
+                fontSize: isMobile ? "14px" : "15px",
                 maxWidth: "560px",
                 lineHeight: "1.7",
               }}
@@ -268,7 +288,14 @@ function Orders() {
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              flexWrap: "wrap",
+              width: isMobile ? "100%" : "auto",
+            }}
+          >
             <button
               className="primary-btn"
               onClick={() => navigate("/products")}
@@ -276,16 +303,19 @@ function Orders() {
                 padding: "14px 18px",
                 borderRadius: "14px",
                 boxShadow: "0 14px 28px rgba(79, 70, 229, 0.24)",
+                width: isMobile ? "100%" : "auto",
               }}
             >
               Shop More
             </button>
+
             <button
               className="secondary-btn"
               onClick={() => navigate("/profile")}
               style={{
                 padding: "14px 18px",
                 borderRadius: "14px",
+                width: isMobile ? "100%" : "auto",
               }}
             >
               Back to Profile
@@ -298,20 +328,22 @@ function Orders() {
             className="app-card empty-state"
             style={{
               borderRadius: "24px",
-              padding: "56px 24px",
+              padding: isMobile ? "40px 18px" : "56px 24px",
               boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
             }}
           >
             <div style={{ fontSize: "56px", marginBottom: "14px" }}>📦</div>
+
             <h3
               style={{
                 margin: 0,
                 color: "#111827",
-                fontSize: "24px",
+                fontSize: isMobile ? "22px" : "24px",
               }}
             >
               No orders yet
             </h3>
+
             <p
               style={{
                 color: "#6b7280",
@@ -328,7 +360,7 @@ function Orders() {
           <div
             style={{
               display: "grid",
-              gap: "24px",
+              gap: isMobile ? "18px" : "24px",
             }}
           >
             {orders.map((order) => (
@@ -336,7 +368,7 @@ function Orders() {
                 key={order._id}
                 className="app-card"
                 style={{
-                  padding: "26px",
+                  padding: isMobile ? "18px" : "26px",
                   borderRadius: "24px",
                   border: "1px solid #e5e7eb",
                   boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
@@ -347,13 +379,13 @@ function Orders() {
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    flexWrap: "wrap",
+                    alignItems: isMobile ? "stretch" : "flex-start",
+                    flexDirection: isMobile ? "column" : "row",
                     gap: "16px",
                     marginBottom: "20px",
                   }}
                 >
-                  <div>
+                  <div style={{ minWidth: 0 }}>
                     <div
                       style={{
                         display: "inline-flex",
@@ -367,6 +399,7 @@ function Orders() {
                         fontWeight: "700",
                         border: "1px solid #e5e7eb",
                         marginBottom: "12px",
+                        flexWrap: "wrap",
                       }}
                     >
                       🧾 Order Summary
@@ -375,13 +408,14 @@ function Orders() {
                     <h3
                       style={{
                         margin: 0,
-                        fontSize: "22px",
+                        fontSize: isMobile ? "20px" : "22px",
                         color: "#111827",
                         letterSpacing: "-0.2px",
                       }}
                     >
                       Order Details
                     </h3>
+
                     <p
                       style={{
                         margin: "8px 0 0",
@@ -403,6 +437,7 @@ function Orders() {
                       fontSize: "13px",
                       fontWeight: "800",
                       boxShadow: "0 8px 16px rgba(15, 23, 42, 0.05)",
+                      alignSelf: isMobile ? "flex-start" : "auto",
                     }}
                   >
                     {order.status}
@@ -414,7 +449,7 @@ function Orders() {
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+                    gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(190px, 1fr))",
                     gap: "16px",
                     marginBottom: "20px",
                   }}
@@ -438,13 +473,15 @@ function Orders() {
                     >
                       Total Amount
                     </p>
+
                     <p
                       style={{
                         margin: 0,
-                        fontSize: "24px",
+                        fontSize: isMobile ? "22px" : "24px",
                         fontWeight: "800",
                         color: "#4f46e5",
                         letterSpacing: "-0.2px",
+                        wordBreak: "break-word",
                       }}
                     >
                       ₹{order.totalAmount}
@@ -470,10 +507,11 @@ function Orders() {
                     >
                       Items Count
                     </p>
+
                     <p
                       style={{
                         margin: 0,
-                        fontSize: "24px",
+                        fontSize: isMobile ? "22px" : "24px",
                         fontWeight: "800",
                         color: "#111827",
                         letterSpacing: "-0.2px",
@@ -503,6 +541,7 @@ function Orders() {
                   >
                     Delivery Address
                   </p>
+
                   <p
                     style={{
                       margin: 0,
@@ -510,9 +549,10 @@ function Orders() {
                       color: "#111827",
                       fontWeight: "600",
                       lineHeight: "1.7",
+                      wordBreak: "break-word",
                     }}
                   >
-                    {order.deliveryAddress}
+                    {order.deliveryAddress || order.address || "Address not available"}
                   </p>
                 </div>
 
@@ -534,27 +574,30 @@ function Orders() {
                         key={index}
                         style={{
                           display: "flex",
+                          flexDirection: isMobile ? "column" : "row",
                           justifyContent: "space-between",
-                          alignItems: "center",
+                          alignItems: isMobile ? "flex-start" : "center",
                           background:
                             "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
                           border: "1px solid #e5e7eb",
                           borderRadius: "16px",
                           padding: "14px 16px",
-                          gap: "14px",
+                          gap: "10px",
                         }}
                       >
-                        <div>
+                        <div style={{ minWidth: 0 }}>
                           <p
                             style={{
                               margin: 0,
                               fontWeight: "800",
                               color: "#111827",
                               fontSize: "15px",
+                              wordBreak: "break-word",
                             }}
                           >
                             {item.name}
                           </p>
+
                           <p
                             style={{
                               margin: "6px 0 0",
@@ -573,7 +616,8 @@ function Orders() {
                             fontWeight: "800",
                             color: "#4f46e5",
                             fontSize: "16px",
-                            whiteSpace: "nowrap",
+                            whiteSpace: isMobile ? "normal" : "nowrap",
+                            wordBreak: "break-word",
                           }}
                         >
                           ₹{item.price}
