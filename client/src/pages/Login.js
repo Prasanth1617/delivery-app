@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./Login.css";
 
@@ -8,12 +8,18 @@ function Login() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectPath = location.state?.from?.pathname || "/profile";
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) navigate("/profile");
-  }, [navigate]);
+    if (token) {
+      navigate(redirectPath, { replace: true });
+    }
+  }, [navigate, redirectPath]);
 
   const isValidIndianPhone = (value) => /^[6-9]\d{9}$/.test(value);
 
@@ -53,7 +59,28 @@ function Login() {
       }
 
       toast.success("Login successful ✅");
-      navigate("/profile");
+
+      const role = res.data.role;
+
+      if (role === "admin") {
+        if (
+          redirectPath.startsWith("/admin") ||
+          redirectPath === "/profile" ||
+          redirectPath === "/products" ||
+          redirectPath === "/cart" ||
+          redirectPath === "/orders"
+        ) {
+          navigate(redirectPath, { replace: true });
+        } else {
+          navigate("/admin/dashboard", { replace: true });
+        }
+      } else {
+        if (redirectPath.startsWith("/admin")) {
+          navigate("/profile", { replace: true });
+        } else {
+          navigate(redirectPath, { replace: true });
+        }
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || "Login Failed ❌");
     } finally {
