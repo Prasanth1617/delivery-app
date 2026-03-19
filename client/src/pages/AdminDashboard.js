@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./AdminDashboard.css";
 
 function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -29,12 +30,14 @@ function AdminDashboard() {
 
   if (!stats) {
     return (
-      <div className="app-page">
+      <div className="app-page admin-dashboard-page">
         <div className="app-container">
-          <div className="app-card empty-state">
-            <div style={{ fontSize: "52px", marginBottom: "14px" }}>📊</div>
-            <h3 style={{ margin: 0 }}>Loading dashboard...</h3>
-            <p>Please wait while we fetch admin statistics.</p>
+          <div className="app-card empty-state admin-dashboard-loading">
+            <div className="admin-dashboard-loading-icon">📊</div>
+            <h3 className="admin-dashboard-loading-title">Loading dashboard...</h3>
+            <p className="admin-dashboard-loading-text">
+              Please wait while we fetch admin statistics.
+            </p>
           </div>
         </div>
       </div>
@@ -46,234 +49,125 @@ function AdminDashboard() {
       title: "Total Orders",
       value: stats.totalOrders,
       icon: "📦",
-      bg: "#eef2ff",
+      bgClass: "orders",
     },
     {
       title: "Pending Orders",
       value: stats.pendingOrders,
       icon: "⏳",
-      bg: "#fef3c7",
+      bgClass: "pending",
     },
     {
       title: "Delivered Orders",
       value: stats.deliveredOrders,
       icon: "✅",
-      bg: "#dcfce7",
+      bgClass: "delivered",
     },
     {
       title: "Total Products",
       value: stats.totalProducts,
       icon: "🛍️",
-      bg: "#ede9fe",
+      bgClass: "products",
     },
     {
       title: "Total Revenue",
       value: `₹${stats.totalRevenue}`,
       icon: "💰",
-      bg: "#dbeafe",
+      bgClass: "revenue",
     },
   ];
 
   return (
-    <div
-      className="app-page"
-      style={{
-        background:
-          "linear-gradient(180deg,#f8fafc 0%,#eef2ff 40%,#f8fafc 100%)",
-        minHeight: "100vh",
-      }}
-    >
+    <div className="app-page admin-dashboard-page">
       <div className="app-container">
-        {/* HEADER */}
-        <div
-          className="app-card topbar-card"
-          style={{
-            padding: "28px",
-            borderRadius: "24px",
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 20px 40px rgba(0,0,0,0.05)",
-          }}
-        >
+        <div className="app-card topbar-card admin-dashboard-top-card">
           <div>
-            <div
-              style={{
-                background: "#eef2ff",
-                padding: "6px 12px",
-                borderRadius: "999px",
-                display: "inline-block",
-                fontSize: "12px",
-                fontWeight: "700",
-                color: "#4338ca",
-                marginBottom: "12px",
-              }}
-            >
-              ⚡ Admin Control Panel
-            </div>
+            <div className="admin-dashboard-pill">⚡ Admin Control Panel</div>
 
-            <h2 style={{ margin: 0, fontSize: "32px", color: "#111827" }}>
-              Admin Dashboard
-            </h2>
+            <h2 className="admin-dashboard-title">Admin Dashboard</h2>
 
-            <p style={{ marginTop: "8px", color: "#6b7280" }}>
+            <p className="admin-dashboard-subtitle">
               Overview of orders, revenue and platform activity
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <div className="admin-dashboard-top-actions">
             <button
-              className="primary-btn"
+              className="primary-btn admin-dashboard-top-btn"
               onClick={() => navigate("/admin/orders")}
+              type="button"
             >
               Manage Orders
             </button>
 
             <button
-              className="secondary-btn"
+              className="secondary-btn admin-dashboard-top-btn"
               onClick={() => navigate("/admin/products")}
+              type="button"
             >
               Manage Products
             </button>
           </div>
         </div>
 
-        {/* STATS */}
-        <div
-          className="grid-cards"
-          style={{ marginTop: "24px", marginBottom: "28px" }}
-        >
+        <div className="grid-cards admin-dashboard-stats">
           {statsCards.map((card, index) => (
-            <div
-              key={index}
-              className="app-card"
-              style={{
-                padding: "24px",
-                borderRadius: "20px",
-                boxShadow: "0 12px 25px rgba(0,0,0,0.04)",
-              }}
-            >
-              <div
-                style={{
-                  width: "54px",
-                  height: "54px",
-                  borderRadius: "16px",
-                  background: card.bg,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "26px",
-                  marginBottom: "16px",
-                }}
-              >
+            <div key={index} className="app-card admin-dashboard-stat-card">
+              <div className={`admin-dashboard-stat-icon ${card.bgClass}`}>
                 {card.icon}
               </div>
 
-              <h3
-                style={{
-                  margin: "0 0 6px",
-                  fontSize: "14px",
-                  color: "#6b7280",
-                  fontWeight: "600",
-                }}
-              >
-                {card.title}
-              </h3>
+              <h3 className="admin-dashboard-stat-title">{card.title}</h3>
 
-              <p
-                style={{
-                  fontSize: "30px",
-                  fontWeight: "800",
-                  margin: 0,
-                  color: "#111827",
-                }}
-              >
-                {card.value}
-              </p>
+              <p className="admin-dashboard-stat-value">{card.value}</p>
             </div>
           ))}
         </div>
 
-        {/* PANELS */}
-        <div className="grid-2">
-          {/* QUICK ACTIONS */}
-          <div
-            className="app-card"
-            style={{
-              padding: "26px",
-              borderRadius: "20px",
-            }}
-          >
-            <h3 style={{ marginTop: 0, marginBottom: "18px" }}>
-              Quick Actions
-            </h3>
+        <div className="grid-2 admin-dashboard-panels">
+          <div className="app-card admin-dashboard-panel">
+            <h3 className="admin-dashboard-panel-title">Quick Actions</h3>
 
-            <div style={{ display: "grid", gap: "14px" }}>
+            <div className="admin-dashboard-actions">
               <button
-                className="primary-btn"
+                className="primary-btn admin-dashboard-action-btn"
                 onClick={() => navigate("/admin/orders")}
-                style={{ width: "100%" }}
+                type="button"
               >
                 Open Orders Panel
               </button>
 
               <button
-                className="secondary-btn"
+                className="secondary-btn admin-dashboard-action-btn"
                 onClick={() => navigate("/admin/products")}
-                style={{ width: "100%" }}
+                type="button"
               >
                 Open Products Panel
               </button>
 
               <button
-                style={{
-                  width: "100%",
-                  padding: "12px",
-                  borderRadius: "12px",
-                  background: "#f9fafb",
-                  border: "1px solid #e5e7eb",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                }}
+                className="admin-dashboard-switch-btn"
                 onClick={() => navigate("/products")}
+                type="button"
               >
                 Switch to User View
               </button>
             </div>
           </div>
 
-          {/* ADMIN NOTES */}
-          <div
-            className="app-card"
-            style={{
-              padding: "26px",
-              borderRadius: "20px",
-            }}
-          >
-            <h3 style={{ marginTop: 0, marginBottom: "18px" }}>Admin Notes</h3>
+          <div className="app-card admin-dashboard-panel">
+            <h3 className="admin-dashboard-panel-title">Admin Notes</h3>
 
-            <div style={{ display: "grid", gap: "14px" }}>
-              <div
-                style={{
-                  background: "#f9fafb",
-                  borderRadius: "14px",
-                  padding: "14px",
-                  border: "1px solid #e5e7eb",
-                }}
-              >
-                <p style={{ margin: 0, lineHeight: "1.7" }}>
+            <div className="admin-dashboard-notes">
+              <div className="admin-dashboard-note">
+                <p>
                   Check pending orders regularly and update delivery status for
                   better customer satisfaction.
                 </p>
               </div>
 
-              <div
-                style={{
-                  background: "#eef2ff",
-                  borderRadius: "14px",
-                  padding: "14px",
-                  border: "1px solid #c7d2fe",
-                }}
-              >
-                <p style={{ margin: 0, lineHeight: "1.7", fontWeight: "600" }}>
+              <div className="admin-dashboard-note admin-dashboard-note-highlight">
+                <p>
                   Keep product stock updated so customers only see available
                   items.
                 </p>

@@ -1,98 +1,100 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "./ForgotPassword.css";
 
 function ForgotPassword() {
   const [phone, setPhone] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [step, setStep] = useState(1); // 1 = enter phone, 2 = set new password
-  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const checkPhone = async () => {
-    if (!phone) return alert("Enter your phone number");
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/auth/check-phone`,
-        { phone }
-      );
-      if (res.data.exists) {
-        setStep(2);
-      } else {
-        alert("Phone number not registered");
-      }
-    } catch (error) {
-      alert("Error checking phone");
+  const isValidIndianPhone = (value) => /^[6-9]\d{9}$/.test(value);
+
+  const handleResetRequest = async () => {
+    if (!phone.trim()) {
+      toast.warning("Please enter your phone number");
+      return;
     }
-  };
 
-  const resetPassword = async () => {
-    if (!newPassword || !confirmPassword)
-      return alert("Fill both password fields");
-    if (newPassword !== confirmPassword)
-      return alert("Passwords do not match");
-    if (newPassword.length < 6)
-      return alert("Password must be at least 6 characters");
+    if (!isValidIndianPhone(phone)) {
+      toast.warning("Enter a valid 10-digit Indian mobile number");
+      return;
+    }
 
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/auth/reset-password`,
-        { phone, newPassword }
-      );
-      setMessage("Password reset successful!");
-      setTimeout(() => navigate("/login"), 2000);
-    } catch (error) {
-      alert("Error resetting password");
+      setLoading(true);
+
+      setTimeout(() => {
+        toast.success("Reset link sent (demo) 📩");
+        navigate("/");
+      }, 1200);
+
+      // Later:
+      // await axios.post("/api/auth/forgot-password", { phone });
+    } catch (err) {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: "40px", maxWidth: "400px", margin: "auto" }}>
-      <h2>Forgot Password</h2>
+    <div className="forgot-page">
+      <div className="forgot-card">
+        <div className="forgot-head">
+          <div className="forgot-icon">🔐</div>
 
-      {step === 1 && (
-        <>
+          <h2 className="forgot-title">Forgot Password</h2>
+
+          <p className="forgot-subtitle">
+            Enter your registered phone number to reset your password.
+          </p>
+        </div>
+
+        <div className="forgot-field">
+          <label>Phone Number</label>
+
           <input
-            type="text"
-            placeholder="Enter your phone number"
+            className="forgot-input"
+            placeholder="Enter 10-digit mobile number"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
+            maxLength={10}
+            inputMode="numeric"
+            onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
           />
-          <button onClick={checkPhone} style={{ width: "100%", padding: "10px" }}>
-            Check Account
+
+          {phone && (
+            <p
+              className={`forgot-phone-hint ${
+                isValidIndianPhone(phone) ? "valid" : "invalid"
+              }`}
+            >
+              {isValidIndianPhone(phone)
+                ? "Valid mobile number"
+                : "Enter a valid number"}
+            </p>
+          )}
+        </div>
+
+        <button
+          onClick={handleResetRequest}
+          disabled={loading}
+          className={`forgot-submit-btn ${loading ? "loading" : ""}`}
+          type="button"
+        >
+          {loading ? "Sending..." : "Send Reset Link"}
+        </button>
+
+        <div className="forgot-footer">
+          <button
+            onClick={() => navigate("/")}
+            className="forgot-back-btn"
+            type="button"
+          >
+            ← Back to Login
           </button>
-        </>
-      )}
-
-      {step === 2 && (
-        <>
-          <input
-            type="password"
-            placeholder="New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
-          />
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            style={{ width: "100%", padding: "10px", marginBottom: "15px" }}
-          />
-          <button onClick={resetPassword} style={{ width: "100%", padding: "10px" }}>
-            Reset Password
-          </button>
-        </>
-      )}
-
-      {message && <p style={{ color: "green", marginTop: "15px" }}>{message}</p>}
-
-      <p style={{ marginTop: "20px" }}>
-        <a href="/login">Back to Login</a>
-      </p>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,18 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./Orders.css";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 640);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 640);
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -42,33 +35,18 @@ function Orders() {
     fetchOrders();
   }, [navigate]);
 
-  const getStatusStyle = (status) => {
+  const getStatusClass = (status) => {
     switch (status) {
       case "Delivered":
-        return {
-          background: "#dcfce7",
-          color: "#166534",
-        };
+        return "orders-status delivered";
       case "Cancelled":
-        return {
-          background: "#fee2e2",
-          color: "#991b1b",
-        };
+        return "orders-status cancelled";
       case "Out for Delivery":
-        return {
-          background: "#dbeafe",
-          color: "#1d4ed8",
-        };
+        return "orders-status out-for-delivery";
       case "Packed":
-        return {
-          background: "#fef3c7",
-          color: "#92400e",
-        };
+        return "orders-status packed";
       default:
-        return {
-          background: "#ede9fe",
-          color: "#5b21b6",
-        };
+        return "orders-status pending";
     }
   };
 
@@ -81,34 +59,9 @@ function Orders() {
   const renderOrderTimeline = (status) => {
     if (status === "Cancelled") {
       return (
-        <div
-          style={{
-            background: "#fff1f2",
-            border: "1px solid #fecdd3",
-            borderRadius: "18px",
-            padding: isMobile ? "14px" : "16px",
-            marginBottom: "20px",
-          }}
-        >
-          <p
-            style={{
-              margin: 0,
-              fontWeight: "800",
-              color: "#be123c",
-              fontSize: "15px",
-            }}
-          >
-            ❌ This order was cancelled
-          </p>
-
-          <p
-            style={{
-              margin: "8px 0 0",
-              color: "#9f1239",
-              fontSize: "14px",
-              lineHeight: "1.7",
-            }}
-          >
+        <div className="orders-cancelled-box">
+          <p className="orders-cancelled-title">❌ This order was cancelled</p>
+          <p className="orders-cancelled-text">
             This order is no longer being processed. You can place a new order
             anytime from the products page.
           </p>
@@ -119,99 +72,39 @@ function Orders() {
     const activeIndex = getStepIndex(status);
 
     return (
-      <div
-        style={{
-          background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
-          border: "1px solid #e5e7eb",
-          borderRadius: "20px",
-          padding: isMobile ? "14px" : "18px",
-          marginBottom: "20px",
-        }}
-      >
-        <p
-          style={{
-            margin: "0 0 16px",
-            fontSize: "14px",
-            fontWeight: "800",
-            color: "#374151",
-          }}
-        >
-          Delivery Progress
-        </p>
+      <div className="orders-timeline-card">
+        <p className="orders-timeline-title">Delivery Progress</p>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)",
-            gap: "12px",
-          }}
-        >
+        <div className="orders-timeline-grid">
           {orderSteps.map((step, index) => {
             const isCompleted = index <= activeIndex;
             const isCurrent = index === activeIndex;
 
             return (
-              <div
-                key={step}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  textAlign: "center",
-                  gap: "10px",
-                  padding: isMobile ? "8px" : "0",
-                }}
-              >
+              <div key={step} className="orders-timeline-step">
                 <div
-                  style={{
-                    width: "42px",
-                    height: "42px",
-                    borderRadius: "999px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "16px",
-                    fontWeight: "800",
-                    color: isCompleted ? "#ffffff" : "#6b7280",
-                    background: isCompleted
-                      ? isCurrent
-                        ? "linear-gradient(135deg, #4f46e5, #7c3aed)"
-                        : "#111827"
-                      : "#e5e7eb",
-                    boxShadow: isCurrent
-                      ? "0 12px 22px rgba(79, 70, 229, 0.20)"
-                      : "none",
-                  }}
+                  className={`orders-timeline-dot ${
+                    isCompleted ? "completed" : ""
+                  } ${isCurrent ? "current" : ""}`}
                 >
                   {index + 1}
                 </div>
 
                 <div>
                   <p
-                    style={{
-                      margin: 0,
-                      fontSize: "13px",
-                      fontWeight: "800",
-                      color: isCompleted ? "#111827" : "#6b7280",
-                      lineHeight: "1.5",
-                    }}
+                    className={`orders-timeline-step-name ${
+                      isCompleted ? "completed" : ""
+                    }`}
                   >
                     {step}
                   </p>
 
                   <p
-                    style={{
-                      margin: "4px 0 0",
-                      fontSize: "12px",
-                      color: isCurrent ? "#4f46e5" : "#9ca3af",
-                      fontWeight: "700",
-                    }}
+                    className={`orders-timeline-step-state ${
+                      isCurrent ? "current" : ""
+                    } ${isCompleted ? "done" : ""}`}
                   >
-                    {isCurrent
-                      ? "Current"
-                      : isCompleted
-                      ? "Done"
-                      : "Waiting"}
+                    {isCurrent ? "Current" : isCompleted ? "Done" : "Waiting"}
                   </p>
                 </div>
               </div>
@@ -223,100 +116,33 @@ function Orders() {
   };
 
   return (
-    <div
-      className="app-page"
-      style={{
-        background:
-          "linear-gradient(180deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%)",
-        minHeight: "100vh",
-        padding: isMobile ? "16px 12px" : "32px 20px",
-      }}
-    >
+    <div className="app-page orders-page">
       <div className="app-container">
-        <div
-          className="app-card topbar-card"
-          style={{
-            padding: isMobile ? "18px" : "28px",
-            borderRadius: "24px",
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 20px 45px rgba(15, 23, 42, 0.08)",
-            background:
-              "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(238,242,255,0.92))",
-          }}
-        >
-          <div style={{ minWidth: 0 }}>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "8px 12px",
-                borderRadius: "999px",
-                background: "#eef2ff",
-                color: "#4338ca",
-                fontWeight: "700",
-                fontSize: "12px",
-                marginBottom: "14px",
-                flexWrap: "wrap",
-              }}
-            >
-              📦 Order Tracking Center
-            </div>
+        <div className="app-card topbar-card orders-top-card">
+          <div className="orders-top-left">
+            <div className="orders-top-pill">📦 Order Tracking Center</div>
 
-            <h2
-              className="app-section-title"
-              style={{
-                marginBottom: "8px",
-                fontSize: isMobile ? "26px" : "34px",
-                letterSpacing: "-0.4px",
-                lineHeight: "1.2",
-              }}
-            >
-              My Orders
-            </h2>
+            <h2 className="app-section-title orders-top-title">My Orders</h2>
 
-            <p
-              className="app-section-subtitle"
-              style={{
-                fontSize: isMobile ? "14px" : "15px",
-                maxWidth: "560px",
-                lineHeight: "1.7",
-              }}
-            >
+            <p className="app-section-subtitle orders-top-subtitle">
               Track your placed orders, monitor delivery progress and review
               item details in one clean view.
             </p>
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-              flexWrap: "wrap",
-              width: isMobile ? "100%" : "auto",
-            }}
-          >
+          <div className="orders-top-actions">
             <button
-              className="primary-btn"
+              className="primary-btn orders-top-btn"
               onClick={() => navigate("/products")}
-              style={{
-                padding: "14px 18px",
-                borderRadius: "14px",
-                boxShadow: "0 14px 28px rgba(79, 70, 229, 0.24)",
-                width: isMobile ? "100%" : "auto",
-              }}
+              type="button"
             >
               Shop More
             </button>
 
             <button
-              className="secondary-btn"
+              className="secondary-btn orders-top-btn"
               onClick={() => navigate("/profile")}
-              style={{
-                padding: "14px 18px",
-                borderRadius: "14px",
-                width: isMobile ? "100%" : "auto",
-              }}
+              type="button"
             >
               Back to Profile
             </button>
@@ -324,304 +150,70 @@ function Orders() {
         </div>
 
         {orders.length === 0 ? (
-          <div
-            className="app-card empty-state"
-            style={{
-              borderRadius: "24px",
-              padding: isMobile ? "40px 18px" : "56px 24px",
-              boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
-            }}
-          >
-            <div style={{ fontSize: "56px", marginBottom: "14px" }}>📦</div>
+          <div className="app-card empty-state orders-empty-card">
+            <div className="orders-empty-icon">📦</div>
 
-            <h3
-              style={{
-                margin: 0,
-                color: "#111827",
-                fontSize: isMobile ? "22px" : "24px",
-              }}
-            >
-              No orders yet
-            </h3>
+            <h3 className="orders-empty-title">No orders yet</h3>
 
-            <p
-              style={{
-                color: "#6b7280",
-                marginTop: "12px",
-                fontSize: "15px",
-                maxWidth: "460px",
-                marginInline: "auto",
-              }}
-            >
+            <p className="orders-empty-text">
               Your placed orders will appear here once you complete checkout.
             </p>
           </div>
         ) : (
-          <div
-            style={{
-              display: "grid",
-              gap: isMobile ? "18px" : "24px",
-            }}
-          >
+          <div className="orders-list">
             {orders.map((order) => (
-              <div
-                key={order._id}
-                className="app-card"
-                style={{
-                  padding: isMobile ? "18px" : "26px",
-                  borderRadius: "24px",
-                  border: "1px solid #e5e7eb",
-                  boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
-                  background: "#ffffff",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: isMobile ? "stretch" : "flex-start",
-                    flexDirection: isMobile ? "column" : "row",
-                    gap: "16px",
-                    marginBottom: "20px",
-                  }}
-                >
-                  <div style={{ minWidth: 0 }}>
-                    <div
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        padding: "7px 11px",
-                        borderRadius: "999px",
-                        background: "#f8fafc",
-                        color: "#475569",
-                        fontSize: "12px",
-                        fontWeight: "700",
-                        border: "1px solid #e5e7eb",
-                        marginBottom: "12px",
-                        flexWrap: "wrap",
-                      }}
-                    >
-                      🧾 Order Summary
-                    </div>
+              <div key={order._id} className="app-card orders-card">
+                <div className="orders-card-header">
+                  <div className="orders-card-head-left">
+                    <div className="orders-summary-pill">🧾 Order Summary</div>
 
-                    <h3
-                      style={{
-                        margin: 0,
-                        fontSize: isMobile ? "20px" : "22px",
-                        color: "#111827",
-                        letterSpacing: "-0.2px",
-                      }}
-                    >
-                      Order Details
-                    </h3>
+                    <h3 className="orders-card-title">Order Details</h3>
 
-                    <p
-                      style={{
-                        margin: "8px 0 0",
-                        color: "#6b7280",
-                        fontSize: "14px",
-                        wordBreak: "break-all",
-                        lineHeight: "1.6",
-                      }}
-                    >
-                      Order ID: {order._id}
-                    </p>
+                    <p className="orders-card-id">Order ID: {order._id}</p>
                   </div>
 
-                  <span
-                    style={{
-                      ...getStatusStyle(order.status),
-                      padding: "9px 15px",
-                      borderRadius: "999px",
-                      fontSize: "13px",
-                      fontWeight: "800",
-                      boxShadow: "0 8px 16px rgba(15, 23, 42, 0.05)",
-                      alignSelf: isMobile ? "flex-start" : "auto",
-                    }}
-                  >
+                  <span className={getStatusClass(order.status)}>
                     {order.status}
                   </span>
                 </div>
 
                 {renderOrderTimeline(order.status)}
 
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(190px, 1fr))",
-                    gap: "16px",
-                    marginBottom: "20px",
-                  }}
-                >
-                  <div
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "18px",
-                      padding: "16px",
-                    }}
-                  >
-                    <p
-                      style={{
-                        margin: "0 0 8px",
-                        fontSize: "13px",
-                        color: "#6b7280",
-                        fontWeight: "700",
-                      }}
-                    >
-                      Total Amount
-                    </p>
-
-                    <p
-                      style={{
-                        margin: 0,
-                        fontSize: isMobile ? "22px" : "24px",
-                        fontWeight: "800",
-                        color: "#4f46e5",
-                        letterSpacing: "-0.2px",
-                        wordBreak: "break-word",
-                      }}
-                    >
+                <div className="orders-stats-grid">
+                  <div className="orders-soft-box">
+                    <p className="orders-box-label">Total Amount</p>
+                    <p className="orders-box-value orders-box-value-purple">
                       ₹{order.totalAmount}
                     </p>
                   </div>
 
-                  <div
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "18px",
-                      padding: "16px",
-                    }}
-                  >
-                    <p
-                      style={{
-                        margin: "0 0 8px",
-                        fontSize: "13px",
-                        color: "#6b7280",
-                        fontWeight: "700",
-                      }}
-                    >
-                      Items Count
-                    </p>
-
-                    <p
-                      style={{
-                        margin: 0,
-                        fontSize: isMobile ? "22px" : "24px",
-                        fontWeight: "800",
-                        color: "#111827",
-                        letterSpacing: "-0.2px",
-                      }}
-                    >
-                      {order.items.length}
-                    </p>
+                  <div className="orders-soft-box">
+                    <p className="orders-box-label">Items Count</p>
+                    <p className="orders-box-value">{order.items.length}</p>
                   </div>
                 </div>
 
-                <div
-                  style={{
-                    background: "#f9fafb",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "18px",
-                    padding: "16px",
-                    marginBottom: "20px",
-                  }}
-                >
-                  <p
-                    style={{
-                      margin: "0 0 8px",
-                      fontSize: "13px",
-                      color: "#6b7280",
-                      fontWeight: "700",
-                    }}
-                  >
-                    Delivery Address
-                  </p>
-
-                  <p
-                    style={{
-                      margin: 0,
-                      fontSize: "15px",
-                      color: "#111827",
-                      fontWeight: "600",
-                      lineHeight: "1.7",
-                      wordBreak: "break-word",
-                    }}
-                  >
-                    {order.deliveryAddress || order.address || "Address not available"}
+                <div className="orders-address-box">
+                  <p className="orders-box-label">Delivery Address</p>
+                  <p className="orders-address-text">
+                    {order.deliveryAddress ||
+                      order.address ||
+                      "Address not available"}
                   </p>
                 </div>
 
                 <div>
-                  <p
-                    style={{
-                      margin: "0 0 14px",
-                      fontSize: "15px",
-                      fontWeight: "800",
-                      color: "#374151",
-                    }}
-                  >
-                    Ordered Items
-                  </p>
+                  <p className="orders-items-title">Ordered Items</p>
 
-                  <div style={{ display: "grid", gap: "12px" }}>
+                  <div className="orders-items-list">
                     {order.items.map((item, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: "flex",
-                          flexDirection: isMobile ? "column" : "row",
-                          justifyContent: "space-between",
-                          alignItems: isMobile ? "flex-start" : "center",
-                          background:
-                            "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
-                          border: "1px solid #e5e7eb",
-                          borderRadius: "16px",
-                          padding: "14px 16px",
-                          gap: "10px",
-                        }}
-                      >
-                        <div style={{ minWidth: 0 }}>
-                          <p
-                            style={{
-                              margin: 0,
-                              fontWeight: "800",
-                              color: "#111827",
-                              fontSize: "15px",
-                              wordBreak: "break-word",
-                            }}
-                          >
-                            {item.name}
-                          </p>
-
-                          <p
-                            style={{
-                              margin: "6px 0 0",
-                              fontSize: "13px",
-                              color: "#6b7280",
-                              fontWeight: "500",
-                            }}
-                          >
-                            Qty: {item.quantity}
-                          </p>
+                      <div key={index} className="orders-item-row">
+                        <div className="orders-item-left">
+                          <p className="orders-item-name">{item.name}</p>
+                          <p className="orders-item-qty">Qty: {item.quantity}</p>
                         </div>
 
-                        <p
-                          style={{
-                            margin: 0,
-                            fontWeight: "800",
-                            color: "#4f46e5",
-                            fontSize: "16px",
-                            whiteSpace: isMobile ? "normal" : "nowrap",
-                            wordBreak: "break-word",
-                          }}
-                        >
-                          ₹{item.price}
-                        </p>
+                        <p className="orders-item-price">₹{item.price}</p>
                       </div>
                     ))}
                   </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./AdminOrders.css";
 
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
@@ -42,18 +43,18 @@ function AdminOrders() {
     }
   };
 
-  const getStatusStyle = (status) => {
+  const getStatusClass = (status) => {
     switch (status) {
       case "Delivered":
-        return { background: "#dcfce7", color: "#166534" };
+        return "admin-orders-status delivered";
       case "Cancelled":
-        return { background: "#fee2e2", color: "#991b1b" };
+        return "admin-orders-status cancelled";
       case "Out for Delivery":
-        return { background: "#dbeafe", color: "#1d4ed8" };
+        return "admin-orders-status out-for-delivery";
       case "Packed":
-        return { background: "#fef3c7", color: "#92400e" };
+        return "admin-orders-status packed";
       default:
-        return { background: "#ede9fe", color: "#5b21b6" };
+        return "admin-orders-status pending";
     }
   };
 
@@ -62,9 +63,9 @@ function AdminOrders() {
   }, []);
 
   return (
-    <div className="app-page">
+    <div className="app-page admin-orders-page">
       <div className="app-container">
-        <div className="app-card topbar-card">
+        <div className="app-card topbar-card admin-orders-top-card">
           <div>
             <h2 className="app-section-title">Admin Orders</h2>
             <p className="app-section-subtitle">
@@ -72,17 +73,19 @@ function AdminOrders() {
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <div className="admin-orders-top-actions">
             <button
-              className="primary-btn"
+              className="primary-btn admin-orders-top-btn"
               onClick={() => navigate("/admin/dashboard")}
+              type="button"
             >
               Dashboard
             </button>
 
             <button
-              className="secondary-btn"
+              className="secondary-btn admin-orders-top-btn"
               onClick={() => navigate("/admin/products")}
+              type="button"
             >
               Products
             </button>
@@ -90,183 +93,56 @@ function AdminOrders() {
         </div>
 
         {orders.length === 0 ? (
-          <div className="app-card empty-state">
-            <div style={{ fontSize: "48px", marginBottom: "12px" }}>📦</div>
-            <h3 style={{ margin: 0, color: "#111827" }}>No orders found</h3>
-            <p style={{ color: "#6b7280", marginTop: "10px" }}>
+          <div className="app-card empty-state admin-orders-empty-card">
+            <div className="admin-orders-empty-icon">📦</div>
+            <h3 className="admin-orders-empty-title">No orders found</h3>
+            <p className="admin-orders-empty-text">
               Customer orders will appear here once users start placing them.
             </p>
           </div>
         ) : (
-          <div style={{ display: "grid", gap: "20px" }}>
+          <div className="admin-orders-list">
             {orders.map((order) => (
-              <div
-                key={order._id}
-                className="app-card"
-                style={{ padding: "24px" }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    flexWrap: "wrap",
-                    gap: "16px",
-                    marginBottom: "18px",
-                  }}
-                >
+              <div key={order._id} className="app-card admin-orders-card">
+                <div className="admin-orders-header">
                   <div>
-                    <h3
-                      style={{
-                        margin: 0,
-                        fontSize: "20px",
-                        color: "#111827",
-                      }}
-                    >
-                      Order Management
-                    </h3>
-                    <p
-                      style={{
-                        margin: "8px 0 0",
-                        color: "#6b7280",
-                        fontSize: "14px",
-                        wordBreak: "break-all",
-                      }}
-                    >
-                      Order ID: {order._id}
-                    </p>
+                    <h3 className="admin-orders-card-title">Order Management</h3>
+                    <p className="admin-orders-card-id">Order ID: {order._id}</p>
                   </div>
 
-                  <span
-                    style={{
-                      ...getStatusStyle(order.status),
-                      padding: "8px 14px",
-                      borderRadius: "999px",
-                      fontSize: "13px",
-                      fontWeight: "700",
-                    }}
-                  >
+                  <span className={getStatusClass(order.status)}>
                     {order.status}
                   </span>
                 </div>
 
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-                    gap: "14px",
-                    marginBottom: "18px",
-                  }}
-                >
-                  <div
-                    style={{
-                      background: "#f9fafb",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "14px",
-                      padding: "14px",
-                    }}
-                  >
-                    <p
-                      style={{
-                        margin: "0 0 8px",
-                        fontSize: "13px",
-                        color: "#6b7280",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Total Amount
-                    </p>
-                    <p
-                      style={{
-                        margin: 0,
-                        fontSize: "18px",
-                        fontWeight: "700",
-                        color: "#4f46e5",
-                      }}
-                    >
+                <div className="admin-orders-stats-grid">
+                  <div className="admin-orders-soft-box">
+                    <p className="admin-orders-box-label">Total Amount</p>
+                    <p className="admin-orders-box-value amount">
                       ₹{order.totalAmount}
                     </p>
                   </div>
 
-                  <div
-                    style={{
-                      background: "#f9fafb",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "14px",
-                      padding: "14px",
-                    }}
-                  >
-                    <p
-                      style={{
-                        margin: "0 0 8px",
-                        fontSize: "13px",
-                        color: "#6b7280",
-                        fontWeight: "600",
-                      }}
-                    >
-                      Items Count
-                    </p>
-                    <p
-                      style={{
-                        margin: 0,
-                        fontSize: "18px",
-                        fontWeight: "700",
-                        color: "#111827",
-                      }}
-                    >
-                      {order.items.length}
-                    </p>
+                  <div className="admin-orders-soft-box">
+                    <p className="admin-orders-box-label">Items Count</p>
+                    <p className="admin-orders-box-value">{order.items.length}</p>
                   </div>
                 </div>
 
-                <div
-                  style={{
-                    background: "#f9fafb",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "14px",
-                    padding: "14px",
-                    marginBottom: "18px",
-                  }}
-                >
-                  <p
-                    style={{
-                      margin: "0 0 8px",
-                      fontSize: "13px",
-                      color: "#6b7280",
-                      fontWeight: "600",
-                    }}
-                  >
-                    Delivery Address
-                  </p>
-                  <p
-                    style={{
-                      margin: 0,
-                      fontSize: "15px",
-                      color: "#111827",
-                      fontWeight: "600",
-                    }}
-                  >
-                    {order.deliveryAddress}
+                <div className="admin-orders-address-box">
+                  <p className="admin-orders-box-label">Delivery Address</p>
+                  <p className="admin-orders-address-text">
+                    {order.deliveryAddress || order.address || "Address not available"}
                   </p>
                 </div>
 
-                <div style={{ marginBottom: "18px" }}>
-                  <p
-                    style={{
-                      margin: "0 0 12px",
-                      fontSize: "14px",
-                      fontWeight: "700",
-                      color: "#374151",
-                    }}
-                  >
-                    Update Status
-                  </p>
+                <div className="admin-orders-status-section">
+                  <p className="admin-orders-section-label">Update Status</p>
 
                   <select
                     value={order.status}
                     onChange={(e) => updateStatus(order._id, e.target.value)}
-                    className="input-field"
-                    style={{ maxWidth: "260px" }}
+                    className="input-field admin-orders-select"
                   >
                     <option value="Pending">Pending</option>
                     <option value="Packed">Packed</option>
@@ -277,62 +153,17 @@ function AdminOrders() {
                 </div>
 
                 <div>
-                  <p
-                    style={{
-                      margin: "0 0 12px",
-                      fontSize: "14px",
-                      fontWeight: "700",
-                      color: "#374151",
-                    }}
-                  >
-                    Ordered Items
-                  </p>
+                  <p className="admin-orders-section-label">Ordered Items</p>
 
-                  <div style={{ display: "grid", gap: "10px" }}>
+                  <div className="admin-orders-items-list">
                     {order.items.map((item, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          background: "#ffffff",
-                          border: "1px solid #e5e7eb",
-                          borderRadius: "12px",
-                          padding: "12px 14px",
-                          gap: "12px",
-                        }}
-                      >
+                      <div key={index} className="admin-orders-item-row">
                         <div>
-                          <p
-                            style={{
-                              margin: 0,
-                              fontWeight: "700",
-                              color: "#111827",
-                            }}
-                          >
-                            {item.name}
-                          </p>
-                          <p
-                            style={{
-                              margin: "6px 0 0",
-                              fontSize: "13px",
-                              color: "#6b7280",
-                            }}
-                          >
-                            Qty: {item.quantity}
-                          </p>
+                          <p className="admin-orders-item-name">{item.name}</p>
+                          <p className="admin-orders-item-qty">Qty: {item.quantity}</p>
                         </div>
 
-                        <p
-                          style={{
-                            margin: 0,
-                            fontWeight: "700",
-                            color: "#4f46e5",
-                          }}
-                        >
-                          ₹{item.price}
-                        </p>
+                        <p className="admin-orders-item-price">₹{item.price}</p>
                       </div>
                     ))}
                   </div>

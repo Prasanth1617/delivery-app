@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import "./Cart.css";
 
 function Cart() {
   const navigate = useNavigate();
@@ -12,14 +13,6 @@ function Cart() {
 
   const [address, setAddress] = useState(localStorage.getItem("address") || "");
   const [loading, setLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     localStorage.setItem("address", address);
@@ -121,111 +114,24 @@ function Cart() {
   };
 
   return (
-    <div
-      className="app-page"
-      style={{
-        background:
-          "linear-gradient(180deg, #f8fafc 0%, #eef2ff 45%, #f8fafc 100%)",
-        minHeight: "100vh",
-        padding: isMobile ? "14px" : "20px",
-      }}
-    >
-      <div
-        className="app-container"
-        style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          width: "100%",
-        }}
-      >
-        <div
-          className="app-card topbar-card"
-          style={{
-            padding: isMobile ? "18px" : "28px",
-            borderRadius: "24px",
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 20px 45px rgba(15, 23, 42, 0.08)",
-            background:
-              "linear-gradient(135deg, rgba(255,255,255,0.98), rgba(238,242,255,0.92))",
-            marginBottom: "22px",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: isMobile ? "column" : "row",
-              justifyContent: "space-between",
-              alignItems: isMobile ? "stretch" : "center",
-              gap: "18px",
-            }}
-          >
-            <div>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "8px 12px",
-                  borderRadius: "999px",
-                  background: "#eef2ff",
-                  color: "#4338ca",
-                  fontWeight: "700",
-                  fontSize: "12px",
-                  marginBottom: "14px",
-                  flexWrap: "wrap",
-                }}
-              >
-                🛒 Premium Cart Experience
-              </div>
+    <div className="app-page cart-page">
+      <div className="app-container cart-container">
+        <div className="app-card topbar-card cart-top-card">
+          <div className="cart-top-inner">
+            <div className="cart-top-left">
+              <div className="cart-top-pill">🛒 Premium Cart Experience</div>
 
-              <h2
-                className="app-section-title"
-                style={{
-                  marginBottom: "8px",
-                  marginTop: 0,
-                  fontSize: isMobile ? "26px" : "34px",
-                  letterSpacing: "-0.4px",
-                  lineHeight: "1.2",
-                }}
-              >
-                Your Cart
-              </h2>
+              <h2 className="app-section-title cart-top-title">Your Cart</h2>
 
-              <p
-                className="app-section-subtitle"
-                style={{
-                  fontSize: isMobile ? "14px" : "15px",
-                  maxWidth: "560px",
-                  lineHeight: "1.7",
-                  margin: 0,
-                  color: "#4b5563",
-                }}
-              >
+              <p className="app-section-subtitle cart-top-subtitle">
                 Review your selected items, update quantities and proceed to a
                 smooth checkout experience.
               </p>
             </div>
 
-            <div
-              style={{
-                display: "flex",
-                gap: "10px",
-                flexWrap: "wrap",
-                width: isMobile ? "100%" : "auto",
-              }}
-            >
-              <Link
-                to="/products"
-                style={{ width: isMobile ? "100%" : "auto" }}
-              >
-                <button
-                  className="secondary-btn"
-                  style={{
-                    padding: "14px 18px",
-                    borderRadius: "14px",
-                    width: isMobile ? "100%" : "auto",
-                  }}
-                >
+            <div className="cart-top-actions">
+              <Link to="/products" className="cart-top-link">
+                <button className="secondary-btn cart-top-btn" type="button">
                   Back to Products
                 </button>
               </Link>
@@ -233,18 +139,8 @@ function Cart() {
               {cart.length > 0 && (
                 <button
                   onClick={clearCart}
-                  style={{
-                    background: "linear-gradient(135deg, #dc2626, #b91c1c)",
-                    color: "#ffffff",
-                    border: "none",
-                    borderRadius: "14px",
-                    padding: "14px 18px",
-                    fontSize: "14px",
-                    fontWeight: "800",
-                    cursor: "pointer",
-                    boxShadow: "0 12px 22px rgba(220, 38, 38, 0.18)",
-                    width: isMobile ? "100%" : "auto",
-                  }}
+                  className="cart-clear-btn"
+                  type="button"
                 >
                   Clear Cart
                 </button>
@@ -254,234 +150,70 @@ function Cart() {
         </div>
 
         {cart.length === 0 ? (
-          <div
-            className="app-card empty-state"
-            style={{
-              borderRadius: "24px",
-              padding: isMobile ? "40px 18px" : "56px 24px",
-              boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
-              background: "#fff",
-              textAlign: "center",
-            }}
-          >
-            <div style={{ fontSize: "56px", marginBottom: "14px" }}>🛒</div>
+          <div className="app-card empty-state cart-empty-card">
+            <div className="cart-empty-icon">🛒</div>
 
-            <h3
-              style={{
-                margin: 0,
-                color: "#111827",
-                fontSize: isMobile ? "22px" : "24px",
-              }}
-            >
-              Your cart is empty
-            </h3>
+            <h3 className="cart-empty-title">Your cart is empty</h3>
 
-            <p
-              style={{
-                color: "#6b7280",
-                marginTop: "12px",
-                fontSize: "15px",
-                maxWidth: "460px",
-                marginInline: "auto",
-              }}
-            >
+            <p className="cart-empty-text">
               Add some amazing products to continue your shopping journey.
             </p>
 
-            <div style={{ marginTop: "20px" }}>
+            <div className="cart-empty-action">
               <Link to="/products">
-                <button className="primary-btn">Browse Products</button>
+                <button className="primary-btn" type="button">
+                  Browse Products
+                </button>
               </Link>
             </div>
           </div>
         ) : (
-          <div
-            className="grid-2"
-            style={{
-              display: "grid",
-              gridTemplateColumns: isMobile ? "1fr" : "1.6fr 1fr",
-              gap: "24px",
-              alignItems: "start",
-            }}
-          >
-            <div
-              className="app-card fade-card"
-              style={{
-                padding: isMobile ? "18px" : "26px",
-                borderRadius: "24px",
-                border: "1px solid #e5e7eb",
-                boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
-                background: "#ffffff",
-              }}
-            >
-              <h3
-                style={{
-                  marginTop: 0,
-                  marginBottom: "18px",
-                  color: "#111827",
-                  fontSize: isMobile ? "20px" : "24px",
-                }}
-              >
-                Cart Items
-              </h3>
+          <div className="cart-grid">
+            <div className="app-card fade-card cart-items-card">
+              <h3 className="cart-section-title">Cart Items</h3>
 
               {cart.map((item) => (
-                <div
-                  key={item._id}
-                  style={{
-                    display: "flex",
-                    flexDirection: isMobile ? "column" : "row",
-                    alignItems: isMobile ? "stretch" : "center",
-                    justifyContent: "space-between",
-                    padding: isMobile ? "14px" : "18px",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "20px",
-                    marginBottom: "16px",
-                    background:
-                      "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
-                    gap: "16px",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "14px",
-                      alignItems: "center",
-                      width: "100%",
-                      minWidth: 0,
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: isMobile ? "68px" : "82px",
-                        height: isMobile ? "68px" : "82px",
-                        borderRadius: "18px",
-                        background: "linear-gradient(135deg, #eef2ff, #f5f3ff)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "30px",
-                        flexShrink: 0,
-                        border: "1px solid #e0e7ff",
-                        overflow: "hidden",
-                      }}
-                    >
+                <div key={item._id} className="cart-item-card">
+                  <div className="cart-item-main">
+                    <div className="cart-item-image-wrap">
                       {item.image ? (
                         <img
                           src={item.image}
                           alt={item.name}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
+                          className="cart-item-image"
                         />
                       ) : (
                         "📦"
                       )}
                     </div>
 
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <h4
-                        style={{
-                          margin: "0 0 8px",
-                          color: "#111827",
-                          fontSize: isMobile ? "16px" : "18px",
-                          fontWeight: "800",
-                          wordBreak: "break-word",
-                        }}
-                      >
-                        {item.name}
-                      </h4>
+                    <div className="cart-item-content">
+                      <h4 className="cart-item-name">{item.name}</h4>
 
-                      <p
-                        style={{
-                          margin: "0 0 6px",
-                          color: "#6b7280",
-                          fontSize: "14px",
-                        }}
-                      >
-                        Price: ₹{item.price}
-                      </p>
+                      <p className="cart-item-price">Price: ₹{item.price}</p>
 
-                      <p
-                        style={{
-                          margin: 0,
-                          fontWeight: "800",
-                          color: "#4f46e5",
-                          fontSize: "15px",
-                        }}
-                      >
+                      <p className="cart-item-subtotal">
                         Subtotal: ₹{item.price * item.quantity}
                       </p>
                     </div>
                   </div>
 
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: isMobile ? "row" : "column",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: "12px",
-                      width: isMobile ? "100%" : "auto",
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                        background: "#ffffff",
-                        border: "1px solid #e5e7eb",
-                        borderRadius: "14px",
-                        padding: "7px 10px",
-                        boxShadow: "0 8px 18px rgba(15, 23, 42, 0.04)",
-                      }}
-                    >
+                  <div className="cart-item-actions">
+                    <div className="cart-qty-box">
                       <button
                         onClick={() => decreaseQuantity(item._id)}
-                        style={{
-                          border: "none",
-                          background: "#e5e7eb",
-                          width: "32px",
-                          height: "32px",
-                          borderRadius: "10px",
-                          cursor: "pointer",
-                          fontWeight: "800",
-                          color: "#111827",
-                        }}
+                        className="cart-qty-btn cart-qty-btn-minus"
+                        type="button"
                       >
                         -
                       </button>
 
-                      <span
-                        style={{
-                          minWidth: "26px",
-                          textAlign: "center",
-                          fontWeight: "800",
-                          color: "#111827",
-                          fontSize: "15px",
-                        }}
-                      >
-                        {item.quantity}
-                      </span>
+                      <span className="cart-qty-value">{item.quantity}</span>
 
                       <button
                         onClick={() => increaseQuantity(item._id)}
-                        style={{
-                          border: "none",
-                          background:
-                            "linear-gradient(135deg, #4f46e5, #7c3aed)",
-                          color: "#ffffff",
-                          width: "32px",
-                          height: "32px",
-                          borderRadius: "10px",
-                          cursor: "pointer",
-                          fontWeight: "800",
-                          boxShadow: "0 8px 16px rgba(79, 70, 229, 0.18)",
-                        }}
+                        className="cart-qty-btn cart-qty-btn-plus"
+                        type="button"
                       >
                         +
                       </button>
@@ -489,16 +221,8 @@ function Cart() {
 
                     <button
                       onClick={() => removeItem(item._id)}
-                      style={{
-                        border: "none",
-                        background: "#fee2e2",
-                        color: "#b91c1c",
-                        padding: "10px 14px",
-                        borderRadius: "12px",
-                        cursor: "pointer",
-                        fontWeight: "800",
-                        width: isMobile ? "100%" : "auto",
-                      }}
+                      className="cart-remove-btn"
+                      type="button"
                     >
                       Remove
                     </button>
@@ -507,80 +231,23 @@ function Cart() {
               ))}
             </div>
 
-            <div
-              className="app-card fade-card"
-              style={{
-                padding: isMobile ? "18px" : "26px",
-                height: "fit-content",
-                borderRadius: "24px",
-                border: "1px solid #e5e7eb",
-                boxShadow: "0 16px 36px rgba(15, 23, 42, 0.06)",
-                background: "#ffffff",
-                position: isMobile ? "static" : "sticky",
-                top: isMobile ? "auto" : "90px",
-              }}
-            >
-              <h3
-                style={{
-                  marginTop: 0,
-                  marginBottom: "18px",
-                  color: "#111827",
-                  fontSize: isMobile ? "20px" : "24px",
-                }}
-              >
-                Order Summary
-              </h3>
+            <div className="app-card fade-card cart-summary-card">
+              <h3 className="cart-section-title">Order Summary</h3>
 
-              <div
-                style={{
-                  background:
-                    "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "18px",
-                  padding: "18px",
-                  marginBottom: "18px",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: "12px",
-                    color: "#374151",
-                    fontWeight: "600",
-                    gap: "12px",
-                  }}
-                >
+              <div className="cart-summary-box">
+                <div className="cart-summary-row">
                   <span>Total Unique Items</span>
                   <span>{cart.length}</span>
                 </div>
 
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: "12px",
-                    color: "#374151",
-                    fontWeight: "600",
-                    gap: "12px",
-                  }}
-                >
+                <div className="cart-summary-row">
                   <span>Total Quantity</span>
                   <span>{totalItems}</span>
                 </div>
 
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    color: "#111827",
-                    fontWeight: "800",
-                    fontSize: "18px",
-                    gap: "12px",
-                  }}
-                >
+                <div className="cart-summary-row cart-summary-total">
                   <span>Total Amount</span>
-                  <span style={{ color: "#4f46e5" }}>₹{totalAmount}</span>
+                  <span className="cart-summary-total-value">₹{totalAmount}</span>
                 </div>
               </div>
 
@@ -591,32 +258,14 @@ function Cart() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 rows={4}
-                className="input-field"
-                style={{
-                  resize: "none",
-                  marginBottom: "18px",
-                  borderRadius: "14px",
-                  background: "#f9fafb",
-                  width: "100%",
-                  boxSizing: "border-box",
-                }}
+                className="input-field cart-address-input"
               />
 
               <button
                 onClick={handleCheckout}
                 disabled={loading}
-                className="primary-btn"
-                style={{
-                  width: "100%",
-                  padding: "14px",
-                  borderRadius: "14px",
-                  background: loading
-                    ? "#9ca3af"
-                    : "linear-gradient(135deg, #4f46e5, #7c3aed)",
-                  boxShadow: loading
-                    ? "none"
-                    : "0 14px 28px rgba(79, 70, 229, 0.24)",
-                }}
+                className={`primary-btn cart-checkout-btn ${loading ? "loading" : ""}`}
+                type="button"
               >
                 {loading ? "Placing Order..." : "Checkout ✅"}
               </button>
