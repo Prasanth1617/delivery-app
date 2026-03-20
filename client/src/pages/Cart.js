@@ -13,16 +13,37 @@ function Cart() {
 
   const [address, setAddress] = useState(localStorage.getItem("address") || "");
   const [loading, setLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("COD"); // ✅ ADDED
+  const [paymentMethod, setPaymentMethod] = useState("COD");
+  const [fetchingLocation, setFetchingLocation] = useState(false);
+  const [locationDenied, setLocationDenied] = useState(false); // ✅ ADDED
 
   useEffect(() => {
     localStorage.setItem("address", address);
   }, [address]);
 
+  // ✅ Check permission status on load
+  useEffect(() => {
+    if (navigator.permissions) {
+      navigator.permissions.query({ name: "geolocation" }).then((result) => {
+        if (result.state === "denied") {
+          setLocationDenied(true);
+        }
+        // Listen for changes
+        result.onchange = () => {
+          if (result.state === "denied") {
+            setLocationDenied(true);
+          } else {
+            setLocationDenied(false);
+          }
+        };
+      });
+    }
+  }, []);
+
   const saveCart = (updatedCart) => {
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
-    window.dispatchEvent(new Event("cartUpdated")); // ✅ FIXED from "storage"
+    window.dispatchEvent(new Event("cartUpdated"));
   };
 
   const increaseQuantity = (id) => {
@@ -50,8 +71,71 @@ function Cart() {
   const clearCart = () => {
     localStorage.removeItem("cart");
     setCart([]);
-    window.dispatchEvent(new Event("cartUpdated")); // ✅ FIXED from "storage"
+    window.dispatchEvent(new Event("cartUpdated"));
     toast.success("Cart cleared successfully");
+  };
+
+  // ✅ Improved location fetch with full error guide
+  const fetchLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Location not supported on this device");
+      return;
+    }
+
+    setFetchingLocation(true);
+    setLocationDenied(false);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+
+          const res = await axios.get(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
+            { headers: { "Accept-Language": "en" } }
+          );
+
+          const addr = res.data.address;
+
+          const parts = [
+            addr.house_number,
+            addr.road || addr.pedestrian || addr.footway,
+            addr.neighbourhood || addr.suburb || addr.quarter,
+            addr.city || addr.town || addr.village || addr.county,
+            addr.state_district,
+            addr.state,
+            addr.postcode,
+          ].filter(Boolean);
+
+          const fullAddress = parts.join(", ");
+          setAddress(fullAddress);
+          setLocationDenied(false);
+          toast.success("📍 Location detected! Please verify before ordering.");
+        } catch (err) {
+          toast.error("Could not read address. Please type manually.");
+        } finally {
+          setFetchingLocation(false);
+        }
+      },
+      (error) => {
+        setFetchingLocation(false);
+        if (
+          error.code === error.PERMISSION_DENIED ||
+          error.code === 1
+        ) {
+          setLocationDenied(true); // ✅ Show guide box
+        } else if (error.code === error.POSITION_UNAVAILABLE || error.code === 2) {
+          toast.error("Location unavailable. Please type address manually.");
+        } else if (error.code === error.TIMEOUT || error.code === 3) {
+          toast.error("Location request timed out. Please try again.");
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
   };
 
   const totalAmount = cart.reduce(
@@ -64,21 +148,9 @@ function Cart() {
   const handleCheckout = async () => {
     try {
       const token = localStorage.getItem("token");
-
-      if (!token) {
-        navigate("/");
-        return;
-      }
-
-      if (cart.length === 0) {
-        toast.warning("Cart is empty 🛒");
-        return;
-      }
-
-      if (!address.trim()) {
-        toast.warning("Please enter delivery address");
-        return;
-      }
+      if (!token) { navigate("/"); return; }
+      if (cart.length === 0) { toast.warning("Cart is empty 🛒"); return; }
+      if (!address.trim()) { toast.warning("Please enter your delivery address"); return; }
 
       setLoading(true);
 
@@ -91,20 +163,19 @@ function Cart() {
         })),
         totalAmount,
         address,
-        paymentMethod, // ✅ ADDED - send payment method to backend
+        paymentMethod,
       };
 
       await axios.post(
         `${process.env.REACT_APP_API_URL}/api/orders/create`,
         payload,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       localStorage.removeItem("cart");
+      localStorage.removeItem("address");
       setCart([]);
-      window.dispatchEvent(new Event("cartUpdated")); // ✅ FIXED from "storage"
+      window.dispatchEvent(new Event("cartUpdated"));
       toast.success("Order placed successfully ✅");
       navigate("/orders");
     } catch (err) {
@@ -122,9 +193,7 @@ function Cart() {
           <div className="cart-top-inner">
             <div className="cart-top-left">
               <div className="cart-top-pill">🛒 Premium Cart Experience</div>
-
               <h2 className="app-section-title cart-top-title">Your Cart</h2>
-
               <p className="app-section-subtitle cart-top-subtitle">
                 Review your selected items, update quantities and proceed to a
                 smooth checkout experience.
@@ -137,13 +206,8 @@ function Cart() {
                   Back to Products
                 </button>
               </Link>
-
               {cart.length > 0 && (
-                <button
-                  onClick={clearCart}
-                  className="cart-clear-btn"
-                  type="button"
-                >
+                <button onClick={clearCart} className="cart-clear-btn" type="button">
                   Clear Cart
                 </button>
               )}
@@ -154,23 +218,20 @@ function Cart() {
         {cart.length === 0 ? (
           <div className="app-card empty-state cart-empty-card">
             <div className="cart-empty-icon">🛒</div>
-
             <h3 className="cart-empty-title">Your cart is empty</h3>
-
             <p className="cart-empty-text">
               Add some amazing products to continue your shopping journey.
             </p>
-
             <div className="cart-empty-action">
               <Link to="/products">
-                <button className="primary-btn" type="button">
-                  Browse Products
-                </button>
+                <button className="primary-btn" type="button">Browse Products</button>
               </Link>
             </div>
           </div>
         ) : (
           <div className="cart-grid">
+
+            {/* Cart Items */}
             <div className="app-card fade-card cart-items-card">
               <h3 className="cart-section-title">Cart Items</h3>
 
@@ -179,60 +240,29 @@ function Cart() {
                   <div className="cart-item-main">
                     <div className="cart-item-image-wrap">
                       {item.image ? (
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="cart-item-image"
-                        />
-                      ) : (
-                        "📦"
-                      )}
+                        <img src={item.image} alt={item.name} className="cart-item-image" />
+                      ) : "📦"}
                     </div>
-
                     <div className="cart-item-content">
                       <h4 className="cart-item-name">{item.name}</h4>
-
                       <p className="cart-item-price">Price: ₹{item.price}</p>
-
-                      <p className="cart-item-subtotal">
-                        Subtotal: ₹{item.price * item.quantity}
-                      </p>
+                      <p className="cart-item-subtotal">Subtotal: ₹{item.price * item.quantity}</p>
                     </div>
                   </div>
 
                   <div className="cart-item-actions">
                     <div className="cart-qty-box">
-                      <button
-                        onClick={() => decreaseQuantity(item._id)}
-                        className="cart-qty-btn cart-qty-btn-minus"
-                        type="button"
-                      >
-                        -
-                      </button>
-
+                      <button onClick={() => decreaseQuantity(item._id)} className="cart-qty-btn cart-qty-btn-minus" type="button">-</button>
                       <span className="cart-qty-value">{item.quantity}</span>
-
-                      <button
-                        onClick={() => increaseQuantity(item._id)}
-                        className="cart-qty-btn cart-qty-btn-plus"
-                        type="button"
-                      >
-                        +
-                      </button>
+                      <button onClick={() => increaseQuantity(item._id)} className="cart-qty-btn cart-qty-btn-plus" type="button">+</button>
                     </div>
-
-                    <button
-                      onClick={() => removeItem(item._id)}
-                      className="cart-remove-btn"
-                      type="button"
-                    >
-                      Remove
-                    </button>
+                    <button onClick={() => removeItem(item._id)} className="cart-remove-btn" type="button">Remove</button>
                   </div>
                 </div>
               ))}
             </div>
 
+            {/* Order Summary */}
             <div className="app-card fade-card cart-summary-card">
               <h3 className="cart-section-title">Order Summary</h3>
 
@@ -241,19 +271,17 @@ function Cart() {
                   <span>Total Unique Items</span>
                   <span>{cart.length}</span>
                 </div>
-
                 <div className="cart-summary-row">
                   <span>Total Quantity</span>
                   <span>{totalItems}</span>
                 </div>
-
                 <div className="cart-summary-row cart-summary-total">
                   <span>Total Amount</span>
                   <span className="cart-summary-total-value">₹{totalAmount}</span>
                 </div>
               </div>
 
-              {/* ✅ ADDED - Payment Method Selector */}
+              {/* Payment Method */}
               <label className="label-text" style={{ marginTop: "16px", display: "block" }}>
                 Payment Method
               </label>
@@ -268,15 +296,10 @@ function Cart() {
                     <p className="cart-payment-title">Cash on Delivery</p>
                     <p className="cart-payment-desc">Pay when your order arrives</p>
                   </div>
-                  {paymentMethod === "COD" && (
-                    <span className="cart-payment-check">✓</span>
-                  )}
+                  {paymentMethod === "COD" && <span className="cart-payment-check">✓</span>}
                 </div>
 
-                <div
-                  className={`cart-payment-option disabled ${paymentMethod === "Online" ? "active" : ""}`}
-                  style={{ opacity: 0.5, cursor: "not-allowed" }}
-                >
+                <div className="cart-payment-option disabled" style={{ opacity: 0.5, cursor: "not-allowed" }}>
                   <span className="cart-payment-icon">💳</span>
                   <div>
                     <p className="cart-payment-title">Online Payment</p>
@@ -285,12 +308,63 @@ function Cart() {
                 </div>
               </div>
 
-              <label className="label-text" style={{ marginTop: "16px", display: "block" }}>
-                Delivery Address
-              </label>
+              {/* ✅ Address label + location button */}
+              <div className="cart-address-header">
+                <label className="label-text">Delivery Address</label>
+                {!locationDenied && (
+                  <button
+                    type="button"
+                    className="cart-location-btn"
+                    onClick={fetchLocation}
+                    disabled={fetchingLocation}
+                  >
+                    {fetchingLocation ? "⏳ Detecting..." : "📍 Use My Location"}
+                  </button>
+                )}
+              </div>
+
+              {/* ✅ Detecting spinner */}
+              {fetchingLocation && (
+                <div className="cart-location-detecting">
+                  <div className="cart-location-spinner" />
+                  <p>Getting your location, please wait...</p>
+                </div>
+              )}
+
+              {/* ✅ Permission denied guide box */}
+              {locationDenied && (
+                <div className="cart-location-denied-box">
+                  <p className="cart-location-denied-title">📍 Location Permission Blocked</p>
+                  <p className="cart-location-denied-text">
+                    Your browser has blocked location access. To enable it:
+                  </p>
+                  <ul className="cart-location-denied-steps">
+                    <li>
+                      <strong>Chrome on Android:</strong> Tap the 🔒 lock icon in the address bar → Permissions → Location → Allow
+                    </li>
+                    <li>
+                      <strong>Safari on iPhone:</strong> Go to Settings → Safari → Location → Allow
+                    </li>
+                    <li>
+                      <strong>Chrome on Desktop:</strong> Click 🔒 lock → Site Settings → Location → Allow
+                    </li>
+                  </ul>
+                  <p className="cart-location-denied-or">— or just type your address below —</p>
+                  <button
+                    type="button"
+                    className="cart-location-retry-btn"
+                    onClick={() => {
+                      setLocationDenied(false);
+                      setTimeout(fetchLocation, 300);
+                    }}
+                  >
+                    🔄 Try Again
+                  </button>
+                </div>
+              )}
 
               <textarea
-                placeholder="Enter your delivery address"
+                placeholder="Tap 'Use My Location' or type your address here"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 rows={4}
