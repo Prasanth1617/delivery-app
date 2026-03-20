@@ -1,114 +1,378 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&display=swap');
+
+/* ══════════════════════════════════
+   TOP NAVBAR
+══════════════════════════════════ */
 .navbar {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 12px rgba(15, 23, 42, 0.06);
 }
 
 .navbar-inner {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: auto;
-  padding: 12px 16px;
-}
-
-/* TOP */
-.navbar-top {
+  padding: 12px 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.brand {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 800;
-}
-
-.subtitle {
-  margin: 2px 0 0;
-  font-size: 12px;
-  color: #6b7280;
-}
-
-/* MENU BUTTON */
-.menu-btn {
-  font-size: 22px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: none;
-}
-
-/* LINKS */
-.nav-links {
+/* Brand */
+.navbar-brand {
   display: flex;
+  align-items: center;
   gap: 10px;
-  margin-top: 10px;
-  flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
-.nav-link {
-  padding: 10px 14px;
+.navbar-logo {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
   border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+  flex-shrink: 0;
+}
+
+.navbar-brand-name {
+  font-family: 'Sora', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.3px;
+  line-height: 1;
+}
+
+.navbar-brand-sub {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* ✅ Desktop links */
+.navbar-desktop-links {
+  display: none;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (min-width: 769px) {
+  .navbar-desktop-links { display: flex; }
+}
+
+.navbar-desktop-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 14px;
   font-weight: 600;
   color: #374151;
+  text-decoration: none;
+  transition: all 0.18s ease;
   position: relative;
 }
 
-.nav-link.active {
-  background: #4f46e5;
-  color: white;
+.navbar-desktop-link:hover {
+  background: #f3f4f6;
+  color: #111827;
 }
 
-/* CART BADGE */
-.cart-badge {
-  margin-left: 6px;
+.navbar-desktop-link.active {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.navbar-desktop-icon { font-size: 15px; }
+
+.navbar-desktop-badge {
   background: #4f46e5;
   color: white;
-  border-radius: 50%;
-  padding: 2px 6px;
+  border-radius: 999px;
+  padding: 1px 7px;
   font-size: 11px;
+  font-weight: 800;
+  margin-left: 2px;
 }
 
-/* LOGOUT */
-.logout-btn {
+.navbar-desktop-logout {
+  margin-left: 8px;
+  padding: 9px 16px;
+  border-radius: 10px;
   background: #111827;
   color: white;
   border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
-/* DESKTOP */
-.desktop {
+.navbar-desktop-logout:hover { background: #1f2937; }
+
+.navbar-desktop-signup {
+  margin-left: 6px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.navbar-desktop-signup:hover { opacity: 0.88; }
+
+/* ✅ Mobile right side */
+.navbar-mobile-right {
   display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* MOBILE */
+@media (min-width: 769px) {
+  .navbar-mobile-right { display: none; }
+}
+
+.navbar-mobile-cart {
+  position: relative;
+  font-size: 22px;
+  text-decoration: none;
+  line-height: 1;
+  padding: 4px;
+}
+
+.navbar-mobile-cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: #ef4444;
+  color: white;
+  border-radius: 999px;
+  min-width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid white;
+}
+
+.navbar-mobile-signup {
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.navbar-menu-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  transition: background 0.15s;
+}
+
+.navbar-menu-btn:hover { background: #e5e7eb; }
+
+/* ✅ Dropdown menu */
+.navbar-dropdown {
+  border-top: 1px solid #f3f4f6;
+  background: white;
+  padding: 8px 16px 12px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.navbar-dropdown-inner {
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.navbar-dropdown-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 8px 0 6px;
+}
+
+.navbar-dropdown-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  text-decoration: none;
+  transition: background 0.15s;
+  margin-bottom: 4px;
+}
+
+.navbar-dropdown-link:hover { background: #f9fafb; }
+
+.navbar-dropdown-logout {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #be123c;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+  margin-top: 4px;
+  transition: background 0.15s;
+}
+
+.navbar-dropdown-logout:hover { background: #fee2e2; }
+
+/* ══════════════════════════════════
+   BOTTOM TAB BAR — Mobile only (Zepto style)
+══════════════════════════════════ */
+.bottom-navbar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid #e5e7eb;
+  box-shadow: 0 -4px 24px rgba(15, 23, 42, 0.08);
+  padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
+}
+
 @media (max-width: 768px) {
-  .menu-btn {
-    display: block;
-  }
+  .bottom-navbar { display: flex; }
+}
 
-  .desktop {
-    display: none;
-  }
+.bottom-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 4px;
+  text-decoration: none;
+  position: relative;
+  transition: transform 0.15s ease;
+  min-height: 52px;
+}
 
-  .mobile {
-    display: flex;
-    flex-direction: column;
-    background: white;
-    padding: 12px;
-    border-radius: 12px;
-    margin-top: 10px;
-  }
+.bottom-tab:active { transform: scale(0.92); }
 
-  .nav-link,
-  .logout-btn {
-    width: 100%;
-    text-align: center;
+/* Icon wrap */
+.bottom-tab-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 32px;
+}
+
+.bottom-tab-icon {
+  font-size: 22px;
+  transition: transform 0.2s ease;
+  filter: grayscale(0.4) opacity(0.6);
+}
+
+.bottom-tab.active .bottom-tab-icon {
+  filter: none;
+  transform: translateY(-2px) scale(1.15);
+}
+
+/* Cart badge */
+.bottom-tab-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #ef4444;
+  color: white;
+  border-radius: 999px;
+  min-width: 17px;
+  height: 17px;
+  font-size: 10px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid white;
+  animation: popIn 0.2s ease;
+}
+
+@keyframes popIn {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+/* Label */
+.bottom-tab-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #9ca3af;
+  transition: color 0.2s;
+  letter-spacing: 0.2px;
+}
+
+.bottom-tab.active .bottom-tab-label {
+  color: #4f46e5;
+  font-weight: 800;
+}
+
+/* Active dot indicator */
+.bottom-tab-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: #4f46e5;
+  position: absolute;
+  bottom: 2px;
+  animation: popIn 0.2s ease;
+}
+
+/* ✅ Add bottom padding to page content on mobile so tabs don't cover content */
+@media (max-width: 768px) {
+  .app-page {
+    padding-bottom: 80px !important;
   }
 }
