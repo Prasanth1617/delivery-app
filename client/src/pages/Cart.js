@@ -15,7 +15,8 @@ function Cart() {
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [fetchingLocation, setFetchingLocation] = useState(false);
-  const [locationDenied, setLocationDenied] = useState(false); // ✅ ADDED
+  const [locationDenied, setLocationDenied] = useState(false);
+  const [locationStatus, setLocationStatus] = useState(""); // ✅ debug status
 
   useEffect(() => {
     localStorage.setItem("address", address);
@@ -25,18 +26,17 @@ function Cart() {
   useEffect(() => {
     if (navigator.permissions) {
       navigator.permissions.query({ name: "geolocation" }).then((result) => {
-        if (result.state === "denied") {
-          setLocationDenied(true);
-        }
-        // Listen for changes
+        setLocationStatus(`Permission: ${result.state}`);
+        if (result.state === "denied") setLocationDenied(true);
         result.onchange = () => {
-          if (result.state === "denied") {
-            setLocationDenied(true);
-          } else {
-            setLocationDenied(false);
-          }
+          setLocationStatus(`Permission changed: ${result.state}`);
+          setLocationDenied(result.state === "denied");
         };
+      }).catch(() => {
+        setLocationStatus("Permission API not supported");
       });
+    } else {
+      setLocationStatus("navigator.permissions not available");
     }
   }, []);
 
@@ -75,21 +75,30 @@ function Cart() {
     toast.success("Cart cleared successfully");
   };
 
-  // ✅ Improved location fetch with full error guide
   const fetchLocation = () => {
+    // ✅ Step 1 — check if geolocation exists
     if (!navigator.geolocation) {
-      toast.error("Location not supported on this device");
+      toast.error("❌ Step 1 Failed: Geolocation not supported on this device/browser");
+      setLocationStatus("Geolocation NOT supported");
       return;
     }
 
+    toast.info("📍 Step 1: Geolocation supported ✅ — requesting position...");
+    setLocationStatus("Requesting position...");
     setFetchingLocation(true);
     setLocationDenied(false);
 
+    // ✅ Step 2 — request position
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
+        // ✅ Step 3 — got coordinates
+        const { latitude, longitude } = position.coords;
+        toast.success(`✅ Step 2: Got coordinates — ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+        setLocationStatus(`Got coords: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
 
+        try {
+          // ✅ Step 4 — reverse geocode
+          toast.info("🗺️ Step 3: Converting to address...");
           const res = await axios.get(
             `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
             { headers: { "Accept-Language": "en" } }
@@ -109,30 +118,36 @@ function Cart() {
 
           const fullAddress = parts.join(", ");
           setAddress(fullAddress);
-          setLocationDenied(false);
-          toast.success("📍 Location detected! Please verify before ordering.");
+          setLocationStatus("Address filled ✅");
+          toast.success("📍 Address detected successfully!");
         } catch (err) {
-          toast.error("Could not read address. Please type manually.");
+          toast.error("❌ Step 3 Failed: Could not convert to address — type manually");
+          setLocationStatus("Geocoding failed");
         } finally {
           setFetchingLocation(false);
         }
       },
       (error) => {
         setFetchingLocation(false);
-        if (
-          error.code === error.PERMISSION_DENIED ||
-          error.code === 1
-        ) {
-          setLocationDenied(true); // ✅ Show guide box
-        } else if (error.code === error.POSITION_UNAVAILABLE || error.code === 2) {
-          toast.error("Location unavailable. Please type address manually.");
-        } else if (error.code === error.TIMEOUT || error.code === 3) {
-          toast.error("Location request timed out. Please try again.");
+
+        // ✅ Show exact error code and message
+        const errorMessages = {
+          1: "❌ Permission DENIED (code 1) — browser blocked location",
+          2: "❌ Position UNAVAILABLE (code 2) — GPS signal not available",
+          3: "❌ TIMEOUT (code 3) — took too long to get location",
+        };
+
+        const msg = errorMessages[error.code] || `❌ Unknown error (code ${error.code}): ${error.message}`;
+        toast.error(msg);
+        setLocationStatus(msg);
+
+        if (error.code === 1) {
+          setLocationDenied(true);
         }
       },
       {
         enableHighAccuracy: true,
-        timeout: 10000,
+        timeout: 15000,
         maximumAge: 0,
       }
     );
@@ -179,7 +194,6 @@ function Cart() {
       toast.success("Order placed successfully ✅");
       navigate("/orders");
     } catch (err) {
-      console.log(err);
       toast.error(err.response?.data?.message || "Checkout failed ❌");
     } finally {
       setLoading(false);
@@ -202,14 +216,10 @@ function Cart() {
 
             <div className="cart-top-actions">
               <Link to="/products" className="cart-top-link">
-                <button className="secondary-btn cart-top-btn" type="button">
-                  Back to Products
-                </button>
+                <button className="secondary-btn cart-top-btn" type="button">Back to Products</button>
               </Link>
               {cart.length > 0 && (
-                <button onClick={clearCart} className="cart-clear-btn" type="button">
-                  Clear Cart
-                </button>
+                <button onClick={clearCart} className="cart-clear-btn" type="button">Clear Cart</button>
               )}
             </div>
           </div>
@@ -219,9 +229,7 @@ function Cart() {
           <div className="app-card empty-state cart-empty-card">
             <div className="cart-empty-icon">🛒</div>
             <h3 className="cart-empty-title">Your cart is empty</h3>
-            <p className="cart-empty-text">
-              Add some amazing products to continue your shopping journey.
-            </p>
+            <p className="cart-empty-text">Add some amazing products to continue your shopping journey.</p>
             <div className="cart-empty-action">
               <Link to="/products">
                 <button className="primary-btn" type="button">Browse Products</button>
@@ -234,7 +242,6 @@ function Cart() {
             {/* Cart Items */}
             <div className="app-card fade-card cart-items-card">
               <h3 className="cart-section-title">Cart Items</h3>
-
               {cart.map((item) => (
                 <div key={item._id} className="cart-item-card">
                   <div className="cart-item-main">
@@ -249,7 +256,6 @@ function Cart() {
                       <p className="cart-item-subtotal">Subtotal: ₹{item.price * item.quantity}</p>
                     </div>
                   </div>
-
                   <div className="cart-item-actions">
                     <div className="cart-qty-box">
                       <button onClick={() => decreaseQuantity(item._id)} className="cart-qty-btn cart-qty-btn-minus" type="button">-</button>
@@ -308,7 +314,7 @@ function Cart() {
                 </div>
               </div>
 
-              {/* ✅ Address label + location button */}
+              {/* Address + location */}
               <div className="cart-address-header">
                 <label className="label-text">Delivery Address</label>
                 {!locationDenied && (
@@ -323,7 +329,14 @@ function Cart() {
                 )}
               </div>
 
-              {/* ✅ Detecting spinner */}
+              {/* ✅ Debug status box — shows what's happening */}
+              {locationStatus && (
+                <div className="cart-location-debug">
+                  🔍 {locationStatus}
+                </div>
+              )}
+
+              {/* Spinner */}
               {fetchingLocation && (
                 <div className="cart-location-detecting">
                   <div className="cart-location-spinner" />
@@ -331,34 +344,23 @@ function Cart() {
                 </div>
               )}
 
-              {/* ✅ Permission denied guide box */}
+              {/* Permission denied guide */}
               {locationDenied && (
                 <div className="cart-location-denied-box">
                   <p className="cart-location-denied-title">📍 Location Permission Blocked</p>
-                  <p className="cart-location-denied-text">
-                    Your browser has blocked location access. To enable it:
-                  </p>
+                  <p className="cart-location-denied-text">To enable location access:</p>
                   <ul className="cart-location-denied-steps">
-                    <li>
-                      <strong>Chrome on Android:</strong> Tap the 🔒 lock icon in the address bar → Permissions → Location → Allow
-                    </li>
-                    <li>
-                      <strong>Safari on iPhone:</strong> Go to Settings → Safari → Location → Allow
-                    </li>
-                    <li>
-                      <strong>Chrome on Desktop:</strong> Click 🔒 lock → Site Settings → Location → Allow
-                    </li>
+                    <li><strong>Chrome Android:</strong> Tap 🔒 lock → Permissions → Location → Allow</li>
+                    <li><strong>Edge:</strong> Tap 🔒 lock → Site permissions → Location → Allow</li>
+                    <li><strong>iPhone Safari:</strong> Settings → Safari → Location → Allow</li>
                   </ul>
                   <p className="cart-location-denied-or">— or just type your address below —</p>
                   <button
                     type="button"
                     className="cart-location-retry-btn"
-                    onClick={() => {
-                      setLocationDenied(false);
-                      setTimeout(fetchLocation, 300);
-                    }}
+                    onClick={() => { setLocationDenied(false); setTimeout(fetchLocation, 300); }}
                   >
-                    🔄 Try Again
+                    🔄 Try Again After Enabling
                   </button>
                 </div>
               )}
