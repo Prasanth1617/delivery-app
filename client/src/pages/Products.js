@@ -44,7 +44,7 @@ function Products() {
     }
 
     localStorage.setItem("cart", JSON.stringify(existingCart));
-    window.dispatchEvent(new Event("storage"));
+    window.dispatchEvent(new Event("cartUpdated")); // ✅ FIXED from "storage" to "cartUpdated"
     setCartVersion((prev) => prev + 1);
     toast.success("Added to cart 🛒");
   };

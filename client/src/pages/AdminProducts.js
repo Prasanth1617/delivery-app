@@ -4,6 +4,22 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./AdminProducts.css";
 
+// ✅ ADDED - fixed category list for Theni grocery store
+const CATEGORIES = [
+  "Rice & Grains",
+  "Dal & Pulses",
+  "Oil & Ghee",
+  "Spices & Masala",
+  "Flour & Rava",
+  "Snacks & Biscuits",
+  "Beverages & Drinks",
+  "Dairy & Eggs",
+  "Fruits & Vegetables",
+  "Cleaning & Household",
+  "Personal Care",
+  "Other",
+];
+
 function AdminProducts() {
   const [products, setProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
@@ -302,14 +318,21 @@ function AdminProducts() {
               />
             </div>
 
+            {/* ✅ CHANGED - category dropdown instead of text input */}
             <div className="admin-products-field">
               <label className="label-text">Category</label>
-              <input
+              <select
                 className="input-field admin-products-input"
-                placeholder="Example: Grocery, Snacks, Drinks"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-              />
+              >
+                <option value="">Select a category</option>
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="admin-products-field">
@@ -531,13 +554,21 @@ function AdminProducts() {
                   />
                 </div>
 
+                {/* ✅ CHANGED - category dropdown in edit modal too */}
                 <div>
                   <label className="label-text">Category</label>
-                  <input
+                  <select
                     className="input-field admin-products-input"
                     value={editCategory}
                     onChange={(e) => setEditCategory(e.target.value)}
-                  />
+                  >
+                    <option value="">Select a category</option>
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>

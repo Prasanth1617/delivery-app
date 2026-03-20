@@ -4,7 +4,15 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// Get all products
+// ✅ Admin only middleware
+const adminOnly = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Admin access only" });
+  }
+  next();
+};
+
+// Get all products (public)
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find();
@@ -14,8 +22,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Add product (protected)
-router.post("/", authMiddleware, async (req, res) => {
+// Add product (admin only) ✅ FIXED
+router.post("/", authMiddleware, adminOnly, async (req, res) => {
   try {
     const { name, price, category, stock, image } = req.body;
 
@@ -24,20 +32,18 @@ router.post("/", authMiddleware, async (req, res) => {
       price,
       category,
       stock,
-      image
+      image,
     });
 
     res.status(201).json(product);
-
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 });
 
-// Delete product
-router.delete("/:id", authMiddleware, async (req, res) => {
+// Delete product (admin only) ✅ FIXED
+router.delete("/:id", authMiddleware, adminOnly, async (req, res) => {
   try {
-
     const product = await Product.findByIdAndDelete(req.params.id);
 
     if (!product) {
@@ -45,14 +51,13 @@ router.delete("/:id", authMiddleware, async (req, res) => {
     }
 
     res.json({ message: "Product deleted successfully" });
-
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 });
 
-// Update product
-router.put("/:id", authMiddleware, async (req, res) => {
+// Update product (admin only) ✅ FIXED
+router.put("/:id", authMiddleware, adminOnly, async (req, res) => {
   try {
     const { name, price, category, stock, image } = req.body;
 
@@ -63,7 +68,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
         price,
         category,
         stock,
-        image
+        image,
       },
       { new: true }
     );
@@ -73,7 +78,6 @@ router.put("/:id", authMiddleware, async (req, res) => {
     }
 
     res.json(updatedProduct);
-
   } catch (error) {
     console.log("Update product error:", error);
     res.status(500).json({ message: "Server error" });

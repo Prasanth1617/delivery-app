@@ -20,10 +20,14 @@ function Navbar() {
 
   useEffect(() => {
     updateCartCount();
+
+    // ✅ FIX: Listen to both storage (other tabs) AND custom event (same tab)
     window.addEventListener("storage", updateCartCount);
+    window.addEventListener("cartUpdated", updateCartCount);
 
     return () => {
       window.removeEventListener("storage", updateCartCount);
+      window.removeEventListener("cartUpdated", updateCartCount);
     };
   }, []);
 

@@ -5,6 +5,7 @@ import "./Orders.css";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true); // ✅ ADDED loading state
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,6 +30,8 @@ function Orders() {
         setOrders(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Orders error:", err);
+      } finally {
+        setLoading(false); // ✅ ADDED - stop loading after fetch
       }
     };
 
@@ -114,6 +117,23 @@ function Orders() {
       </div>
     );
   };
+
+  // ✅ ADDED - loading skeleton screen
+  if (loading) {
+    return (
+      <div className="app-page orders-page">
+        <div className="app-container">
+          <div className="app-card empty-state orders-empty-card">
+            <div className="orders-empty-icon">⏳</div>
+            <h3 className="orders-empty-title">Loading your orders...</h3>
+            <p className="orders-empty-text">
+              Please wait while we fetch your order history.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="app-page orders-page">
