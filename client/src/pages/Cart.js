@@ -13,6 +13,7 @@ function Cart() {
 
   const [address, setAddress] = useState(localStorage.getItem("address") || "");
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("COD"); // ✅ ADDED
 
   useEffect(() => {
     localStorage.setItem("address", address);
@@ -21,7 +22,7 @@ function Cart() {
   const saveCart = (updatedCart) => {
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
-    window.dispatchEvent(new Event("storage"));
+    window.dispatchEvent(new Event("cartUpdated")); // ✅ FIXED from "storage"
   };
 
   const increaseQuantity = (id) => {
@@ -49,7 +50,7 @@ function Cart() {
   const clearCart = () => {
     localStorage.removeItem("cart");
     setCart([]);
-    window.dispatchEvent(new Event("storage"));
+    window.dispatchEvent(new Event("cartUpdated")); // ✅ FIXED from "storage"
     toast.success("Cart cleared successfully");
   };
 
@@ -90,6 +91,7 @@ function Cart() {
         })),
         totalAmount,
         address,
+        paymentMethod, // ✅ ADDED - send payment method to backend
       };
 
       await axios.post(
@@ -102,7 +104,7 @@ function Cart() {
 
       localStorage.removeItem("cart");
       setCart([]);
-      window.dispatchEvent(new Event("storage"));
+      window.dispatchEvent(new Event("cartUpdated")); // ✅ FIXED from "storage"
       toast.success("Order placed successfully ✅");
       navigate("/orders");
     } catch (err) {
@@ -251,7 +253,41 @@ function Cart() {
                 </div>
               </div>
 
-              <label className="label-text">Delivery Address</label>
+              {/* ✅ ADDED - Payment Method Selector */}
+              <label className="label-text" style={{ marginTop: "16px", display: "block" }}>
+                Payment Method
+              </label>
+
+              <div className="cart-payment-options">
+                <div
+                  className={`cart-payment-option ${paymentMethod === "COD" ? "active" : ""}`}
+                  onClick={() => setPaymentMethod("COD")}
+                >
+                  <span className="cart-payment-icon">💵</span>
+                  <div>
+                    <p className="cart-payment-title">Cash on Delivery</p>
+                    <p className="cart-payment-desc">Pay when your order arrives</p>
+                  </div>
+                  {paymentMethod === "COD" && (
+                    <span className="cart-payment-check">✓</span>
+                  )}
+                </div>
+
+                <div
+                  className={`cart-payment-option disabled ${paymentMethod === "Online" ? "active" : ""}`}
+                  style={{ opacity: 0.5, cursor: "not-allowed" }}
+                >
+                  <span className="cart-payment-icon">💳</span>
+                  <div>
+                    <p className="cart-payment-title">Online Payment</p>
+                    <p className="cart-payment-desc">UPI, GPay, Cards — Coming Soon</p>
+                  </div>
+                </div>
+              </div>
+
+              <label className="label-text" style={{ marginTop: "16px", display: "block" }}>
+                Delivery Address
+              </label>
 
               <textarea
                 placeholder="Enter your delivery address"
@@ -267,7 +303,7 @@ function Cart() {
                 className={`primary-btn cart-checkout-btn ${loading ? "loading" : ""}`}
                 type="button"
               >
-                {loading ? "Placing Order..." : "Checkout ✅"}
+                {loading ? "Placing Order..." : `Place Order — ${paymentMethod} ✅`}
               </button>
             </div>
           </div>

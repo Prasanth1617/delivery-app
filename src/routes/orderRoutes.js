@@ -13,7 +13,7 @@ router.get("/ping", (req, res) => {
 // Create Order
 router.post("/create", authMiddleware, async (req, res) => {
   try {
-    const { items, totalAmount, address } = req.body;
+    const { items, totalAmount, address, paymentMethod } = req.body; // ✅ ADDED paymentMethod
 
     if (!items || items.length === 0) {
       return res.status(400).json({ message: "Cart is empty" });
@@ -57,6 +57,8 @@ router.post("/create", authMiddleware, async (req, res) => {
       totalAmount,
       deliveryAddress: address,
       status: "Pending",
+      paymentMethod: paymentMethod || "COD", // ✅ ADDED - default to COD
+      paymentStatus: "Pending",              // ✅ ADDED - COD is always pending until delivery
     });
 
     res.status(201).json({
@@ -72,7 +74,7 @@ router.post("/create", authMiddleware, async (req, res) => {
 // Get My Orders
 router.get("/myorders", authMiddleware, async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.user.id });
+    const orders = await Order.find({ userId: req.user.id }).sort({ createdAt: -1 }); // ✅ ADDED sort - newest first
     res.json(orders);
   } catch (error) {
     console.log("My orders error:", error);
