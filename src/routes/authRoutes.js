@@ -57,7 +57,7 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign(
       { id: user._id, role: user.role },
-      process.env.JWT_SECRET,   // ✅ CHANGED from "secretkey"
+      process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
@@ -77,11 +77,28 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// Protected route
+// Get profile
 router.get("/profile", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ✅ ADDED - Update delivery address
+router.put("/update-address", authMiddleware, async (req, res) => {
+  try {
+    const { address } = req.body;
+
+    if (!address || !address.trim()) {
+      return res.status(400).json({ message: "Address is required" });
+    }
+
+    await User.findByIdAndUpdate(req.user.id, { address: address.trim() });
+
+    res.json({ message: "Address updated successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
