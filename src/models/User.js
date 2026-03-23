@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["user", "admin"],
     default: "user"
+  },
+  // ✅ ADDED - for secure password reset without OTP
+  secretAnswer: {
+    type: String,
+    default: ""
   }
 }, { timestamps: true });
 

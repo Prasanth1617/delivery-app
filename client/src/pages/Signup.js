@@ -4,6 +4,17 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./Signup.css";
 
+// ✅ Fixed security questions
+const SECURITY_QUESTIONS = [
+  "What is your mother's first name?",
+  "What is the name of your first school?",
+  "What is your childhood nickname?",
+  "What is your favourite food?",
+  "What is the name of your hometown?",
+  "What is your father's first name?",
+  "What is your pet's name?",
+];
+
 function Signup() {
   const navigate = useNavigate();
 
@@ -12,14 +23,19 @@ function Signup() {
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  // ✅ ADDED - security question
+  const [securityQuestion, setSecurityQuestion] = useState(SECURITY_QUESTIONS[0]);
+  const [secretAnswer, setSecretAnswer] = useState("");
 
   const isValidIndianPhone = (value) => /^[6-9]\d{9}$/.test(value);
 
   const passwordChecks = {
     minLength: password.length >= 8,
-    upper: /[A-Z]/.test(password),
-    lower: /[a-z]/.test(password),
-    number: /\d/.test(password),
+    upper:   /[A-Z]/.test(password),
+    lower:   /[a-z]/.test(password),
+    number:  /\d/.test(password),
     special: /[!@#$%^&*(),.?":{}|<>_\-\\/[\]=+;']/g.test(password),
   };
 
@@ -57,19 +73,25 @@ function Signup() {
         return;
       }
 
+      // ✅ ADDED - validate secret answer
+      if (!secretAnswer.trim() || secretAnswer.trim().length < 2) {
+        toast.warning("Please enter your security answer");
+        return;
+      }
+
       setLoading(true);
 
       await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
-        name: name.trim(),
-        phone: phone.trim(),
+        name:           name.trim(),
+        phone:          phone.trim(),
         password,
-        address: address.trim(),
+        address:        address.trim(),
+        secretAnswer:   secretAnswer.trim(), // ✅ ADDED
       });
 
       toast.success("Account created successfully ✅");
       navigate("/");
     } catch (err) {
-      console.log("Signup error:", err.response?.data || err.message);
       toast.error(err.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);
@@ -79,6 +101,8 @@ function Signup() {
   return (
     <div className="signup-page">
       <div className="signup-grid">
+
+        {/* Hero */}
         <div className="signup-hero">
           <div className="signup-hero-circle signup-hero-circle-top" />
           <div className="signup-hero-circle signup-hero-circle-bottom" />
@@ -100,23 +124,18 @@ function Signup() {
             <div className="signup-feature-card">
               <div className="signup-feature-icon">🛒</div>
               <h3>Easy Shopping</h3>
-              <p>
-                Browse products quickly and enjoy a smoother checkout flow.
-              </p>
+              <p>Browse products quickly and enjoy a smoother checkout flow.</p>
             </div>
-
             <div className="signup-feature-card">
               <div className="signup-feature-icon">⚡</div>
               <h3>Faster Orders</h3>
               <p>Save your details and place orders with less friction.</p>
             </div>
-
             <div className="signup-feature-card">
               <div className="signup-feature-icon">📦</div>
               <h3>Order Tracking</h3>
               <p>Track your placed orders and delivery progress easily.</p>
             </div>
-
             <div className="signup-feature-card">
               <div className="signup-feature-icon">🔒</div>
               <h3>Secure Access</h3>
@@ -125,19 +144,16 @@ function Signup() {
           </div>
         </div>
 
+        {/* Form */}
         <div className="signup-form-card">
           <div className="signup-form-inner">
             <div className="signup-form-head">
               <div className="signup-form-logo">✨</div>
-
               <h2>Create account</h2>
-
-              <p>
-                Sign up to unlock a better shopping experience with easier
-                ordering and order tracking.
-              </p>
+              <p>Sign up to unlock a better shopping experience.</p>
             </div>
 
+            {/* Name */}
             <div className="signup-field">
               <label>Full Name</label>
               <input
@@ -148,6 +164,7 @@ function Signup() {
               />
             </div>
 
+            {/* Phone */}
             <div className="signup-field">
               <label>Phone Number</label>
               <input
@@ -159,81 +176,98 @@ function Signup() {
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
               />
               {phone && (
-                <p
-                  className={`signup-phone-hint ${
-                    isValidIndianPhone(phone) ? "valid" : "invalid"
-                  }`}
-                >
+                <p className={`signup-phone-hint ${isValidIndianPhone(phone) ? "valid" : "invalid"}`}>
                   {isValidIndianPhone(phone)
-                    ? "Valid mobile number"
-                    : "Enter a valid 10-digit Indian mobile number"}
+                    ? "✓ Valid mobile number"
+                    : "✗ Enter a valid 10-digit Indian mobile number"}
                 </p>
               )}
             </div>
 
+            {/* Password */}
             <div className="signup-field">
               <label>Password</label>
-              <input
-                type="password"
-                className="signup-input"
-                placeholder="Create strong password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div style={{ position: "relative" }}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="signup-input"
+                  placeholder="Create strong password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={{ paddingRight: "48px" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: "absolute", right: "14px", top: "50%",
+                    transform: "translateY(-50%)", background: "none",
+                    border: "none", cursor: "pointer", fontSize: "16px",
+                    color: "#6b7280", padding: "0", lineHeight: 1,
+                  }}
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
 
               <div className="signup-password-rules">
-                <span
-                  className={`signup-password-rule ${
-                    passwordChecks.minLength ? "passed" : ""
-                  }`}
-                >
-                  {passwordChecks.minLength ? "✓" : "•"} 8+ chars
-                </span>
-
-                <span
-                  className={`signup-password-rule ${
-                    passwordChecks.upper ? "passed" : ""
-                  }`}
-                >
-                  {passwordChecks.upper ? "✓" : "•"} Uppercase
-                </span>
-
-                <span
-                  className={`signup-password-rule ${
-                    passwordChecks.lower ? "passed" : ""
-                  }`}
-                >
-                  {passwordChecks.lower ? "✓" : "•"} Lowercase
-                </span>
-
-                <span
-                  className={`signup-password-rule ${
-                    passwordChecks.number ? "passed" : ""
-                  }`}
-                >
-                  {passwordChecks.number ? "✓" : "•"} Number
-                </span>
-
-                <span
-                  className={`signup-password-rule ${
-                    passwordChecks.special ? "passed" : ""
-                  }`}
-                >
-                  {passwordChecks.special ? "✓" : "•"} Special char
-                </span>
+                {[
+                  { key: "minLength", label: "8+ chars" },
+                  { key: "upper",    label: "Uppercase" },
+                  { key: "lower",    label: "Lowercase" },
+                  { key: "number",   label: "Number" },
+                  { key: "special",  label: "Special char" },
+                ].map(({ key, label }) => (
+                  <span key={key} className={`signup-password-rule ${passwordChecks[key] ? "passed" : ""}`}>
+                    {passwordChecks[key] ? "✓" : "•"} {label}
+                  </span>
+                ))}
               </div>
             </div>
 
-            <div className="signup-field signup-address-field">
+            {/* Address */}
+            <div className="signup-field">
               <label>Address</label>
               <input
                 className="signup-input"
-                placeholder="Enter your address"
+                placeholder="Enter your delivery address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
               />
             </div>
 
+            {/* ✅ ADDED - Security Question */}
+            <div className="signup-field">
+              <label>Security Question</label>
+              <select
+                className="signup-input signup-select"
+                value={securityQuestion}
+                onChange={(e) => setSecurityQuestion(e.target.value)}
+              >
+                {SECURITY_QUESTIONS.map((q) => (
+                  <option key={q} value={q}>{q}</option>
+                ))}
+              </select>
+              <p className="signup-security-hint">
+                🔐 This is used to verify your identity if you forget your password
+              </p>
+            </div>
+
+            {/* ✅ ADDED - Secret Answer */}
+            <div className="signup-field">
+              <label>Your Answer</label>
+              <input
+                className="signup-input"
+                placeholder="Enter your answer (keep it secret)"
+                value={secretAnswer}
+                onChange={(e) => setSecretAnswer(e.target.value)}
+              />
+              <p className="signup-security-hint">
+                ⚠️ Remember this answer — you'll need it to reset your password
+              </p>
+            </div>
+
+            {/* Submit */}
             <button
               onClick={handleSignup}
               disabled={loading}
@@ -245,7 +279,6 @@ function Signup() {
 
             <div className="signup-login-box">
               <p>Already have an account? Login and continue shopping.</p>
-
               <button
                 onClick={() => navigate("/")}
                 className="signup-link-btn signup-back-btn"
