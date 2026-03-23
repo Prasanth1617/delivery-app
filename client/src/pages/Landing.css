@@ -302,15 +302,21 @@
 
 .landing-cta-secondary {
   padding: 16px 24px;
-  background: transparent;
-  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 14px;
-  color: var(--muted);
+  color: #f0ece4;
   font-family: 'Outfit', sans-serif;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  transition: all 0.2s;
+}
+
+.landing-cta-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
 }
 
 .landing-cta-secondary:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
