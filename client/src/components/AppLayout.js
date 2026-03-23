@@ -8,7 +8,7 @@ function AppLayout({ children }) {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
-  const hideNavbarRoutes = ["/", "/signup", "/forgot-password"];
+  const hideNavbarRoutes = ["/", "/login", "/signup", "/forgot-password"];
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   if (!token || shouldHideNavbar) {

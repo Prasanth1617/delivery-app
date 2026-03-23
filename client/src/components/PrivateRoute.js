@@ -7,7 +7,7 @@ function PrivateRoute({ children, adminOnly = false }) {
   const role = localStorage.getItem("role");
 
   if (!token) {
-    return <Navigate to="/" replace state={{ from: location }} />;
+    return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
   if (adminOnly && role !== "admin") {
