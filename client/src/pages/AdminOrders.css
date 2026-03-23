@@ -230,3 +230,107 @@
     align-items: center;
   }
 }
+/* ══════════════════════════════════
+   PASTE THIS AT THE BOTTOM OF AdminOrders.css
+══════════════════════════════════ */
+
+/* ✅ Top pill */
+.admin-orders-top-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px; border-radius: 999px;
+  background: #eef2ff; color: #4338ca;
+  font-weight: 700; font-size: 12px; margin-bottom: 12px;
+}
+
+.admin-orders-top-title { font-size: 28px; }
+
+/* ✅ Count row */
+.admin-orders-count-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 6px; flex-wrap: wrap;
+}
+
+.admin-orders-count-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; background: #f1f5f9;
+  border: 1px solid #e2e8f0; border-radius: 999px;
+  font-size: 13px; font-weight: 700; color: #475569;
+}
+
+.admin-orders-new-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; background: #fef2f2;
+  border: 1px solid #fecaca; border-radius: 999px;
+  font-size: 13px; font-weight: 700; color: #dc2626;
+  animation: popIn 0.3s ease;
+}
+
+/* ✅ NEW order card highlight */
+.admin-orders-card-new {
+  border-color: #fca5a5 !important;
+  box-shadow: 0 0 0 2px rgba(239,68,68,0.1), 0 16px 36px rgba(15,23,42,0.06) !important;
+}
+
+.admin-orders-new-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #dc2626; color: white;
+  font-size: 11px; font-weight: 800;
+  padding: 4px 12px; border-radius: 999px;
+  margin-bottom: 14px; letter-spacing: 0.5px;
+  animation: popIn 0.3s ease;
+}
+
+/* ✅ Card badges */
+.admin-orders-card-badges {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+}
+
+.admin-orders-card-title { margin: 0; font-size: 18px; color: #111827; }
+.admin-orders-card-id    { margin: 6px 0 4px; color: #6b7280; font-size: 13px; word-break: break-all; }
+.admin-orders-card-date  { margin: 0; color: #9ca3af; font-size: 13px; font-weight: 600; }
+
+/* Payment badge */
+.admin-orders-payment-badge {
+  padding: 7px 12px; border-radius: 999px;
+  font-size: 12px; font-weight: 700;
+  background: #f0fdf4; color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+/* Stats */
+.admin-orders-box-small { font-size: 15px !important; }
+
+/* ✅ Skeleton loader */
+.admin-orders-skeleton-list { display: grid; gap: 18px; padding: 24px 0; }
+
+.admin-orders-skeleton-card {
+  background: #ffffff; border: 1px solid #e5e7eb;
+  border-radius: 24px; padding: 24px; display: grid; gap: 14px;
+}
+
+.admin-orders-skeleton-line {
+  height: 14px; border-radius: 8px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.admin-orders-skeleton-line.long  { width: 70%; }
+.admin-orders-skeleton-line.short { width: 40%; }
+
+.admin-orders-skeleton-block {
+  height: 80px; border-radius: 14px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}

@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import axios from "axios";
 import "./Navbar.css";
 
 function Navbar() {
@@ -8,6 +9,12 @@ function Navbar() {
 
   const [cartCount, setCartCount] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // ✅ ADDED - notification state
+  const [newOrderCount, setNewOrderCount] = useState(0);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [recentOrders, setRecentOrders] = useState([]);
+  const notifRef = useRef(null);
 
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
@@ -30,18 +37,74 @@ function Navbar() {
 
   useEffect(() => {
     setMenuOpen(false);
+    setNotifOpen(false);
     updateCartCount();
   }, [location.pathname]);
+
+  // ✅ ADDED - Poll for new orders every 30 seconds (admin only)
+  useEffect(() => {
+    if (!token || role !== "admin") return;
+
+    const checkNewOrders = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/admin/orders`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const orders = res.data;
+
+        // Get last seen order count from localStorage
+        const lastSeenCount = parseInt(localStorage.getItem("lastSeenOrderCount") || "0");
+        const currentCount = orders.length;
+
+        if (currentCount > lastSeenCount) {
+          setNewOrderCount(currentCount - lastSeenCount);
+        }
+
+        // Store 5 most recent orders for notification panel
+        setRecentOrders(orders.slice(0, 5));
+      } catch (err) {
+        console.log("Notification check error:", err);
+      }
+    };
+
+    // Check immediately on mount
+    checkNewOrders();
+
+    // Then check every 30 seconds
+    const interval = setInterval(checkNewOrders, 30000);
+    return () => clearInterval(interval);
+  }, [token, role]);
+
+  // ✅ ADDED - Close notif panel when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotifOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // ✅ ADDED - Mark all notifications as read
+  const markAllRead = () => {
+    localStorage.setItem("lastSeenOrderCount", String(recentOrders.length + parseInt(localStorage.getItem("lastSeenOrderCount") || "0")));
+    setNewOrderCount(0);
+    setNotifOpen(false);
+    navigate("/admin/orders");
+  };
 
   const handleLogout = () => {
     localStorage.clear();
     setCartCount(0);
+    setNewOrderCount(0);
     navigate("/");
   };
 
   const isActive = (path) => location.pathname === path;
 
-  // ✅ User bottom tabs (like Zepto)
   const userTabs = [
     { path: "/products", icon: "🛍️", label: "Shop" },
     { path: "/cart",     icon: "🛒", label: "Cart",   badge: cartCount },
@@ -49,21 +112,25 @@ function Navbar() {
     { path: "/profile",  icon: "👤", label: "Profile" },
   ];
 
-  // ✅ Admin bottom tabs
   const adminTabs = [
     { path: "/admin/dashboard", icon: "📊", label: "Dashboard" },
     { path: "/admin/products",  icon: "🛍️", label: "Products" },
-    { path: "/admin/orders",    icon: "📦", label: "Orders" },
+    { path: "/admin/orders",    icon: "📦", label: "Orders", badge: newOrderCount },
     { path: "/profile",         icon: "👤", label: "Profile" },
   ];
 
   const tabs = role === "admin" ? adminTabs : userTabs;
 
+  // ✅ Format order time
+  const formatTime = (dateStr) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) +
+      " · " + date.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+  };
+
   return (
     <>
-      {/* ══════════════════════════════════
-          TOP NAVBAR — Desktop + Mobile header
-      ══════════════════════════════════ */}
       <nav className="navbar">
         <div className="navbar-inner">
 
@@ -93,6 +160,72 @@ function Navbar() {
                 </Link>
               ))}
 
+              {/* ✅ ADDED - Admin notification bell (desktop) */}
+              {role === "admin" && (
+                <div className="navbar-notif-wrap" ref={notifRef}>
+                  <button
+                    className="navbar-notif-btn"
+                    onClick={() => setNotifOpen(!notifOpen)}
+                    type="button"
+                  >
+                    🔔
+                    {newOrderCount > 0 && (
+                      <span className="navbar-notif-badge">{newOrderCount}</span>
+                    )}
+                  </button>
+
+                  {/* Notification dropdown */}
+                  {notifOpen && (
+                    <div className="navbar-notif-panel">
+                      <div className="navbar-notif-header">
+                        <span className="navbar-notif-title">
+                          🔔 New Orders
+                          {newOrderCount > 0 && (
+                            <span className="navbar-notif-count">{newOrderCount} new</span>
+                          )}
+                        </span>
+                        <button
+                          className="navbar-notif-clear"
+                          onClick={markAllRead}
+                          type="button"
+                        >
+                          View All →
+                        </button>
+                      </div>
+
+                      {recentOrders.length === 0 ? (
+                        <div className="navbar-notif-empty">No orders yet</div>
+                      ) : (
+                        <div className="navbar-notif-list">
+                          {recentOrders.map((order, i) => (
+                            <div
+                              key={order._id}
+                              className={`navbar-notif-item ${i < newOrderCount ? "unread" : ""}`}
+                              onClick={markAllRead}
+                            >
+                              <div className="navbar-notif-item-icon">
+                                {i < newOrderCount ? "🆕" : "📦"}
+                              </div>
+                              <div className="navbar-notif-item-body">
+                                <p className="navbar-notif-item-title">
+                                  Order ₹{order.totalAmount}
+                                  {i < newOrderCount && (
+                                    <span className="navbar-notif-new-pill">NEW</span>
+                                  )}
+                                </p>
+                                <p className="navbar-notif-item-sub">
+                                  {order.items.length} items · {order.status} · {formatTime(order.createdAt)}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
               <button onClick={handleLogout} className="navbar-desktop-logout" type="button">
                 Logout
               </button>
@@ -102,7 +235,7 @@ function Navbar() {
           {/* Desktop — not logged in */}
           {!token && (
             <div className="navbar-desktop-links">
-              <Link to="/" className={`navbar-desktop-link ${isActive("/") ? "active" : ""}`}>
+              <Link to="/login" className={`navbar-desktop-link ${isActive("/login") ? "active" : ""}`}>
                 Login
               </Link>
               <Link to="/signup" className="navbar-desktop-signup">
@@ -111,19 +244,36 @@ function Navbar() {
             </div>
           )}
 
-          {/* Mobile right — cart badge + menu */}
+          {/* Mobile right */}
           {token && (
             <div className="navbar-mobile-right">
-              <Link to="/cart" className="navbar-mobile-cart">
-                🛒
-                {cartCount > 0 && (
-                  <span className="navbar-mobile-cart-badge">{cartCount}</span>
-                )}
-              </Link>
+
+              {/* ✅ ADDED - Bell icon on mobile for admin */}
+              {role === "admin" && (
+                <button
+                  className="navbar-mobile-bell"
+                  onClick={() => { setNotifOpen(!notifOpen); setMenuOpen(false); }}
+                  type="button"
+                >
+                  🔔
+                  {newOrderCount > 0 && (
+                    <span className="navbar-mobile-bell-badge">{newOrderCount}</span>
+                  )}
+                </button>
+              )}
+
+              {role !== "admin" && (
+                <Link to="/cart" className="navbar-mobile-cart">
+                  🛒
+                  {cartCount > 0 && (
+                    <span className="navbar-mobile-cart-badge">{cartCount}</span>
+                  )}
+                </Link>
+              )}
 
               <button
                 className="navbar-menu-btn"
-                onClick={() => setMenuOpen(!menuOpen)}
+                onClick={() => { setMenuOpen(!menuOpen); setNotifOpen(false); }}
                 type="button"
                 aria-label="Menu"
               >
@@ -139,7 +289,52 @@ function Navbar() {
           )}
         </div>
 
-        {/* ✅ Mobile dropdown menu — only for admin extra links */}
+        {/* ✅ Mobile notification panel */}
+        {notifOpen && token && role === "admin" && (
+          <div className="navbar-notif-mobile">
+            <div className="navbar-notif-header">
+              <span className="navbar-notif-title">
+                🔔 New Orders
+                {newOrderCount > 0 && (
+                  <span className="navbar-notif-count">{newOrderCount} new</span>
+                )}
+              </span>
+              <button className="navbar-notif-clear" onClick={markAllRead} type="button">
+                View All →
+              </button>
+            </div>
+            {recentOrders.length === 0 ? (
+              <div className="navbar-notif-empty">No orders yet</div>
+            ) : (
+              <div className="navbar-notif-list">
+                {recentOrders.map((order, i) => (
+                  <div
+                    key={order._id}
+                    className={`navbar-notif-item ${i < newOrderCount ? "unread" : ""}`}
+                    onClick={markAllRead}
+                  >
+                    <div className="navbar-notif-item-icon">
+                      {i < newOrderCount ? "🆕" : "📦"}
+                    </div>
+                    <div className="navbar-notif-item-body">
+                      <p className="navbar-notif-item-title">
+                        Order ₹{order.totalAmount}
+                        {i < newOrderCount && (
+                          <span className="navbar-notif-new-pill">NEW</span>
+                        )}
+                      </p>
+                      <p className="navbar-notif-item-sub">
+                        {order.items.length} items · {order.status} · {formatTime(order.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Mobile dropdown — admin */}
         {menuOpen && token && role === "admin" && (
           <div className="navbar-dropdown">
             <div className="navbar-dropdown-inner">
@@ -152,6 +347,9 @@ function Navbar() {
               </Link>
               <Link to="/admin/orders" className="navbar-dropdown-link" onClick={() => setMenuOpen(false)}>
                 📦 Manage Orders
+                {newOrderCount > 0 && (
+                  <span className="navbar-dropdown-badge">{newOrderCount} new</span>
+                )}
               </Link>
               <button onClick={() => { handleLogout(); setMenuOpen(false); }} className="navbar-dropdown-logout" type="button">
                 🚪 Logout
@@ -160,7 +358,7 @@ function Navbar() {
           </div>
         )}
 
-        {/* ✅ Mobile dropdown — regular user */}
+        {/* Mobile dropdown — user */}
         {menuOpen && token && role !== "admin" && (
           <div className="navbar-dropdown">
             <div className="navbar-dropdown-inner">
@@ -179,9 +377,7 @@ function Navbar() {
         )}
       </nav>
 
-      {/* ══════════════════════════════════
-          BOTTOM TAB BAR — Mobile only (like Zepto)
-      ══════════════════════════════════ */}
+      {/* Bottom tab bar */}
       {token && (
         <nav className="bottom-navbar">
           {tabs.map((tab) => {
