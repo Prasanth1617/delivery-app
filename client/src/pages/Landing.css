@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap');
 
 /* ── Variables ── */
-:root {
+.landing {
   --bg:       #060a0f;
   --surface:  #0c1118;
   --card:     #111820;
