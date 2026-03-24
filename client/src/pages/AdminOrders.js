@@ -202,9 +202,9 @@ function AdminOrders() {
 
                       <h3 className="admin-orders-card-title">Order Details</h3>
 
-                      <p className="admin-orders-card-id">
-                        <strong>ID:</strong> {order._id}
-                      </p>
+                     <p className="admin-orders-card-id">
+                     <strong>ID:</strong> #{order._id.slice(-8).toUpperCase()}
+                     </p>
 
                       <p className="admin-orders-card-date">
                         🕐 {formatDate(order.createdAt)}
