@@ -46,13 +46,13 @@ button, input, textarea, select { font: inherit; }
 ════════════════════════════════════ */
 .app-page {
   min-height: 100vh;
-  padding: 28px 20px 100px;
-  background: #f8fafc;
+  padding: 24px 20px 90px;
+  background: radial-gradient(circle at top left, #f9fafb 0, #e5e7eb 26%, #f8fafc 60%);
 }
 
 .app-container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1120px;
   margin: 0 auto;
   display: grid;
   gap: 20px;
@@ -192,11 +192,11 @@ input, textarea, select { transition: all 0.18s ease; }
 
 .input-field {
   width: 100%;
-  padding: 13px 16px;
-  border-radius: 12px;
-  border: 1.5px solid #e2e8f0;
-  background: #f8fafc;
-  font-size: 15px;
+  padding: 11px 14px;
+  border-radius: 999px;
+  border: 1px solid #d4d4d8;
+  background: #f9fafb;
+  font-size: 14px;
   color: #0f172a;
   outline: none;
   transition: all 0.18s ease;
@@ -204,8 +204,8 @@ input, textarea, select { transition: all 0.18s ease; }
 
 .input-field::placeholder { color: #94a3b8; }
 
-.input-field:hover  { border-color: #cbd5e1; background: #ffffff; }
-.input-field:focus  { border-color: #4f46e5; background: #ffffff; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+.input-field:hover  { border-color: #a1a1aa; background: #ffffff; }
+.input-field:focus  { border-color: #4f46e5; background: #ffffff; box-shadow: 0 0 0 2px rgba(79,70,229,0.25); }
 
 textarea.input-field { resize: vertical; min-height: 100px; }
 
