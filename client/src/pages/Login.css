@@ -40,7 +40,7 @@
 .login-grid { display: grid; grid-template-columns: 1fr; width: 100%; position: relative; z-index: 1; }
 @media (min-width: 960px) { .login-grid { grid-template-columns: 1fr 1fr; } }
 
-/* Hero */
+/* Premium Hero */
 .login-hero {
   display: none;
   flex-direction: column;
@@ -151,7 +151,7 @@
 .login-feature-card h3 { margin: 0 0 var(--space-2, 8px); font-family: 'Playfair Display', serif; font-size: var(--text-base, 14px); font-weight: var(--font-bold, 700); color: var(--lp-text, #f0ece4); }
 .login-feature-card p  { margin: 0; font-size: var(--text-sm, 12px); color: var(--lp-muted, #6b7585); line-height: 1.6; }
 
-/* Form panel */
+/* Premium Form panel */
 .login-form-card {
   display: flex;
   align-items: center;

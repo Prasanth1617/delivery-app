@@ -39,7 +39,7 @@
 .signup-grid { display: grid; grid-template-columns: 1fr; width: 100%; position: relative; z-index: 1; }
 @media (min-width: 960px) { .signup-grid { grid-template-columns: 1fr 1fr; } }
 
-/* Hero */
+/* Premium Hero */
 .signup-hero {
   display: none;
   flex-direction: column;
@@ -144,7 +144,7 @@
 .signup-feature-card h3 { margin: 0 0 var(--space-2, 8px); font-family: 'Playfair Display', serif; font-size: var(--text-base, 14px); font-weight: var(--font-bold, 700); color: var(--sp-text, #f0ece4); }
 .signup-feature-card p  { margin: 0; font-size: var(--text-sm, 12px); color: var(--sp-muted, #6b7585); line-height: 1.6; }
 
-/* Form */
+/* Premium Form */
 .signup-form-card {
   display: flex;
   align-items: flex-start;

@@ -1,17 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&display=swap');
 
 /* ══════════════════════════════════
-   TOP NAVBAR
+   PREMIUM TOP NAVBAR
    ══════════════════════════════════ */
 .navbar {
   position: sticky;
   top: 0;
   z-index: 1000;
   background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--color-border, #e2e8f0);
-  box-shadow: var(--shadow-sm, 0 2px 8px rgba(15, 23, 42, 0.04));
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(15, 23, 42, 0.06));
 }
 
 .navbar-inner {
@@ -24,7 +24,7 @@
   gap: var(--space-6, 16px);
 }
 
-/* Brand */
+/* Premium Brand */
 .navbar-brand {
   display: flex;
   align-items: center;
@@ -35,13 +35,13 @@
 .navbar-logo {
   width: 38px;
   height: 38px;
-  background: linear-gradient(135deg, var(--color-primary, #4f46e5), var(--color-secondary, #7c3aed));
+  background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6));
   border-radius: var(--radius-md, 10px);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
   flex-shrink: 0;
 }
 
@@ -61,7 +61,7 @@
   margin-top: 2px;
 }
 
-/* ✅ Desktop links */
+/* ✅ Premium Desktop links */
 .navbar-desktop-links {
   display: none;
   align-items: center;
@@ -87,19 +87,19 @@
 }
 
 .navbar-desktop-link:hover {
-  background: #f3f4f6;
-  color: #111827;
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--color-primary, #6366f1);
 }
 
 .navbar-desktop-link.active {
-  background: var(--color-primary-light, #eef2ff);
-  color: var(--color-primary, #4f46e5);
+  background: var(--color-primary-light, #e0e7ff);
+  color: var(--color-primary, #6366f1);
 }
 
 .navbar-desktop-icon { font-size: 15px; }
 
 .navbar-desktop-badge {
-  background: var(--color-primary, #4f46e5);
+  background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6));
   color: var(--color-white, #ffffff);
   border-radius: var(--radius-full, 999px);
   padding: 1px 7px;
@@ -112,7 +112,7 @@
   margin-left: var(--space-2, 8px);
   padding: var(--space-3, 10px) var(--space-6, 16px);
   border-radius: var(--radius-md, 10px);
-  background: #111827;
+  background: linear-gradient(135deg, #1e293b, #334155);
   color: var(--color-white, #ffffff);
   border: none;
   font-size: var(--text-base, 14px);
@@ -121,13 +121,13 @@
   transition: background var(--transition-base, 0.2s ease);
 }
 
-.navbar-desktop-logout:hover { background: #1f2937; }
+.navbar-desktop-logout:hover { background: linear-gradient(135deg, #334155, #475569); }
 
 .navbar-desktop-signup {
   margin-left: var(--space-2, 8px);
   padding: var(--space-3, 10px) var(--space-7, 18px);
   border-radius: var(--radius-md, 10px);
-  background: linear-gradient(135deg, var(--color-primary, #4f46e5), var(--color-secondary, #7c3aed));
+  background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6));
   color: var(--color-white, #ffffff);
   font-size: var(--text-base, 14px);
   font-weight: var(--font-bold, 700);
@@ -137,7 +137,7 @@
 
 .navbar-desktop-signup:hover { opacity: 0.88; }
 
-/* ✅ Mobile right side */
+/* ✅ Premium Mobile right side */
 .navbar-mobile-right {
   display: flex;
   align-items: center;
@@ -160,7 +160,7 @@
   position: absolute;
   top: -4px;
   right: -6px;
-  background: var(--color-danger, #ef4444);
+  background: linear-gradient(135deg, var(--color-danger, #f43f5e), var(--color-danger-dark, #e11d48));
   color: var(--color-white, #ffffff);
   border-radius: var(--radius-full, 999px);
   min-width: 18px;
@@ -177,7 +177,7 @@
 .navbar-mobile-signup {
   padding: var(--space-2, 8px) var(--space-5, 14px);
   border-radius: var(--radius-sm, 8px);
-  background: linear-gradient(135deg, var(--color-primary, #4f46e5), var(--color-secondary, #7c3aed));
+  background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6));
   color: var(--color-white, #ffffff);
   font-size: var(--text-sm, 12px);
   font-weight: var(--font-bold, 700);
@@ -188,7 +188,7 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-sm, 8px);
-  background: #f3f4f6;
+  background: rgba(99, 102, 241, 0.1);
   border: 1px solid var(--color-border, #e2e8f0);
   font-size: 16px;
   cursor: pointer;
@@ -199,14 +199,16 @@
   transition: background var(--transition-fast, 0.15s ease);
 }
 
-.navbar-menu-btn:hover { background: var(--color-border, #e2e8f0); }
+.navbar-menu-btn:hover { background: rgba(99, 102, 241, 0.2); }
 
-/* ✅ Dropdown menu */
+/* ✅ Premium Dropdown menu */
 .navbar-dropdown {
   border-top: 1px solid #f3f4f6;
-  background: var(--color-white, #ffffff);
+  background: rgba(255, 255, 255, 0.95);
   padding: var(--space-2, 8px) var(--space-6, 16px) var(--space-4, 12px);
   animation: slideDown var(--transition-base, 0.2s ease);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 @keyframes slideDown {
@@ -242,15 +244,15 @@
   margin-bottom: var(--space-1, 4px);
 }
 
-.navbar-dropdown-link:hover { background: #f9fafb; }
+.navbar-dropdown-link:hover { background: rgba(99, 102, 241, 0.1); }
 
 .navbar-dropdown-logout {
   width: 100%;
   padding: var(--space-4, 12px) var(--space-5, 14px);
   border-radius: var(--radius-lg, 12px);
-  background: #fff1f2;
-  border: 1px solid #fecdd3;
-  color: #be123c;
+  background: var(--color-danger-light, #ffe4e6);
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  color: var(--color-danger-dark, #e11d48);
   font-size: var(--text-md, 15px);
   font-weight: var(--font-bold, 700);
   cursor: pointer;
@@ -259,10 +261,10 @@
   transition: background var(--transition-fast, 0.15s ease);
 }
 
-.navbar-dropdown-logout:hover { background: var(--color-danger-light, #fee2e2); }
+.navbar-dropdown-logout:hover { background: var(--color-danger-light, #ffe4e6); }
 
 /* ══════════════════════════════════
-   BOTTOM TAB BAR — Mobile only (Zepto style)
+   PREMIUM BOTTOM TAB BAR — Mobile only (Zepto style)
    ══════════════════════════════════ */
 .bottom-navbar {
   display: none;
@@ -325,7 +327,7 @@
   position: absolute;
   top: -2px;
   right: -2px;
-  background: var(--color-danger, #ef4444);
+  background: linear-gradient(135deg, var(--color-danger, #f43f5e), var(--color-danger-dark, #e11d48));
   color: var(--color-white, #ffffff);
   border-radius: var(--radius-full, 999px);
   min-width: 17px;
@@ -355,7 +357,7 @@
 }
 
 .bottom-tab.active .bottom-tab-label {
-  color: var(--color-primary, #4f46e5);
+  color: var(--color-primary, #6366f1);
   font-weight: var(--font-extrabold, 800);
 }
 
@@ -364,7 +366,7 @@
   width: 4px;
   height: 4px;
   border-radius: var(--radius-full, 999px);
-  background: var(--color-primary, #4f46e5);
+  background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6));
   position: absolute;
   bottom: 2px;
   animation: popIn var(--transition-base, 0.2s ease);
@@ -378,7 +380,7 @@
 }
 
 /* ══════════════════════════════════
-   NOTIFICATION COMPONENTS
+   PREMIUM NOTIFICATION COMPONENTS
    ══════════════════════════════════ */
 
 /* ✅ Notification bell button */
@@ -391,7 +393,7 @@
   width: 38px;
   height: 38px;
   border-radius: var(--radius-md, 10px);
-  background: #f3f4f6;
+  background: rgba(99, 102, 241, 0.1);
   border: 1px solid var(--color-border, #e2e8f0);
   font-size: 17px;
   cursor: pointer;
@@ -401,13 +403,13 @@
   transition: background var(--transition-fast, 0.15s ease);
 }
 
-.navbar-notif-btn:hover { background: var(--color-border, #e2e8f0); }
+.navbar-notif-btn:hover { background: rgba(99, 102, 241, 0.2); }
 
 .navbar-notif-badge {
   position: absolute;
   top: -5px;
   right: -5px;
-  background: var(--color-danger, #ef4444);
+  background: linear-gradient(135deg, var(--color-danger, #f43f5e), var(--color-danger-dark, #e11d48));
   color: var(--color-white, #ffffff);
   border-radius: var(--radius-full, 999px);
   min-width: 18px;
@@ -428,21 +430,25 @@
   top: calc(100% + 10px);
   right: 0;
   width: 320px;
-  background: var(--color-white, #ffffff);
+  background: rgba(255, 255, 255, 0.95);
   border: 1px solid var(--color-border, #e2e8f0);
   border-radius: var(--radius-3xl, 18px);
-  box-shadow: var(--shadow-2xl, 0 20px 48px rgba(15, 23, 42, 0.14));
+  box-shadow: var(--shadow-2xl, 0 20px 48px rgba(15, 23, 42, 0.16));
   z-index: 9999;
   overflow: hidden;
   animation: slideDown var(--transition-base, 0.2s ease);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 /* ✅ Mobile notification panel */
 .navbar-notif-mobile {
   border-top: 1px solid #f3f4f6;
-  background: var(--color-white, #ffffff);
+  background: rgba(255, 255, 255, 0.95);
   padding: 0 0 var(--space-2, 8px);
   animation: slideDown var(--transition-base, 0.2s ease);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .navbar-notif-header {
@@ -463,8 +469,8 @@
 }
 
 .navbar-notif-count {
-  background: var(--color-danger-light, #fee2e2);
-  color: var(--color-danger-dark, #dc2626);
+  background: var(--color-danger-light, #ffe4e6);
+  color: var(--color-danger-dark, #e11d48);
   font-size: var(--text-xs, 11px);
   font-weight: var(--font-bold, 700);
   padding: 2px 8px;
@@ -474,7 +480,7 @@
 .navbar-notif-clear {
   background: none;
   border: none;
-  color: var(--color-primary, #4f46e5);
+  color: var(--color-primary, #6366f1);
   font-size: var(--text-sm, 12px);
   font-weight: var(--font-bold, 700);
   cursor: pointer;
@@ -503,10 +509,10 @@
   margin-bottom: var(--space-1, 4px);
 }
 
-.navbar-notif-item:hover { background: #f9fafb; }
+.navbar-notif-item:hover { background: rgba(99, 102, 241, 0.1); }
 
-.navbar-notif-item.unread { background: #eff6ff; }
-.navbar-notif-item.unread:hover { background: #dbeafe; }
+.navbar-notif-item.unread { background: rgba(99, 102, 241, 0.08); }
+.navbar-notif-item.unread:hover { background: rgba(99, 102, 241, 0.12); }
 
 .navbar-notif-item-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
 
