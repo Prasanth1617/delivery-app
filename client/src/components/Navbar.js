@@ -289,7 +289,7 @@ function Navbar() {
           )}
         </div>
 
-        {/* ✅ Mobile notification panel */}
+        {/* ✅ Mobile notification panel - moved inside navbar-mobile-right */}
         {notifOpen && token && role === "admin" && (
           <div className="navbar-notif-mobile">
             <div className="navbar-notif-header">
