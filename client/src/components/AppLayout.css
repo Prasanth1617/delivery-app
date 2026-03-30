@@ -2,18 +2,18 @@
 
 .app-layout-banner {
   width: 100%;
-  color: #ffffff;
+  color: var(--color-white, #ffffff);
   text-align: center;
-  font-weight: 600;
-  font-size: 13px;
+  font-weight: var(--font-semibold, 600);
+  font-size: var(--text-sm, 12px);
   letter-spacing: 0.3px;
   position: sticky;
   top: 0;
   z-index: 1100;
-  padding: 10px 16px;
+  padding: var(--space-3, 10px) var(--space-6, 16px);
   line-height: 1.5;
 }
 
-.user-banner  { background: linear-gradient(90deg, #4f46e5, #7c3aed); }
+.user-banner  { background: linear-gradient(90deg, var(--color-primary, #4f46e5), var(--color-secondary, #7c3aed)); }
 .admin-banner { background: linear-gradient(90deg, #0f172a, #1e293b); }
 .app-layout-content { width: 100%; }

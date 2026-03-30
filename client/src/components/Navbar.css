@@ -2,7 +2,7 @@
 
 /* ══════════════════════════════════
    TOP NAVBAR
-══════════════════════════════════ */
+   ══════════════════════════════════ */
 .navbar {
   position: sticky;
   top: 0;
@@ -10,33 +10,33 @@
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 1px 12px rgba(15, 23, 42, 0.06);
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(15, 23, 42, 0.04));
 }
 
 .navbar-inner {
-  max-width: 1200px;
+  max-width: var(--container-xl, 1200px);
   margin: auto;
-  padding: 12px 20px;
+  padding: var(--space-4, 12px) var(--space-8, 20px);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-6, 16px);
 }
 
 /* Brand */
 .navbar-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3, 10px);
   flex-shrink: 0;
 }
 
 .navbar-logo {
   width: 38px;
   height: 38px;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  border-radius: 10px;
+  background: linear-gradient(135deg, var(--color-primary, #4f46e5), var(--color-secondary, #7c3aed));
+  border-radius: var(--radius-md, 10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,17 +47,17 @@
 
 .navbar-brand-name {
   font-family: 'Sora', sans-serif;
-  font-size: 16px;
-  font-weight: 800;
+  font-size: var(--text-lg, 16px);
+  font-weight: var(--font-extrabold, 800);
   color: #111827;
   letter-spacing: -0.3px;
   line-height: 1;
 }
 
 .navbar-brand-sub {
-  font-size: 11px;
+  font-size: var(--text-xs, 11px);
   color: #6b7280;
-  font-weight: 500;
+  font-weight: var(--font-medium, 500);
   margin-top: 2px;
 }
 
@@ -65,7 +65,7 @@
 .navbar-desktop-links {
   display: none;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1, 4px);
 }
 
 @media (min-width: 769px) {
@@ -75,14 +75,14 @@
 .navbar-desktop-link {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-5, 14px);
+  border-radius: var(--radius-md, 10px);
+  font-size: var(--text-base, 14px);
+  font-weight: var(--font-semibold, 600);
   color: #374151;
   text-decoration: none;
-  transition: all 0.18s ease;
+  transition: all var(--transition-fast, 0.15s ease);
   position: relative;
 }
 
@@ -92,47 +92,47 @@
 }
 
 .navbar-desktop-link.active {
-  background: #eef2ff;
-  color: #4f46e5;
+  background: var(--color-primary-light, #eef2ff);
+  color: var(--color-primary, #4f46e5);
 }
 
 .navbar-desktop-icon { font-size: 15px; }
 
 .navbar-desktop-badge {
-  background: #4f46e5;
-  color: white;
-  border-radius: 999px;
+  background: var(--color-primary, #4f46e5);
+  color: var(--color-white, #ffffff);
+  border-radius: var(--radius-full, 999px);
   padding: 1px 7px;
-  font-size: 11px;
-  font-weight: 800;
+  font-size: var(--text-xs, 11px);
+  font-weight: var(--font-extrabold, 800);
   margin-left: 2px;
 }
 
 .navbar-desktop-logout {
-  margin-left: 8px;
-  padding: 9px 16px;
-  border-radius: 10px;
+  margin-left: var(--space-2, 8px);
+  padding: var(--space-3, 10px) var(--space-6, 16px);
+  border-radius: var(--radius-md, 10px);
   background: #111827;
-  color: white;
+  color: var(--color-white, #ffffff);
   border: none;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: var(--text-base, 14px);
+  font-weight: var(--font-bold, 700);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background var(--transition-base, 0.2s ease);
 }
 
 .navbar-desktop-logout:hover { background: #1f2937; }
 
 .navbar-desktop-signup {
-  margin-left: 6px;
-  padding: 9px 18px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  color: white;
-  font-size: 14px;
-  font-weight: 700;
+  margin-left: var(--space-2, 8px);
+  padding: var(--space-3, 10px) var(--space-7, 18px);
+  border-radius: var(--radius-md, 10px);
+  background: linear-gradient(135deg, var(--color-primary, #4f46e5), var(--color-secondary, #7c3aed));
+  color: var(--color-white, #ffffff);
+  font-size: var(--text-base, 14px);
+  font-weight: var(--font-bold, 700);
   text-decoration: none;
-  transition: opacity 0.2s;
+  transition: opacity var(--transition-base, 0.2s ease);
 }
 
 .navbar-desktop-signup:hover { opacity: 0.88; }
@@ -141,7 +141,7 @@
 .navbar-mobile-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3, 10px);
 }
 
 @media (min-width: 769px) {
@@ -153,60 +153,60 @@
   font-size: 22px;
   text-decoration: none;
   line-height: 1;
-  padding: 4px;
+  padding: var(--space-1, 4px);
 }
 
 .navbar-mobile-cart-badge {
   position: absolute;
   top: -4px;
   right: -6px;
-  background: #ef4444;
-  color: white;
-  border-radius: 999px;
+  background: var(--color-danger, #ef4444);
+  color: var(--color-white, #ffffff);
+  border-radius: var(--radius-full, 999px);
   min-width: 18px;
   height: 18px;
   font-size: 10px;
-  font-weight: 800;
+  font-weight: var(--font-extrabold, 800);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0 4px;
-  border: 2px solid white;
+  border: 2px solid var(--color-white, #ffffff);
 }
 
 .navbar-mobile-signup {
-  padding: 8px 14px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
-  color: white;
-  font-size: 13px;
-  font-weight: 700;
+  padding: var(--space-2, 8px) var(--space-5, 14px);
+  border-radius: var(--radius-sm, 8px);
+  background: linear-gradient(135deg, var(--color-primary, #4f46e5), var(--color-secondary, #7c3aed));
+  color: var(--color-white, #ffffff);
+  font-size: var(--text-sm, 12px);
+  font-weight: var(--font-bold, 700);
   text-decoration: none;
 }
 
 .navbar-menu-btn {
   width: 36px;
   height: 36px;
-  border-radius: 9px;
+  border-radius: var(--radius-sm, 8px);
   background: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border, #e2e8f0);
   font-size: 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #374151;
-  transition: background 0.15s;
+  transition: background var(--transition-fast, 0.15s ease);
 }
 
-.navbar-menu-btn:hover { background: #e5e7eb; }
+.navbar-menu-btn:hover { background: var(--color-border, #e2e8f0); }
 
 /* ✅ Dropdown menu */
 .navbar-dropdown {
   border-top: 1px solid #f3f4f6;
-  background: white;
-  padding: 8px 16px 12px;
-  animation: slideDown 0.2s ease;
+  background: var(--color-white, #ffffff);
+  padding: var(--space-2, 8px) var(--space-6, 16px) var(--space-4, 12px);
+  animation: slideDown var(--transition-base, 0.2s ease);
 }
 
 @keyframes slideDown {
@@ -220,50 +220,50 @@
 }
 
 .navbar-dropdown-title {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: var(--text-xs, 11px);
+  font-weight: var(--font-bold, 700);
   color: #9ca3af;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  padding: 8px 0 6px;
+  padding: var(--space-2, 8px) 0 var(--space-2, 8px);
 }
 
 .navbar-dropdown-link {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 600;
+  gap: var(--space-3, 10px);
+  padding: var(--space-4, 12px) var(--space-5, 14px);
+  border-radius: var(--radius-lg, 12px);
+  font-size: var(--text-md, 15px);
+  font-weight: var(--font-semibold, 600);
   color: #111827;
   text-decoration: none;
-  transition: background 0.15s;
-  margin-bottom: 4px;
+  transition: background var(--transition-fast, 0.15s ease);
+  margin-bottom: var(--space-1, 4px);
 }
 
 .navbar-dropdown-link:hover { background: #f9fafb; }
 
 .navbar-dropdown-logout {
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 12px;
+  padding: var(--space-4, 12px) var(--space-5, 14px);
+  border-radius: var(--radius-lg, 12px);
   background: #fff1f2;
   border: 1px solid #fecdd3;
   color: #be123c;
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--text-md, 15px);
+  font-weight: var(--font-bold, 700);
   cursor: pointer;
   text-align: left;
-  margin-top: 4px;
-  transition: background 0.15s;
+  margin-top: var(--space-1, 4px);
+  transition: background var(--transition-fast, 0.15s ease);
 }
 
-.navbar-dropdown-logout:hover { background: #fee2e2; }
+.navbar-dropdown-logout:hover { background: var(--color-danger-light, #fee2e2); }
 
 /* ══════════════════════════════════
    BOTTOM TAB BAR — Mobile only (Zepto style)
-══════════════════════════════════ */
+   ══════════════════════════════════ */
 .bottom-navbar {
   display: none;
   position: fixed;
@@ -274,9 +274,9 @@
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--color-border, #e2e8f0);
   box-shadow: 0 -4px 24px rgba(15, 23, 42, 0.08);
-  padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
+  padding: var(--space-2, 8px) 0 calc(var(--space-2, 8px) + env(safe-area-inset-bottom));
 }
 
 @media (max-width: 768px) {
@@ -289,11 +289,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 6px 4px;
+  gap: var(--space-1, 4px);
+  padding: var(--space-2, 8px) var(--space-1, 4px);
   text-decoration: none;
   position: relative;
-  transition: transform 0.15s ease;
+  transition: transform var(--transition-fast, 0.15s ease);
   min-height: 52px;
 }
 
@@ -311,7 +311,7 @@
 
 .bottom-tab-icon {
   font-size: 22px;
-  transition: transform 0.2s ease;
+  transition: transform var(--transition-base, 0.2s ease);
   filter: grayscale(0.4) opacity(0.6);
 }
 
@@ -325,19 +325,19 @@
   position: absolute;
   top: -2px;
   right: -2px;
-  background: #ef4444;
-  color: white;
-  border-radius: 999px;
+  background: var(--color-danger, #ef4444);
+  color: var(--color-white, #ffffff);
+  border-radius: var(--radius-full, 999px);
   min-width: 17px;
   height: 17px;
   font-size: 10px;
-  font-weight: 800;
+  font-weight: var(--font-extrabold, 800);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0 4px;
-  border: 2px solid white;
-  animation: popIn 0.2s ease;
+  border: 2px solid var(--color-white, #ffffff);
+  animation: popIn var(--transition-base, 0.2s ease);
 }
 
 @keyframes popIn {
@@ -348,26 +348,26 @@
 /* Label */
 .bottom-tab-label {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: var(--font-semibold, 600);
   color: #9ca3af;
-  transition: color 0.2s;
+  transition: color var(--transition-base, 0.2s ease);
   letter-spacing: 0.2px;
 }
 
 .bottom-tab.active .bottom-tab-label {
-  color: #4f46e5;
-  font-weight: 800;
+  color: var(--color-primary, #4f46e5);
+  font-weight: var(--font-extrabold, 800);
 }
 
 /* Active dot indicator */
 .bottom-tab-dot {
   width: 4px;
   height: 4px;
-  border-radius: 999px;
-  background: #4f46e5;
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-primary, #4f46e5);
   position: absolute;
   bottom: 2px;
-  animation: popIn 0.2s ease;
+  animation: popIn var(--transition-base, 0.2s ease);
 }
 
 /* ✅ Add bottom padding to page content on mobile so tabs don't cover content */
@@ -378,8 +378,8 @@
 }
 
 /* ══════════════════════════════════
-   PASTE THIS AT THE BOTTOM OF Navbar.css
-══════════════════════════════════ */
+   NOTIFICATION COMPONENTS
+   ══════════════════════════════════ */
 
 /* ✅ Notification bell button */
 .navbar-notif-wrap {
@@ -388,30 +388,38 @@
 
 .navbar-notif-btn {
   position: relative;
-  width: 38px; height: 38px;
-  border-radius: 10px;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md, 10px);
   background: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-border, #e2e8f0);
   font-size: 17px;
   cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast, 0.15s ease);
 }
 
-.navbar-notif-btn:hover { background: #e5e7eb; }
+.navbar-notif-btn:hover { background: var(--color-border, #e2e8f0); }
 
 .navbar-notif-badge {
   position: absolute;
-  top: -5px; right: -5px;
-  background: #ef4444;
-  color: white;
-  border-radius: 999px;
-  min-width: 18px; height: 18px;
-  font-size: 10px; font-weight: 800;
-  display: flex; align-items: center; justify-content: center;
+  top: -5px;
+  right: -5px;
+  background: var(--color-danger, #ef4444);
+  color: var(--color-white, #ffffff);
+  border-radius: var(--radius-full, 999px);
+  min-width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: var(--font-extrabold, 800);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0 4px;
-  border: 2px solid white;
-  animation: popIn 0.2s ease;
+  border: 2px solid var(--color-white, #ffffff);
+  animation: popIn var(--transition-base, 0.2s ease);
 }
 
 /* ✅ Desktop notification panel */
@@ -420,67 +428,79 @@
   top: calc(100% + 10px);
   right: 0;
   width: 320px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
-  box-shadow: 0 20px 48px rgba(15,23,42,0.14);
+  background: var(--color-white, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-3xl, 18px);
+  box-shadow: var(--shadow-2xl, 0 20px 48px rgba(15, 23, 42, 0.14));
   z-index: 9999;
   overflow: hidden;
-  animation: slideDown 0.2s ease;
+  animation: slideDown var(--transition-base, 0.2s ease);
 }
 
 /* ✅ Mobile notification panel */
 .navbar-notif-mobile {
   border-top: 1px solid #f3f4f6;
-  background: white;
-  padding: 0 0 8px;
-  animation: slideDown 0.2s ease;
+  background: var(--color-white, #ffffff);
+  padding: 0 0 var(--space-2, 8px);
+  animation: slideDown var(--transition-base, 0.2s ease);
 }
 
 .navbar-notif-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 16px 10px;
+  padding: var(--space-5, 14px) var(--space-6, 16px) var(--space-3, 10px);
   border-bottom: 1px solid #f3f4f6;
 }
 
 .navbar-notif-title {
-  font-size: 14px; font-weight: 800; color: #111827;
-  display: flex; align-items: center; gap: 8px;
+  font-size: var(--text-base, 14px);
+  font-weight: var(--font-extrabold, 800);
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
 }
 
 .navbar-notif-count {
-  background: #fee2e2;
-  color: #dc2626;
-  font-size: 11px; font-weight: 700;
-  padding: 2px 8px; border-radius: 999px;
+  background: var(--color-danger-light, #fee2e2);
+  color: var(--color-danger-dark, #dc2626);
+  font-size: var(--text-xs, 11px);
+  font-weight: var(--font-bold, 700);
+  padding: 2px 8px;
+  border-radius: var(--radius-full, 999px);
 }
 
 .navbar-notif-clear {
-  background: none; border: none;
-  color: #4f46e5; font-size: 13px;
-  font-weight: 700; cursor: pointer;
-  transition: opacity 0.2s;
+  background: none;
+  border: none;
+  color: var(--color-primary, #4f46e5);
+  font-size: var(--text-sm, 12px);
+  font-weight: var(--font-bold, 700);
+  cursor: pointer;
+  transition: opacity var(--transition-base, 0.2s ease);
 }
 
 .navbar-notif-clear:hover { opacity: 0.7; }
 
 .navbar-notif-empty {
-  padding: 20px 16px;
+  padding: var(--space-8, 20px) var(--space-6, 16px);
   text-align: center;
-  font-size: 13px; color: #9ca3af;
+  font-size: var(--text-sm, 12px);
+  color: #9ca3af;
 }
 
-.navbar-notif-list { padding: 8px; }
+.navbar-notif-list { padding: var(--space-2, 8px); }
 
 .navbar-notif-item {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 10px 10px;
-  border-radius: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3, 10px);
+  padding: var(--space-3, 10px) var(--space-3, 10px);
+  border-radius: var(--radius-md, 10px);
   cursor: pointer;
-  transition: background 0.15s;
-  margin-bottom: 4px;
+  transition: background var(--transition-fast, 0.15s ease);
+  margin-bottom: var(--space-1, 4px);
 }
 
 .navbar-notif-item:hover { background: #f9fafb; }
@@ -494,48 +514,10 @@
 
 .navbar-notif-item-title {
   margin: 0 0 3px;
-  font-size: 13px; font-weight: 700;
+  font-size: var(--text-sm, 12px);
+  font-weight: var(--font-bold, 700);
   color: #111827;
-  display: flex; align-items: center; gap: 6px;
-}
-
-.navbar-notif-new-pill {
-  background: #dc2626;
-  color: white; font-size: 9px;
-  font-weight: 800; padding: 1px 6px;
-  border-radius: 999px; letter-spacing: 0.5px;
-}
-
-.navbar-notif-item-sub {
-  margin: 0; font-size: 11px; color: #6b7280;
-  font-weight: 500; line-height: 1.5;
-}
-
-/* ✅ Mobile bell */
-.navbar-mobile-bell {
-  position: relative;
-  font-size: 20px;
-  background: none; border: none;
-  cursor: pointer; padding: 4px;
-  line-height: 1;
-}
-
-.navbar-mobile-bell-badge {
-  position: absolute;
-  top: -4px; right: -6px;
-  background: #ef4444; color: white;
-  border-radius: 999px;
-  min-width: 17px; height: 17px;
-  font-size: 10px; font-weight: 800;
-  display: flex; align-items: center; justify-content: center;
-  padding: 0 3px; border: 2px solid white;
-  animation: popIn 0.2s ease;
-}
-
-/* ✅ Dropdown badge */
-.navbar-dropdown-badge {
-  background: #dc2626; color: white;
-  font-size: 10px; font-weight: 800;
-  padding: 2px 7px; border-radius: 999px;
-  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
 }
