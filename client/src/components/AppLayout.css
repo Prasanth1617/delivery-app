@@ -14,6 +14,6 @@
   line-height: 1.5;
 }
 
-.user-banner  { background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6)); }
-.admin-banner { background: linear-gradient(135deg, #1e293b, #334155); }
+.user-banner  { background: var(--color-primary, #1e3a5f); }
+.admin-banner { background: var(--color-text, #2c2c2c); }
 .app-layout-content { width: 100%; }

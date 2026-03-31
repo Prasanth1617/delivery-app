@@ -1,12 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
-/* ─── Premium Page Background ─── */
+/* ─── Premium Page Background - Elegant & Luxurious ─── */
 body {
-  background:
-    radial-gradient(circle at top left, rgba(99, 102, 241, 0.15), transparent 30%),
-    radial-gradient(circle at top right, rgba(139, 92, 246, 0.12), transparent 28%),
-    radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.10), transparent 25%),
-    linear-gradient(180deg, #f8fafc 0%, #e0e7ff 50%, #fce7f3 100%);
+  background: var(--color-bg, #f8fafc);
 }
 
 /* ─── Premium Navbar ─── */
@@ -53,8 +49,7 @@ body {
   font-size: 1.1rem;
   font-weight: var(--font-extrabold, 800);
   letter-spacing: 0.3px;
-  background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6), var(--color-accent, #06b6d4));
-  box-shadow: 0 14px 28px rgba(99, 102, 241, 0.35);
+  background: var(--color-primary, #1e3a5f);
 }
 
 .brand-text h1,
@@ -97,17 +92,16 @@ body {
 .navbar-center a:hover,
 .menu-links a:hover,
 .nav-link:hover {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--color-primary, #6366f1);
+  background: rgba(30, 58, 95, 0.08);
+  color: var(--color-primary, #1e3a5f);
 }
 
 .nav-links a.active,
 .navbar-center a.active,
 .menu-links a.active,
 .nav-link.active {
-  color: var(--color-primary, #6366f1);
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.12));
-  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.2);
+  color: var(--color-primary, #1e3a5f);
+  background: rgba(30, 58, 95, 0.12);
 }
 
 .logout-btn,
@@ -118,8 +112,7 @@ body {
   border-radius: var(--radius-xl, 14px);
   font-weight: var(--font-bold, 700);
   color: var(--color-white, #ffffff);
-  background: linear-gradient(135deg, #1e293b, #334155);
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.2);
+  background: var(--color-text, #1e293b);
   transition: var(--transition-slow, 0.25s ease);
 }
 
@@ -130,7 +123,7 @@ body {
   box-shadow: 0 16px 30px rgba(15, 23, 42, 0.28);
 }
 
-/* ─── Premium Notice Bars ─── */
+/* ─── Premium Notice Bars - Elegant & Luxurious ─── */
 .top-strip,
 .admin-mode-bar,
 .notice-bar {
@@ -141,11 +134,10 @@ body {
   color: var(--color-white, #ffffff);
   text-align: center;
   font-weight: var(--font-semibold, 600);
-  background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6));
-  box-shadow: var(--shadow-md, 0 4px 12px rgba(15, 23, 42, 0.08));
+  background: var(--color-primary, #1e3a5f);
 }
 
-/* ─── Premium Hero Section ─── */
+/* ─── Premium Hero Section - Elegant & Luxurious ─── */
 .hero-section,
 .admin-products-hero,
 .page-hero,
@@ -156,24 +148,10 @@ body {
   padding: 38px;
   border-radius: 30px;
   color: var(--color-white, #ffffff);
-  background:
-    radial-gradient(circle at top right, rgba(255, 255, 255, 0.15), transparent 22%),
-    radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.3), transparent 24%),
-    linear-gradient(135deg, #4f46e5 0%, #7c3aed 45%, #06b6d4 100%);
-  box-shadow: var(--shadow-xl, 0 12px 32px rgba(15, 23, 42, 0.12));
+  background: linear-gradient(135deg, var(--color-primary, #1e3a5f) 0%, var(--color-primary-dark, #152a45) 100%);
 }
 
-.hero-section::after,
-.admin-products-hero::after,
-.page-hero::after,
-.dashboard-hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(120deg, rgba(255, 255, 255, 0.1), transparent 45%);
-  pointer-events: none;
-}
+
 
 .hero-badge,
 .premium-badge {

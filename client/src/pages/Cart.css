@@ -1,12 +1,15 @@
-/* ════ CART PAGE ════ */
-.cart-page { background: #f8fafc; min-height: 100vh; }
+/* ════ CART PAGE - Elegant & Luxurious ════ */
+.cart-page {
+  background: var(--color-bg, #f8fafc);
+  min-height: 100vh;
+}
 
 .cart-container { gap: 20px; }
 
 /* Top card */
 .cart-top-card {
-  background: linear-gradient(135deg, #ffffff, #f0f4ff);
-  border: 1px solid #e0e7ff;
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
   border-radius: 20px; padding: 24px;
   display: flex; justify-content: space-between;
   align-items: flex-start; flex-wrap: wrap; gap: 16px;
@@ -185,7 +188,7 @@
 }
 
 .cart-location-btn {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: var(--color-primary, #6366f1);
   color: white; border: none; border-radius: 8px;
   padding: 7px 12px; font-size: 12px; font-weight: 700;
   cursor: pointer; transition: opacity 0.2s; white-space: nowrap;

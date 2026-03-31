@@ -35,13 +35,12 @@
 .navbar-logo {
   width: 38px;
   height: 38px;
-  background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6));
+  background: var(--color-primary, #1e3a5f);
   border-radius: var(--radius-md, 10px);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
   flex-shrink: 0;
 }
 
@@ -87,19 +86,19 @@
 }
 
 .navbar-desktop-link:hover {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--color-primary, #6366f1);
+  background: rgba(30, 58, 95, 0.08);
+  color: var(--color-primary, #1e3a5f);
 }
 
 .navbar-desktop-link.active {
-  background: var(--color-primary-light, #e0e7ff);
-  color: var(--color-primary, #6366f1);
+  background: var(--color-primary-light, #e8eef5);
+  color: var(--color-primary, #1e3a5f);
 }
 
 .navbar-desktop-icon { font-size: 15px; }
 
 .navbar-desktop-badge {
-  background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6));
+  background: var(--color-secondary, #c9a962);
   color: var(--color-white, #ffffff);
   border-radius: var(--radius-full, 999px);
   padding: 1px 7px;
@@ -112,7 +111,7 @@
   margin-left: var(--space-2, 8px);
   padding: var(--space-3, 10px) var(--space-6, 16px);
   border-radius: var(--radius-md, 10px);
-  background: linear-gradient(135deg, #1e293b, #334155);
+  background: var(--color-text, #1e293b);
   color: var(--color-white, #ffffff);
   border: none;
   font-size: var(--text-base, 14px);
@@ -121,13 +120,13 @@
   transition: background var(--transition-base, 0.2s ease);
 }
 
-.navbar-desktop-logout:hover { background: linear-gradient(135deg, #334155, #475569); }
+.navbar-desktop-logout:hover { background: #334155; }
 
 .navbar-desktop-signup {
   margin-left: var(--space-2, 8px);
   padding: var(--space-3, 10px) var(--space-7, 18px);
   border-radius: var(--radius-md, 10px);
-  background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6));
+  background: var(--color-primary, #1e3a5f);
   color: var(--color-white, #ffffff);
   font-size: var(--text-base, 14px);
   font-weight: var(--font-bold, 700);
@@ -136,6 +135,35 @@
 }
 
 .navbar-desktop-signup:hover { opacity: 0.88; }
+
+/* Dark mode toggle button */
+.navbar-dark-mode-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md, 10px);
+  background: rgba(30, 58, 95, 0.08);
+  border: 1px solid var(--color-border, #e8e4df);
+  font-size: 17px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast, 0.15s ease);
+  margin-left: var(--space-2, 8px);
+}
+
+.navbar-dark-mode-btn:hover {
+  background: rgba(30, 58, 95, 0.15);
+}
+
+.dark-mode .navbar-dark-mode-btn {
+  background: rgba(201, 169, 98, 0.1);
+  border-color: rgba(201, 169, 98, 0.15);
+}
+
+.dark-mode .navbar-dark-mode-btn:hover {
+  background: rgba(201, 169, 98, 0.2);
+}
 
 /* ✅ Premium Mobile right side */
 .navbar-mobile-right {
@@ -160,7 +188,7 @@
   position: absolute;
   top: -4px;
   right: -6px;
-  background: linear-gradient(135deg, var(--color-danger, #f43f5e), var(--color-danger-dark, #e11d48));
+  background: var(--color-danger, #f43f5e);
   color: var(--color-white, #ffffff);
   border-radius: var(--radius-full, 999px);
   min-width: 18px;
@@ -177,7 +205,7 @@
 .navbar-mobile-signup {
   padding: var(--space-2, 8px) var(--space-5, 14px);
   border-radius: var(--radius-sm, 8px);
-  background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6));
+  background: var(--color-primary, #1e3a5f);
   color: var(--color-white, #ffffff);
   font-size: var(--text-sm, 12px);
   font-weight: var(--font-bold, 700);
@@ -188,18 +216,18 @@
   width: 36px;
   height: 36px;
   border-radius: var(--radius-sm, 8px);
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid var(--color-border, #e2e8f0);
+  background: rgba(30, 58, 95, 0.08);
+  border: 1px solid var(--color-border, #e8e4df);
   font-size: 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #374151;
+  color: #2c2c2c;
   transition: background var(--transition-fast, 0.15s ease);
 }
 
-.navbar-menu-btn:hover { background: rgba(99, 102, 241, 0.2); }
+.navbar-menu-btn:hover { background: rgba(30, 58, 95, 0.15); }
 
 /* ✅ Premium Dropdown menu */
 .navbar-dropdown {
@@ -244,7 +272,7 @@
   margin-bottom: var(--space-1, 4px);
 }
 
-.navbar-dropdown-link:hover { background: rgba(99, 102, 241, 0.1); }
+.navbar-dropdown-link:hover { background: rgba(30, 58, 95, 0.08); }
 
 .navbar-dropdown-logout {
   width: 100%;
@@ -327,7 +355,7 @@
   position: absolute;
   top: -2px;
   right: -2px;
-  background: linear-gradient(135deg, var(--color-danger, #f43f5e), var(--color-danger-dark, #e11d48));
+  background: var(--color-danger, #f43f5e);
   color: var(--color-white, #ffffff);
   border-radius: var(--radius-full, 999px);
   min-width: 17px;
@@ -357,16 +385,16 @@
 }
 
 .bottom-tab.active .bottom-tab-label {
-  color: var(--color-primary, #6366f1);
+  color: var(--color-primary, #1e3a5f);
   font-weight: var(--font-extrabold, 800);
 }
 
-/* Active dot indicator */
+/* Active dot indicator - Vibrant & Fun */
 .bottom-tab-dot {
   width: 4px;
   height: 4px;
   border-radius: var(--radius-full, 999px);
-  background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6));
+  background: var(--color-primary, #1e3a5f);
   position: absolute;
   bottom: 2px;
   animation: popIn var(--transition-base, 0.2s ease);
@@ -393,8 +421,8 @@
   width: 38px;
   height: 38px;
   border-radius: var(--radius-md, 10px);
-  background: rgba(99, 102, 241, 0.1);
-  border: 1px solid var(--color-border, #e2e8f0);
+  background: rgba(30, 58, 95, 0.08);
+  border: 1px solid var(--color-border, #e8e4df);
   font-size: 17px;
   cursor: pointer;
   display: flex;
@@ -403,13 +431,13 @@
   transition: background var(--transition-fast, 0.15s ease);
 }
 
-.navbar-notif-btn:hover { background: rgba(99, 102, 241, 0.2); }
+.navbar-notif-btn:hover { background: rgba(30, 58, 95, 0.15); }
 
 .navbar-notif-badge {
   position: absolute;
   top: -5px;
   right: -5px;
-  background: linear-gradient(135deg, var(--color-danger, #f43f5e), var(--color-danger-dark, #e11d48));
+  background: var(--color-danger, #f43f5e);
   color: var(--color-white, #ffffff);
   border-radius: var(--radius-full, 999px);
   min-width: 18px;
@@ -441,14 +469,19 @@
   -webkit-backdrop-filter: blur(10px);
 }
 
-/* ✅ Mobile notification panel */
+/* ✅ Mobile notification panel - Vibrant & Fun */
 .navbar-notif-mobile {
+  display: none;
   border-top: 1px solid #f3f4f6;
   background: rgba(255, 255, 255, 0.95);
   padding: 0 0 var(--space-2, 8px);
   animation: slideDown var(--transition-base, 0.2s ease);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+}
+
+@media (max-width: 768px) {
+  .navbar-notif-mobile { display: block; }
 }
 
 .navbar-notif-header {

@@ -9,6 +9,9 @@ function Navbar() {
 
   const [cartCount, setCartCount] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("darkMode") === "true";
+  });
 
   // ✅ ADDED - notification state
   const [newOrderCount, setNewOrderCount] = useState(0);
@@ -18,6 +21,25 @@ function Navbar() {
 
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
+
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    localStorage.setItem("darkMode", String(newMode));
+    if (newMode) {
+      document.documentElement.classList.add("dark-mode");
+    } else {
+      document.documentElement.classList.remove("dark-mode");
+    }
+  };
+
+  // Apply dark mode on mount
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark-mode");
+    }
+  }, [darkMode]);
 
   const updateCartCount = () => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -119,6 +141,18 @@ function Navbar() {
     { path: "/profile",         icon: "👤", label: "Profile" },
   ];
 
+  // Dark mode toggle button
+  const darkModeToggle = (
+    <button
+      onClick={toggleDarkMode}
+      className="navbar-dark-mode-btn"
+      type="button"
+      title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+    >
+      {darkMode ? "☀️" : "🌙"}
+    </button>
+  );
+
   const tabs = role === "admin" ? adminTabs : userTabs;
 
   // ✅ Format order time
@@ -159,6 +193,8 @@ function Navbar() {
                   )}
                 </Link>
               ))}
+
+              {darkModeToggle}
 
               {/* ✅ ADDED - Admin notification bell (desktop) */}
               {role === "admin" && (
@@ -235,6 +271,7 @@ function Navbar() {
           {/* Desktop — not logged in */}
           {!token && (
             <div className="navbar-desktop-links">
+              {darkModeToggle}
               <Link to="/login" className={`navbar-desktop-link ${isActive("/login") ? "active" : ""}`}>
                 Login
               </Link>
@@ -247,6 +284,8 @@ function Navbar() {
           {/* Mobile right */}
           {token && (
             <div className="navbar-mobile-right">
+
+              {darkModeToggle}
 
               {/* ✅ ADDED - Bell icon on mobile for admin */}
               {role === "admin" && (
@@ -284,6 +323,7 @@ function Navbar() {
 
           {!token && (
             <div className="navbar-mobile-right">
+              {darkModeToggle}
               <Link to="/signup" className="navbar-mobile-signup">Sign Up</Link>
             </div>
           )}

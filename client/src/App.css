@@ -1,14 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-/* ─── Premium App-specific overrides ─── */
+/* ─── Premium App-specific overrides - Elegant & Luxurious ─── */
 .app-page {
   min-height: 100vh;
   padding: var(--space-9, 24px) var(--space-8, 20px) 90px;
-  background:
-    radial-gradient(circle at top left, rgba(99, 102, 241, 0.12), transparent 30%),
-    radial-gradient(circle at top right, rgba(139, 92, 246, 0.10), transparent 28%),
-    radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.08), transparent 25%),
-    linear-gradient(180deg, #f8fafc 0%, #e0e7ff 50%, #fce7f3 100%);
+  background: var(--color-bg, #f8fafc);
 }
 
 .app-container {
@@ -44,7 +40,7 @@
   flex-wrap: wrap;
   gap: var(--space-6, 16px);
   border-radius: var(--radius-4xl, 20px);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(224, 231, 255, 0.5));
+  background: var(--color-surface, #ffffff);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -89,22 +85,21 @@ button:hover  { transform: translateY(-1px); }
 button:active { transform: translateY(0); }
 
 .primary-btn {
-  background: linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6));
+  background: var(--color-primary, #6366f1);
   color: var(--color-white, #ffffff);
   border: none;
   border-radius: var(--radius-lg, 12px);
   padding: var(--space-4, 12px) var(--space-6, 16px);
   font-size: var(--text-base, 14px);
   font-weight: var(--font-bold, 700);
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
   letter-spacing: 0.1px;
 }
 
-.primary-btn:hover { box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45); }
+.primary-btn:hover { opacity: 0.9; }
 .primary-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
 
 .secondary-btn {
-  background: linear-gradient(135deg, var(--color-text, #1e293b), #334155);
+  background: var(--color-text, #1e293b);
   color: var(--color-white, #ffffff);
   border: none;
   border-radius: var(--radius-lg, 12px);
@@ -113,20 +108,19 @@ button:active { transform: translateY(0); }
   font-weight: var(--font-bold, 700);
 }
 
-.secondary-btn:hover { background: linear-gradient(135deg, #334155, #475569); }
+.secondary-btn:hover { background: #334155; }
 
 .danger-btn {
-  background: linear-gradient(135deg, var(--color-danger, #f43f5e), var(--color-danger-dark, #e11d48));
+  background: var(--color-danger, #f43f5e);
   color: var(--color-white, #ffffff);
   border: none;
   border-radius: var(--radius-lg, 12px);
   padding: var(--space-4, 12px) var(--space-6, 16px);
   font-size: var(--text-base, 14px);
   font-weight: var(--font-bold, 700);
-  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.35);
 }
 
-.danger-btn:hover { box-shadow: 0 6px 20px rgba(244, 63, 94, 0.45); }
+.danger-btn:hover { opacity: 0.9; }
 
 .ghost-btn {
   background: transparent;
@@ -212,22 +206,17 @@ textarea.input-field { resize: vertical; min-height: 100px; }
 
 /* ─── Premium Skeleton Loader ─── */
 .skel {
-  background: linear-gradient(90deg, var(--color-bg-soft, #f1f5f9) 25%, var(--color-border, #e2e8f0) 50%, var(--color-bg-soft, #f1f5f9) 75%);
-  background-size: 200% 100%;
-  animation: skelShimmer 1.4s ease infinite;
+  background: var(--color-bg-soft, #f1f5f9);
   border-radius: var(--radius-md, 10px);
 }
 
-@keyframes skelShimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
 
-/* ─── Premium Scrollbar ─── */
+
+/* ─── Premium Scrollbar - Elegant & Luxurious ─── */
 ::-webkit-scrollbar       { width: 8px; }
-::-webkit-scrollbar-track { background: var(--color-bg-soft, #f1f5f9); border-radius: var(--radius-full, 999px); }
-::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--color-primary, #6366f1), var(--color-secondary, #8b5cf6)); border-radius: var(--radius-full, 999px); border: 2px solid var(--color-bg-soft, #f1f5f9); }
-::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, var(--color-primary-dark, #4f46e5), var(--color-secondary-dark, #7c3aed)); }
+::-webkit-scrollbar-track { background: var(--color-bg-soft, #f5f3f0); border-radius: var(--radius-full, 999px); }
+::-webkit-scrollbar-thumb { background: var(--color-primary, #1e3a5f); border-radius: var(--radius-full, 999px); border: 2px solid var(--color-bg-soft, #f5f3f0); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary-dark, #152a45); }
 
 /* ─── Premium Responsive ─── */
 @media (min-width: 640px) {
