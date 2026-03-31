@@ -3,6 +3,7 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./Login.css";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
   const [phone, setPhone] = useState("");
@@ -11,6 +12,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
+  const { login } = useAuth();
   const location = useLocation();
 
   const redirectPath = location.state?.from?.pathname || "/profile";
@@ -44,12 +46,7 @@ function Login() {
         { phone: phone.trim(), password }
       );
 
-      localStorage.setItem("token", res.data.token);
-      if (res.data.role) {
-        localStorage.setItem("role", res.data.role);
-      } else {
-        localStorage.removeItem("role");
-      }
+login(res.data);
 
       toast.success("Welcome back! ✅");
 

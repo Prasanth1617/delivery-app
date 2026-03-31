@@ -14,7 +14,14 @@ const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://delivery-app-alpha-five.vercel.app"
+  ],
+  credentials: true
+}));
 
 app.use("/api/auth",      require("./routes/authRoutes"));
 app.use("/api/products",  require("./routes/productRoutes"));

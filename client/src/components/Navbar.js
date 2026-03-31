@@ -2,9 +2,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import "./Navbar.css";
+import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
   const navigate = useNavigate();
+  const { token, role, logout } = useAuth();
   const location = useLocation();
 
   const [cartCount, setCartCount] = useState(0);
@@ -19,8 +21,6 @@ function Navbar() {
   const [recentOrders, setRecentOrders] = useState([]);
   const notifRef = useRef(null);
 
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
 
   // Toggle dark mode
   const toggleDarkMode = () => {
@@ -118,13 +118,12 @@ function Navbar() {
     navigate("/admin/orders");
   };
 
-  const handleLogout = () => {
-    localStorage.clear();
-    setCartCount(0);
-    setNewOrderCount(0);
-    navigate("/");
-  };
-
+const handleLogout = () => {
+  logout();
+  setCartCount(0);
+  setNewOrderCount(0);
+  navigate("/");
+};
   const isActive = (path) => location.pathname === path;
 
   const userTabs = [

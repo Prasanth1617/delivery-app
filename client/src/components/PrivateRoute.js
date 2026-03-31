@@ -1,18 +1,11 @@
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function PrivateRoute({ children, adminOnly = false }) {
-  const location = useLocation();
+  const { token, role } = useAuth();
 
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
-
-  if (!token) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
-  }
-
-  if (adminOnly && role !== "admin") {
-    return <Navigate to="/profile" replace />;
-  }
+  if (!token) return <Navigate to="/login" replace />;
+  if (adminOnly && role !== "admin") return <Navigate to="/products" replace />;
 
   return children;
 }
