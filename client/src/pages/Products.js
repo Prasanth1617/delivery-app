@@ -8,7 +8,7 @@ import ProductCard from "../components/ProductCard";
 function Products() {
   const [products, setProducts]             = useState([]);
   const [loading, setLoading]               = useState(true);
-  const [cartVersion, setCartVersion]       = useState(0);
+  const [, setCartVersion] = useState(0);
   const [searchTerm, setSearchTerm]         = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortOption, setSortOption]         = useState("default");
