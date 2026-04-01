@@ -1,30 +1,30 @@
-/* ══ Premium Product Card — Zepto Style ══ */
+/* ══ Premium Product Card — Deep Purple + Gold ══ */
 .pcard {
   position: relative;
   background: #ffffff;
-  border: 0.5px solid #f1f5f9;
+  border: 0.5px solid #f0ebf8;
   border-radius: 16px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 10px rgba(94, 32, 128, 0.07);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .pcard:hover {
-  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.12);
+  box-shadow: 0 8px 24px rgba(94, 32, 128, 0.14);
   transform: translateY(-2px);
 }
 
 .pcard-out { opacity: 0.7; }
 
-/* Discount badge */
+/* Discount badge — gold */
 .pcard-discount-badge {
   position: absolute;
   top: 8px;
   left: 8px;
-  background: #7c3aed;
-  color: #ffffff;
+  background: #c9a84c;
+  color: #1e0a3c;
   font-size: 10px;
   font-weight: 700;
   padding: 2px 8px;
@@ -47,18 +47,18 @@
 .pcard-out-overlay span {
   font-size: 11px;
   font-weight: 600;
-  color: #64748b;
+  color: #6b4f8a;
   background: #ffffff;
   padding: 4px 12px;
   border-radius: 999px;
-  border: 0.5px solid #e2e8f0;
+  border: 0.5px solid #e8e0f0;
 }
 
 /* Image */
 .pcard-image-wrap {
   width: 100%;
-  height: 120px;
-  background: #f8f8ff;
+  height: 118px;
+  background: #f8f4ff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,8 +91,8 @@
 /* Category */
 .pcard-category {
   display: inline-block;
-  background: #f3f0ff;
-  color: #7c3aed;
+  background: #f3ecff;
+  color: #5e2080;
   font-size: 9px;
   font-weight: 700;
   padding: 2px 7px;
@@ -105,7 +105,7 @@
 .pcard-name {
   font-size: 12px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #1e0a3c;
   line-height: 1.35;
   margin: 0;
   display: -webkit-box;
@@ -118,21 +118,21 @@
 /* Unit */
 .pcard-unit {
   font-size: 10px;
-  color: #94a3b8;
+  color: #9d7bb0;
   font-weight: 500;
 }
 
-/* Rating */
+/* Rating — gold stars */
 .pcard-rating {
   font-size: 10px;
-  color: #f59e0b;
+  color: #c9a84c;
   display: flex;
   align-items: center;
   gap: 3px;
 }
 
 .pcard-rating-count {
-  color: #94a3b8;
+  color: #9d7bb0;
   font-size: 10px;
 }
 
@@ -147,22 +147,23 @@
 .pcard-price {
   font-size: 16px;
   font-weight: 800;
-  color: #1a1a2e;
+  color: #1e0a3c;
 }
 
 .pcard-mrp {
   font-size: 11px;
-  color: #94a3b8;
+  color: #b0a0c0;
   text-decoration: line-through;
   font-weight: 500;
 }
 
-/* Savings */
+/* Savings — gold pill */
 .pcard-savings {
   font-size: 9px;
   font-weight: 700;
-  color: #059669;
-  background: #d1fae5;
+  color: #c9a84c;
+  background: rgba(201, 168, 76, 0.12);
+  border: 0.5px solid rgba(201, 168, 76, 0.3);
   padding: 2px 7px;
   border-radius: 999px;
   width: fit-content;
@@ -181,12 +182,12 @@
 .pcard-stock.low { background: #fef3c7; color: #d97706; }
 .pcard-stock.out { background: #fee2e2; color: #dc2626; }
 
-/* Add to Cart button */
+/* Add to Cart button — deep purple */
 .pcard-add-btn {
   margin-top: auto;
   width: 100%;
   padding: 9px;
-  background: #7c3aed;
+  background: #5e2080;
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -199,21 +200,21 @@
   justify-content: center;
   gap: 5px;
   letter-spacing: 0.2px;
-  transition: background 0.15s ease, transform 0.15s ease;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 12px rgba(94, 32, 128, 0.38);
 }
 
 .pcard-add-btn:hover {
-  background: #6d28d9;
+  background: #4a1866;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.5);
+  box-shadow: 0 6px 16px rgba(94, 32, 128, 0.48);
 }
 
 .pcard-add-btn:active { transform: translateY(0); }
 
 .pcard-add-disabled {
-  background: #f1f5f9 !important;
-  color: #94a3b8 !important;
+  background: #f3ecff !important;
+  color: #b0a0c0 !important;
   cursor: not-allowed !important;
   transform: none !important;
   box-shadow: none !important;
@@ -227,7 +228,7 @@
   border-radius: 10px;
   overflow: hidden;
   min-height: 38px;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+  box-shadow: 0 4px 12px rgba(94, 32, 128, 0.2);
 }
 
 .pcard-qty-btn {
@@ -245,44 +246,53 @@
 }
 
 .pcard-qty-minus {
-  background: #f3f0ff;
-  color: #7c3aed;
+  background: #f3ecff;
+  color: #5e2080;
 }
 
-.pcard-qty-minus:hover { background: #ede9fe; }
+.pcard-qty-minus:hover { background: #ede4ff; }
 
 .pcard-qty-plus {
-  background: #7c3aed;
+  background: #5e2080;
   color: #ffffff;
 }
 
-.pcard-qty-plus:hover { background: #6d28d9; }
+.pcard-qty-plus:hover { background: #4a1866; }
 
 .pcard-qty-val {
   flex: 1;
   font-size: 14px;
   font-weight: 800;
-  color: #7c3aed;
-  background: #f3f0ff;
+  color: #5e2080;
+  background: #f3ecff;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-left: 1px solid #ede9fe;
-  border-right: 1px solid #ede9fe;
+  border-left: 1px solid #e8d5ff;
+  border-right: 1px solid #e8d5ff;
 }
 
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  .pcard { background: #1e1b2e; border-color: #2d2a3e; }
-  .pcard-name { color: #f1f5f9; }
-  .pcard-price { color: #f1f5f9; }
-  .pcard-image-wrap { background: #2d2a3e; }
-  .pcard-category { background: #2d2264; color: #a78bfa; }
-  .pcard-qty-minus { background: #2d2264; color: #a78bfa; }
-  .pcard-qty-val { background: #2d2264; color: #a78bfa; border-color: #3d3080; }
-  .pcard-out-overlay { background: rgba(30, 27, 46, 0.75); }
-  .pcard-out-overlay span { background: #1e1b2e; border-color: #2d2a3e; color: #94a3b8; }
+/* ── Dark mode ── */
+.dark-mode .pcard {
+  background: #1e1030;
+  border-color: #2d1a45;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
+
+.dark-mode .pcard-name  { color: #f0e6ff; }
+.dark-mode .pcard-price { color: #f0e6ff; }
+.dark-mode .pcard-image-wrap { background: #2d1a45; }
+.dark-mode .pcard-category { background: #2d1a45; color: #c9a84c; }
+.dark-mode .pcard-savings { background: rgba(201,168,76,0.15); border-color: rgba(201,168,76,0.25); }
+.dark-mode .pcard-unit { color: #7a5f9a; }
+.dark-mode .pcard-mrp  { color: #7a5f9a; }
+.dark-mode .pcard-qty-minus { background: #2d1a45; color: #c9a84c; }
+.dark-mode .pcard-qty-val { background: #2d1a45; color: #c9a84c; border-color: #3d2560; }
+.dark-mode .pcard-add-btn { background: #7c3aed; box-shadow: 0 4px 12px rgba(124,58,237,0.4); }
+.dark-mode .pcard-add-btn:hover { background: #6d28d9; }
+.dark-mode .pcard-out-overlay { background: rgba(20, 10, 40, 0.75); }
+.dark-mode .pcard-out-overlay span { background: #1e1030; border-color: #2d1a45; color: #9d7bb0; }
+.dark-mode .pcard-discount-badge { background: #c9a84c; color: #1e0a3c; }
 
 /* Mobile */
 @media (max-width: 640px) {

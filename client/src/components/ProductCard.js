@@ -64,7 +64,7 @@ function ProductCard({ product, onAdd, onRemove, cartQty = 0 }) {
         </div>
 
         {savings > 0 && (
-          <div className="pcard-savings">Save ₹{savings}</div>
+          <div className="pcard-savings">✦ Save ₹{savings}</div>
         )}
 
         <div className={`pcard-stock ${isOutOfStock ? "out" : isLowStock ? "low" : "in"}`}>
