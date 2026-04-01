@@ -7,13 +7,12 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(30, 10, 60, 0.96);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--color-border, #e2e8f0);
-  box-shadow: var(--shadow-sm, 0 2px 8px rgba(15, 23, 42, 0.06));
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
 }
-
 .navbar-inner {
   max-width: var(--container-xl, 1200px);
   margin: auto;
@@ -47,16 +46,16 @@
 .navbar-brand-name {
   font-family: 'Sora', sans-serif;
   font-size: var(--text-lg, 16px);
-  font-weight: var(--font-extrabold, 800);
-  color: #111827;
+  font-weight: 800;
+  color: #ffffff;
   letter-spacing: -0.3px;
   line-height: 1;
 }
 
 .navbar-brand-sub {
-  font-size: var(--text-xs, 11px);
-  color: #6b7280;
-  font-weight: var(--font-medium, 500);
+  font-size: 11px;
+  color: rgba(201, 168, 76, 0.7);
+  font-weight: 500;
   margin-top: 2px;
 }
 
@@ -75,24 +74,23 @@
   display: flex;
   align-items: center;
   gap: var(--space-2, 8px);
-  padding: var(--space-2, 8px) var(--space-5, 14px);
-  border-radius: var(--radius-md, 10px);
-  font-size: var(--text-base, 14px);
-  font-weight: var(--font-semibold, 600);
-  color: #374151;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
   text-decoration: none;
-  transition: all var(--transition-fast, 0.15s ease);
-  position: relative;
+  transition: all 0.15s ease;
 }
 
 .navbar-desktop-link:hover {
-  background: rgba(30, 58, 95, 0.08);
-  color: var(--color-primary, #1e3a5f);
+  background: rgba(201, 168, 76, 0.1);
+  color: #c9a84c;
 }
 
 .navbar-desktop-link.active {
-  background: var(--color-primary-light, #e8eef5);
-  color: var(--color-primary, #1e3a5f);
+  background: rgba(201, 168, 76, 0.15);
+  color: #c9a84c;
 }
 
 .navbar-desktop-icon { font-size: 15px; }
@@ -108,19 +106,22 @@
 }
 
 .navbar-desktop-logout {
-  margin-left: var(--space-2, 8px);
-  padding: var(--space-3, 10px) var(--space-6, 16px);
-  border-radius: var(--radius-md, 10px);
-  background: var(--color-text, #1e293b);
-  color: var(--color-white, #ffffff);
+  margin-left: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #c9a84c;
+  color: #1e0a3c;
   border: none;
-  font-size: var(--text-base, 14px);
-  font-weight: var(--font-bold, 700);
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background var(--transition-base, 0.2s ease);
+  transition: all 0.15s ease;
 }
 
-.navbar-desktop-logout:hover { background: #334155; }
+.navbar-desktop-logout:hover {
+  background: #b8943d;
+}
+
 
 .navbar-desktop-signup {
   margin-left: var(--space-2, 8px);
