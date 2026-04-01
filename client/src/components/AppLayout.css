@@ -15,8 +15,10 @@
 
 .user-banner {
   background: #1e0a3c;
-  color: rgba(255, 255, 255, 0.75);
+  color: #c9a84c;
   border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+  font-size: 12px;
+  letter-spacing: 0.3px;
 }
 
 .admin-banner {

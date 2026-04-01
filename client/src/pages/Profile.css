@@ -281,3 +281,171 @@
   .profile-main-card { padding: var(--space-10, 28px); }
   .profile-side-card { padding: var(--space-9, 24px); }
 }
+
+/* ══ Premium Profile — Deep Purple + Gold ══ */
+
+/* Top card hero */
+.profile-top-card,
+.profile-hero {
+  background: #1e0a3c !important;
+  border: none !important;
+  border-radius: 20px !important;
+}
+
+.profile-top-card h1,
+.profile-hero h1,
+.profile-top-card .app-section-title {
+  color: #ffffff !important;
+}
+
+.profile-top-card p,
+.profile-hero p,
+.profile-top-card .app-section-subtitle {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* Avatar */
+.profile-avatar,
+.profile-avatar-circle {
+  background: #5e2080 !important;
+  color: #c9a84c !important;
+  border: 2px solid rgba(201, 168, 76, 0.3) !important;
+}
+
+/* Name */
+.profile-name {
+  color: #1e0a3c !important;
+  font-weight: 800 !important;
+}
+
+.profile-member-tag {
+  color: #9d7bb0 !important;
+}
+
+/* Stats row */
+.profile-stats-grid > div,
+.profile-stat-card {
+  background: #f3ecff !important;
+  border: 0.5px solid #e8d5ff !important;
+  border-radius: 12px !important;
+}
+
+.profile-stat-value {
+  color: #5e2080 !important;
+  font-weight: 800 !important;
+}
+
+.profile-stat-label {
+  color: #9d7bb0 !important;
+}
+
+/* Info cards */
+.profile-info-card,
+.profile-section-card {
+  border: 0.5px solid #e8e0f0 !important;
+  border-radius: 16px !important;
+}
+
+.profile-info-label,
+.profile-field-label {
+  color: #9d7bb0 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.profile-info-value,
+.profile-field-value {
+  color: #1e0a3c !important;
+  font-weight: 700 !important;
+}
+
+/* Edit button */
+.profile-edit-btn,
+button[class*="edit"] {
+  background: #f3ecff !important;
+  color: #5e2080 !important;
+  border: 0.5px solid #e8d5ff !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+}
+
+/* Quick action buttons */
+.profile-action-btn,
+.profile-quick-btn {
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  min-height: 44px !important;
+}
+
+/* Shop Now — gold */
+.profile-action-btn:first-child,
+.profile-quick-btn:first-child {
+  background: #c9a84c !important;
+  color: #1e0a3c !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(201, 168, 76, 0.35) !important;
+}
+
+/* Open Cart — purple */
+.profile-action-btn:nth-child(2),
+.profile-quick-btn:nth-child(2) {
+  background: #5e2080 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(94, 32, 128, 0.35) !important;
+}
+
+/* View Orders — outlined purple */
+.profile-action-btn:nth-child(3),
+.profile-quick-btn:nth-child(3) {
+  background: #f3ecff !important;
+  color: #5e2080 !important;
+  border: 0.5px solid #e8d5ff !important;
+}
+
+/* Logout — soft red stays */
+.profile-logout-btn,
+.profile-action-btn:last-child {
+  background: #fff0f0 !important;
+  color: #dc2626 !important;
+  border: 0.5px solid #fecaca !important;
+}
+
+/* Account type badge */
+.profile-account-type,
+.profile-role-badge {
+  background: #f3ecff !important;
+  color: #5e2080 !important;
+  border: 0.5px solid #e8d5ff !important;
+  border-radius: 999px !important;
+  padding: 4px 12px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+/* Shopping tips */
+.profile-tips-card,
+.profile-tips {
+  background: rgba(201, 168, 76, 0.06) !important;
+  border: 0.5px solid rgba(201, 168, 76, 0.2) !important;
+  border-radius: 16px !important;
+}
+
+.profile-tips h3,
+.profile-tips-title {
+  color: #c9a84c !important;
+  font-weight: 700 !important;
+}
+
+.profile-tips li,
+.profile-tips p {
+  color: #6b4f8a !important;
+}
+
+/* Dark mode */
+.dark-mode .profile-name       { color: #f0e6ff !important; }
+.dark-mode .profile-info-value { color: #f0e6ff !important; }
+.dark-mode .profile-info-card  { background: #1e1030 !important; border-color: #2d1a45 !important; }
+.dark-mode .profile-stat-card  { background: #2d1a45 !important; border-color: #3d2560 !important; }
