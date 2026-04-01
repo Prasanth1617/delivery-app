@@ -18,7 +18,9 @@ function ProductCard({ product, onAdd, onRemove, cartQty = 0 }) {
       )}
 
       {isOutOfStock && (
-        <div className="pcard-out-overlay">Out of Stock</div>
+        <div className="pcard-out-overlay">
+          <span>Out of stock</span>
+        </div>
       )}
 
       <div className="pcard-image-wrap">
@@ -36,7 +38,6 @@ function ProductCard({ product, onAdd, onRemove, cartQty = 0 }) {
       </div>
 
       <div className="pcard-body">
-
         {product.category && (
           <div className="pcard-category">{product.category}</div>
         )}
@@ -63,15 +64,15 @@ function ProductCard({ product, onAdd, onRemove, cartQty = 0 }) {
         </div>
 
         {savings > 0 && (
-          <div className="pcard-savings">You save ₹{savings}</div>
+          <div className="pcard-savings">Save ₹{savings}</div>
         )}
 
         <div className={`pcard-stock ${isOutOfStock ? "out" : isLowStock ? "low" : "in"}`}>
           {isOutOfStock
-            ? "Out of stock"
+            ? "✕ Out of stock"
             : isLowStock
-            ? `⚠️ Only ${product.stock} left`
-            : "✅ In stock"}
+            ? `⚠ Only ${product.stock} left`
+            : "✓ In stock"}
         </div>
 
         {isOutOfStock ? (
@@ -80,32 +81,15 @@ function ProductCard({ product, onAdd, onRemove, cartQty = 0 }) {
           </button>
         ) : cartQty > 0 ? (
           <div className="pcard-qty-row">
-            <button
-              className="pcard-qty-btn"
-              onClick={() => onRemove(product)}
-              type="button"
-            >
-              −
-            </button>
+            <button className="pcard-qty-btn pcard-qty-minus" onClick={() => onRemove(product)} type="button">−</button>
             <span className="pcard-qty-val">{cartQty}</span>
-            <button
-              className="pcard-qty-btn pcard-qty-add"
-              onClick={() => onAdd(product)}
-              type="button"
-            >
-              +
-            </button>
+            <button className="pcard-qty-btn pcard-qty-plus" onClick={() => onAdd(product)} type="button">+</button>
           </div>
         ) : (
-          <button
-            className="pcard-add-btn"
-            onClick={() => onAdd(product)}
-            type="button"
-          >
-            Add to Cart 🛒
+          <button className="pcard-add-btn" onClick={() => onAdd(product)} type="button">
+            + Add to Cart
           </button>
         )}
-
       </div>
     </div>
   );

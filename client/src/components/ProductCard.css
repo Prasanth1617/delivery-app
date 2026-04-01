@@ -1,43 +1,43 @@
-/* ══ Premium Product Card ══ */
+/* ══ Premium Product Card — Zepto Style ══ */
 .pcard {
   position: relative;
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 0.5px solid #f1f5f9;
   border-radius: 16px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
-  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
 }
 
 .pcard:hover {
-  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.13);
-  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.12);
+  transform: translateY(-2px);
 }
 
-.pcard-out { opacity: 0.72; }
+.pcard-out { opacity: 0.7; }
 
-/* ── Discount badge ── */
+/* Discount badge */
 .pcard-discount-badge {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: #e11d48;
+  top: 8px;
+  left: 8px;
+  background: #7c3aed;
   color: #ffffff;
   font-size: 10px;
-  font-weight: 800;
-  padding: 3px 9px;
+  font-weight: 700;
+  padding: 2px 8px;
   border-radius: 999px;
   z-index: 2;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
 }
 
-/* ── Out of stock overlay ── */
+/* Out of stock overlay */
 .pcard-out-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.72);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,20 +45,20 @@
 }
 
 .pcard-out-overlay span {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   color: #64748b;
   background: #ffffff;
-  padding: 5px 14px;
+  padding: 4px 12px;
   border-radius: 999px;
-  border: 1px solid #e2e8f0;
+  border: 0.5px solid #e2e8f0;
 }
 
-/* ── Image ── */
+/* Image */
 .pcard-image-wrap {
   width: 100%;
-  height: 148px;
-  background: #f8fafc;
+  height: 120px;
+  background: #f8f8ff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,56 +75,56 @@
 .pcard:hover .pcard-image { transform: scale(1.05); }
 
 .pcard-image-fallback {
-  font-size: 44px;
-  opacity: 0.35;
+  font-size: 40px;
+  opacity: 0.3;
 }
 
-/* ── Body ── */
+/* Body */
 .pcard-body {
-  padding: 12px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   flex: 1;
 }
 
-/* ── Category ── */
+/* Category */
 .pcard-category {
   display: inline-block;
-  background: #e0e7ff;
-  color: #4338ca;
-  font-size: 10px;
+  background: #f3f0ff;
+  color: #7c3aed;
+  font-size: 9px;
   font-weight: 700;
-  padding: 2px 9px;
+  padding: 2px 7px;
   border-radius: 999px;
   letter-spacing: 0.3px;
   width: fit-content;
 }
 
-/* ── Name ── */
+/* Name */
 .pcard-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  color: #0f172a;
-  line-height: 1.4;
+  color: #1a1a2e;
+  line-height: 1.35;
   margin: 0;
   display: -webkit-box;
--webkit-line-clamp: 2;
-line-clamp: 2;
--webkit-box-orient: vertical;
-overflow: hidden;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* ── Unit ── */
+/* Unit */
 .pcard-unit {
   font-size: 10px;
   color: #94a3b8;
   font-weight: 500;
 }
 
-/* ── Rating ── */
+/* Rating */
 .pcard-rating {
-  font-size: 11px;
+  font-size: 10px;
   color: #f59e0b;
   display: flex;
   align-items: center;
@@ -136,43 +136,43 @@ overflow: hidden;
   font-size: 10px;
 }
 
-/* ── Price ── */
+/* Price */
 .pcard-price-row {
   display: flex;
   align-items: baseline;
-  gap: 7px;
+  gap: 5px;
   margin-top: 2px;
 }
 
 .pcard-price {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 800;
-  color: #0f172a;
+  color: #1a1a2e;
 }
 
 .pcard-mrp {
-  font-size: 12px;
+  font-size: 11px;
   color: #94a3b8;
   text-decoration: line-through;
   font-weight: 500;
 }
 
-/* ── Savings ── */
+/* Savings */
 .pcard-savings {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   color: #059669;
   background: #d1fae5;
-  padding: 2px 9px;
+  padding: 2px 7px;
   border-radius: 999px;
   width: fit-content;
 }
 
-/* ── Stock ── */
+/* Stock */
 .pcard-stock {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  padding: 2px 9px;
+  padding: 2px 7px;
   border-radius: 999px;
   width: fit-content;
 }
@@ -181,100 +181,113 @@ overflow: hidden;
 .pcard-stock.low { background: #fef3c7; color: #d97706; }
 .pcard-stock.out { background: #fee2e2; color: #dc2626; }
 
-/* ── Add to Cart button ── */
+/* Add to Cart button */
 .pcard-add-btn {
   margin-top: auto;
   width: 100%;
-  padding: 10px;
-  background: #4f46e5;
+  padding: 9px;
+  background: #7c3aed;
   color: #ffffff;
   border: none;
   border-radius: 10px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  min-height: 42px;
+  min-height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  letter-spacing: 0.3px;
-  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.45);
+  gap: 5px;
+  letter-spacing: 0.2px;
+  transition: background 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
 }
 
 .pcard-add-btn:hover {
-  background: #4338ca;
+  background: #6d28d9;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.55);
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.5);
 }
 
-.pcard-add-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
-}
+.pcard-add-btn:active { transform: translateY(0); }
+
 .pcard-add-disabled {
-  background: #e2e8f0 !important;
+  background: #f1f5f9 !important;
   color: #94a3b8 !important;
   cursor: not-allowed !important;
   transform: none !important;
   box-shadow: none !important;
 }
 
-/* ── Qty selector ── */
+/* Qty selector */
 .pcard-qty-row {
   margin-top: auto;
   display: flex;
   align-items: stretch;
   border-radius: 10px;
   overflow: hidden;
-  min-height: 42px;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
+  min-height: 38px;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
 }
 
 .pcard-qty-btn {
-  width: 44px;
+  width: 38px;
   border: none;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease;
   min-height: unset;
-  background: #eef2ff;
-  color: #4f46e5;
 }
 
-.pcard-qty-btn:hover { background: #e0e7ff; }
+.pcard-qty-minus {
+  background: #f3f0ff;
+  color: #7c3aed;
+}
 
-.pcard-qty-add {
-  background: #4f46e5;
+.pcard-qty-minus:hover { background: #ede9fe; }
+
+.pcard-qty-plus {
+  background: #7c3aed;
   color: #ffffff;
 }
 
-.pcard-qty-add:hover { background: #4338ca; }
+.pcard-qty-plus:hover { background: #6d28d9; }
 
 .pcard-qty-val {
   flex: 1;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
-  color: #4f46e5;
-  background: #eef2ff;
+  color: #7c3aed;
+  background: #f3f0ff;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-left: 1px solid #e0e7ff;
-  border-right: 1px solid #e0e7ff;
+  border-left: 1px solid #ede9fe;
+  border-right: 1px solid #ede9fe;
 }
 
-/* ── Mobile ── */
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .pcard { background: #1e1b2e; border-color: #2d2a3e; }
+  .pcard-name { color: #f1f5f9; }
+  .pcard-price { color: #f1f5f9; }
+  .pcard-image-wrap { background: #2d2a3e; }
+  .pcard-category { background: #2d2264; color: #a78bfa; }
+  .pcard-qty-minus { background: #2d2264; color: #a78bfa; }
+  .pcard-qty-val { background: #2d2264; color: #a78bfa; border-color: #3d3080; }
+  .pcard-out-overlay { background: rgba(30, 27, 46, 0.75); }
+  .pcard-out-overlay span { background: #1e1b2e; border-color: #2d2a3e; color: #94a3b8; }
+}
+
+/* Mobile */
 @media (max-width: 640px) {
-  .pcard-image-wrap { height: 130px; }
-  .pcard-body       { padding: 10px; gap: 4px; }
-  .pcard-price      { font-size: 15px; }
-  .pcard-name       { font-size: 12px; }
-  .pcard-add-btn    { font-size: 12px; min-height: 38px; }
+  .pcard-image-wrap { height: 110px; }
+  .pcard-body { padding: 9px; gap: 3px; }
+  .pcard-price { font-size: 15px; }
+  .pcard-add-btn { font-size: 12px; min-height: 36px; }
 }
