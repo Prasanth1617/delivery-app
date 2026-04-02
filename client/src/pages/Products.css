@@ -2,6 +2,11 @@
 .products-page {
   background: #fafafa;
   min-height: 100vh;
+  padding-top: 0 !important;
+}
+
+.app-page.products-page {
+  padding: 0 0 90px 0 !important;
 }
 
 /* Hero top card */
@@ -232,4 +237,25 @@
 
 @media (min-width: 1024px) {
   .products-grid { grid-template-columns: repeat(4, 1fr) !important; }
+}
+
+
+
+.products-filter-card {
+  background: #ffffff;
+  border: none;
+  border-radius: 0;
+  padding: 10px 16px 0;
+  box-shadow: none;
+  margin-top: 0;
+}
+
+.products-count-row {
+  padding: 8px 16px 4px;
+}
+
+.products-count-pill {
+  font-size: 11px;
+  color: #9d7bb0;
+  font-weight: 600;
 }

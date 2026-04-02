@@ -7,20 +7,21 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(30, 10, 60, 0.96);
+  background: #1e0a3c;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(201, 168, 76, 0.15);
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
 }
+
 .navbar-inner {
   max-width: var(--container-xl, 1200px);
   margin: auto;
-  padding: var(--space-4, 12px) var(--space-8, 20px);
+  padding: 10px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-6, 16px);
+  gap: 16px;
 }
 
 /* Premium Brand */
@@ -344,8 +345,8 @@
 
 .bottom-tab-icon {
   font-size: 22px;
-  transition: transform var(--transition-base, 0.2s ease);
-  filter: grayscale(0.4) opacity(0.6);
+  transition: transform 0.2s ease;
+  filter: grayscale(1) opacity(0.45);
 }
 
 .bottom-tab.active .bottom-tab-icon {
@@ -353,36 +354,10 @@
   transform: translateY(-2px) scale(1.15);
 }
 
-/* Cart badge */
-.bottom-tab-badge {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  background: var(--color-danger, #f43f5e);
-  color: var(--color-white, #ffffff);
-  border-radius: var(--radius-full, 999px);
-  min-width: 17px;
-  height: 17px;
-  font-size: 10px;
-  font-weight: var(--font-extrabold, 800);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
-  border: 2px solid var(--color-white, #ffffff);
-  animation: popIn var(--transition-base, 0.2s ease);
-}
-
-@keyframes popIn {
-  from { transform: scale(0); }
-  to   { transform: scale(1); }
-}
-
-/* Label */
 .bottom-tab-label {
   font-size: 10px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.35);
   transition: color 0.2s ease;
   letter-spacing: 0.2px;
 }
@@ -391,7 +366,7 @@
   color: #c9a84c;
   font-weight: 800;
 }
-/* Active dot indicator - Vibrant & Fun */
+
 .bottom-tab-dot {
   width: 4px;
   height: 4px;
