@@ -291,3 +291,18 @@
 @media (max-width: 768px) {
   .app-page { padding-bottom: 80px !important; }
 }
+
+/* Force flush navbar — override all other styles */
+.navbar {
+  border-radius: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  top: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    border-radius: 0 !important;
+    margin: 0 !important;
+  }
+}

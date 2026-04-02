@@ -219,6 +219,5 @@ body {
   .page-hero,
   .dashboard-hero {
     padding: var(--space-9, 24px);
-    border-radius: var(--radius-5xl, 24px);
   }
 }
