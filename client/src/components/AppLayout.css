@@ -9,22 +9,20 @@
   position: sticky;
   top: 0;
   z-index: 1100;
-  padding: 10px 16px;
+  padding: 8px 16px;
   line-height: 1.5;
 }
 
 .user-banner {
   background: #1e0a3c;
   color: #c9a84c;
-  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
-  font-size: 12px;
-  letter-spacing: 0.3px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
 }
 
 .admin-banner {
   background: #0f0a1a;
   color: #c9a84c;
-  border-bottom: 1px solid rgba(201, 168, 76, 0.3);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.25);
 }
 
 .app-layout-content { width: 100%; }

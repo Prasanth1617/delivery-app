@@ -150,7 +150,7 @@ function Products() {
         {products.length > 0 && (
           <div className="products-count-row">
             <span className="products-count-pill">
-              🛍️ {sorted.length} of {products.length} Products
+              {sorted.length} of {products.length} Products
             </span>
           </div>
         )}
