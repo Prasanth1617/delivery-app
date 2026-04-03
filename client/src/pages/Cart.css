@@ -512,3 +512,11 @@
 .dark-mode .cart-payment-option { background: #1e1030; border-color: #2d1a45; }
 .dark-mode .cart-payment-option.active { background: #2d1a45; border-color: #5e2080; }
 .dark-mode .cart-address-input { background: #1e1030 !important; border-color: #2d1a45 !important; color: #f0e6ff !important; }
+
+.cart-summary-card:last-child {
+  margin-bottom: 0;
+}
+
+.cart-checkout-btn {
+  margin-bottom: 0;
+}

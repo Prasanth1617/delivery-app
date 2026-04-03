@@ -203,15 +203,14 @@ function Cart() {
   return (
     <div className="app-page cart-page">
       <div className="app-container cart-container">
-        <div className="app-card topbar-card cart-top-card">
+        <div className="cart-top-card">
           <div className="cart-top-inner">
             <div className="cart-top-left">
               <div className="cart-top-pill">🛒 Premium Cart Experience</div>
-              <h2 className="app-section-title cart-top-title">Your Cart</h2>
-              <p className="app-section-subtitle cart-top-subtitle">
-                Review your selected items, update quantities and proceed to a
-                smooth checkout experience.
-              </p>
+             <h2 className="cart-top-title">Your Cart</h2>
+<p className="cart-top-subtitle">
+  {cart.length} item{cart.length !== 1 ? "s" : ""} · ₹{totalAmount} total
+</p>
             </div>
 
             <div className="cart-top-actions">
@@ -219,7 +218,7 @@ function Cart() {
                 <button className="secondary-btn cart-top-btn" type="button">Back to Products</button>
               </Link>
               {cart.length > 0 && (
-                <button onClick={clearCart} className="cart-clear-btn" type="button">Clear Cart</button>
+                <button onClick={clearCart} className="cart-clear-btn" type="button">✕ Clear</button>
               )}
             </div>
           </div>
@@ -240,7 +239,7 @@ function Cart() {
           <div className="cart-grid">
 
             {/* Cart Items */}
-            <div className="app-card fade-card cart-items-card">
+            <div className="cart-items-card">
               <h3 className="cart-section-title">Cart Items</h3>
               {cart.map((item) => (
                 <div key={item._id} className="cart-item-card">
@@ -269,7 +268,7 @@ function Cart() {
             </div>
 
             {/* Order Summary */}
-            <div className="app-card fade-card cart-summary-card">
+            <div className="cart-summary-card">
               <h3 className="cart-section-title">Order Summary</h3>
 
               <div className="cart-summary-box">
