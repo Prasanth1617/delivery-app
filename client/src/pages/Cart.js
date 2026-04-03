@@ -255,13 +255,33 @@ function Cart() {
                       <p className="cart-item-subtotal">Subtotal: ₹{item.price * item.quantity}</p>
                     </div>
                   </div>
-                  <div className="cart-item-actions">
+                  <div className="cart-item-actions" style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:"8px", flexWrap:"nowrap"}}>
                     <div className="cart-qty-box">
                       <button onClick={() => decreaseQuantity(item._id)} className="cart-qty-btn cart-qty-btn-minus" type="button">−</button>
                       <span className="cart-qty-value">{item.quantity}</span>
                       <button onClick={() => increaseQuantity(item._id)} className="cart-qty-btn cart-qty-btn-plus" type="button">+</button>
                     </div>
-                      <button onClick={() => removeItem(item._id)} className="cart-remove-btn" type="button">✕ Remove</button>
+                      <button 
+  onClick={() => removeItem(item._id)} 
+  className="cart-remove-btn" 
+  type="button"
+  style={{
+    padding: "6px 10px",
+    borderRadius: "7px",
+    background: "#fff5f5",
+    border: "0.5px solid #fecaca",
+    color: "#dc2626",
+    fontSize: "11px",
+    fontWeight: "600",
+    cursor: "pointer",
+    minHeight: "unset",
+    whiteSpace: "nowrap",
+    width: "auto",
+    flexShrink: 0
+  }}
+>
+  ✕ Remove
+</button>
                     </div>
                   
                 </div>
