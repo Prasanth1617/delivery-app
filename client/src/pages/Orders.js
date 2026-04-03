@@ -13,12 +13,10 @@ function Orders() {
       try {
         const token = localStorage.getItem("token");
         if (!token) { navigate("/"); return; }
-
         const res = await axios.get(
           `${process.env.REACT_APP_API_URL}/api/orders/myorders`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-
         setOrders(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Orders error:", err);
@@ -26,19 +24,14 @@ function Orders() {
         setLoading(false);
       }
     };
-
     fetchOrders();
   }, [navigate]);
 
-  // ✅ Format date nicely
   const formatDate = (dateStr) => {
     if (!dateStr) return "N/A";
     return new Date(dateStr).toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+      day: "numeric", month: "short", year: "numeric",
+      hour: "2-digit", minute: "2-digit",
     });
   };
 
@@ -78,8 +71,7 @@ function Orders() {
         <div className="orders-cancelled-box">
           <p className="orders-cancelled-title">❌ This order was cancelled</p>
           <p className="orders-cancelled-text">
-            This order is no longer being processed. You can place a new order
-            anytime from the products page.
+            This order is no longer being processed. You can place a new order anytime.
           </p>
         </div>
       );
@@ -103,7 +95,7 @@ function Orders() {
                   <p className={`orders-timeline-step-name ${isCompleted ? "completed" : ""}`}>
                     {step}
                   </p>
-                  <p className={`orders-timeline-step-state ${isCurrent ? "current" : ""} ${isCompleted ? "done" : ""}`}>
+                  <p className={`orders-timeline-step-state ${isCurrent ? "current" : ""} ${isCompleted && !isCurrent ? "done" : ""}`}>
                     {isCurrent ? "● Current" : isCompleted ? "✓ Done" : "Waiting"}
                   </p>
                 </div>
@@ -115,7 +107,6 @@ function Orders() {
     );
   };
 
-  // ✅ Premium skeleton loader
   if (loading) {
     return (
       <div className="app-page orders-page">
@@ -139,34 +130,24 @@ function Orders() {
     <div className="app-page orders-page">
       <div className="app-container">
 
-        <div className="app-card topbar-card orders-top-card">
+        {/* ── Hero ── */}
+        <div className="orders-top-card">
           <div className="orders-top-left">
-            <div className="orders-top-pill">📦 Order Tracking Center</div>
-            <h2 className="app-section-title orders-top-title">My Orders</h2>
-            <p className="app-section-subtitle orders-top-subtitle">
-              Track your placed orders, monitor delivery progress and review
-              item details in one clean view.
+            <h2 className="orders-top-title">My Orders</h2>
+            <p className="orders-top-subtitle">
+              {orders.length} {orders.length === 1 ? "order" : "orders"} found
             </p>
           </div>
-          <div className="orders-top-actions">
-            <button className="primary-btn orders-top-btn" onClick={() => navigate("/products")} type="button">
-              Shop More
-            </button>
-            <button className="secondary-btn orders-top-btn" onClick={() => navigate("/profile")} type="button">
-              Back to Profile
-            </button>
-          </div>
+          <button
+            className="orders-shop-btn"
+            onClick={() => navigate("/products")}
+            type="button"
+          >
+            + Shop More
+          </button>
         </div>
 
-        {/* ✅ Orders count */}
-        {orders.length > 0 && (
-          <div className="orders-count-row">
-            <span className="orders-count-pill">
-              🧾 {orders.length} {orders.length === 1 ? "Order" : "Orders"} Found
-            </span>
-          </div>
-        )}
-
+        {/* ── Empty state ── */}
         {orders.length === 0 ? (
           <div className="app-card empty-state orders-empty-card">
             <div className="orders-empty-icon">📦</div>
@@ -174,16 +155,20 @@ function Orders() {
             <p className="orders-empty-text">
               Your placed orders will appear here once you complete checkout.
             </p>
-            <button className="primary-btn orders-empty-btn" onClick={() => navigate("/products")} type="button">
+            <button
+              className="primary-btn orders-empty-btn"
+              onClick={() => navigate("/products")}
+              type="button"
+            >
               Start Shopping
             </button>
           </div>
         ) : (
           <div className="orders-list">
             {orders.map((order) => (
-              <div key={order._id} className="app-card orders-card">
+              <div key={order._id} className="orders-card">
 
-                {/* ✅ Header — badges + date */}
+                {/* Header */}
                 <div className="orders-card-header">
                   <div className="orders-card-head-left">
                     <div className="orders-card-badges">
@@ -198,16 +183,17 @@ function Orders() {
                   </div>
                 </div>
 
+                {/* Timeline */}
                 {renderOrderTimeline(order.status)}
 
-                {/* ✅ 3 stat boxes */}
+                {/* Stats */}
                 <div className="orders-stats-grid">
                   <div className="orders-soft-box">
-                    <p className="orders-box-label">Total Amount</p>
+                    <p className="orders-box-label">Total</p>
                     <p className="orders-box-value orders-box-value-purple">₹{order.totalAmount}</p>
                   </div>
                   <div className="orders-soft-box">
-                    <p className="orders-box-label">Items Count</p>
+                    <p className="orders-box-label">Items</p>
                     <p className="orders-box-value">{order.items.length}</p>
                   </div>
                   <div className="orders-soft-box">
@@ -216,6 +202,7 @@ function Orders() {
                   </div>
                 </div>
 
+                {/* Address */}
                 <div className="orders-address-box">
                   <p className="orders-box-label">📍 Delivery Address</p>
                   <p className="orders-address-text">
@@ -223,6 +210,7 @@ function Orders() {
                   </p>
                 </div>
 
+                {/* Items */}
                 <div>
                   <p className="orders-items-title">🛍️ Ordered Items</p>
                   <div className="orders-items-list">
@@ -242,6 +230,7 @@ function Orders() {
             ))}
           </div>
         )}
+
       </div>
     </div>
   );
