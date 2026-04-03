@@ -2,7 +2,7 @@
 .products-page {
   background: #fafafa;
   min-height: 100vh;
-  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .app-page.products-page {
@@ -130,10 +130,9 @@
 /* Product grid */
 .products-grid {
   grid-template-columns: repeat(2, 1fr) !important;
-  padding: 8px 16px 100px !important;
+  padding: 8px 14px 90px !important;
   gap: 10px !important;
 }
-
 /* Empty states */
 .products-empty-card {
   margin: 16px;

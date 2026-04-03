@@ -99,6 +99,10 @@
   border-radius: 999px;
   letter-spacing: 0.3px;
   width: fit-content;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Name */
