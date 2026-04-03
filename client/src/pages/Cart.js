@@ -257,12 +257,13 @@ function Cart() {
                   </div>
                   <div className="cart-item-actions">
                     <div className="cart-qty-box">
-                      <button onClick={() => decreaseQuantity(item._id)} className="cart-qty-btn cart-qty-btn-minus" type="button">-</button>
+                      <button onClick={() => decreaseQuantity(item._id)} className="cart-qty-btn cart-qty-btn-minus" type="button">−</button>
                       <span className="cart-qty-value">{item.quantity}</span>
                       <button onClick={() => increaseQuantity(item._id)} className="cart-qty-btn cart-qty-btn-plus" type="button">+</button>
                     </div>
-                    <button onClick={() => removeItem(item._id)} className="cart-remove-btn" type="button">Remove</button>
-                  </div>
+                      <button onClick={() => removeItem(item._id)} className="cart-remove-btn" type="button">✕ Remove</button>
+                    </div>
+                  
                 </div>
               ))}
             </div>
@@ -329,11 +330,11 @@ function Cart() {
               </div>
 
               {/* ✅ Debug status box — shows what's happening */}
-              {locationStatus && (
-                <div className="cart-location-debug">
-                  🔍 {locationStatus}
+              {locationStatus && process.env.NODE_ENV === "development" && (
+              <div className="cart-location-debug">
+              🔍 {locationStatus}
                 </div>
-              )}
+)}
 
               {/* Spinner */}
               {fetchingLocation && (
