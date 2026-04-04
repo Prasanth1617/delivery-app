@@ -449,3 +449,257 @@ button[class*="edit"] {
 .dark-mode .profile-info-value { color: #f0e6ff !important; }
 .dark-mode .profile-info-card  { background: #1e1030 !important; border-color: #2d1a45 !important; }
 .dark-mode .profile-stat-card  { background: #2d1a45 !important; border-color: #3d2560 !important; }
+
+/* ══ Profile Premium Override — Deep Purple + Gold ══ */
+
+.profile-page.app-page {
+  background: #f4f0f8 !important;
+  padding: 0 !important;
+  padding-bottom: 90px !important;
+}
+
+.profile-page .app-container {
+  padding: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+}
+
+/* Hero — flush dark purple */
+.profile-top-card,
+.profile-page .topbar-card {
+  background: #1e0a3c !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 16px !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+/* Hide pill and description in hero */
+.profile-top-pill,
+.profile-top-card .app-section-subtitle,
+.profile-top-card p {
+  display: none !important;
+}
+
+/* Hero title */
+.profile-top-card .app-section-title,
+.profile-top-card h2 {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  margin: 0 !important;
+}
+
+/* Hide logout from hero — keep only in quick actions */
+.profile-top-card button,
+.profile-top-actions .danger-btn {
+  display: none !important;
+}
+
+/* Avatar section */
+.profile-user-card {
+  background: #ffffff !important;
+  border: 0.5px solid #f0ebf8 !important;
+  border-radius: 14px !important;
+  margin: 12px 16px !important;
+  padding: 14px !important;
+  box-shadow: 0 2px 8px rgba(94,32,128,0.07) !important;
+}
+
+.profile-avatar {
+  background: #5e2080 !important;
+  color: #c9a84c !important;
+  border: 2px solid rgba(201,168,76,0.3) !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+}
+
+.profile-name {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: #1e0a3c !important;
+}
+
+.profile-member-tag,
+.profile-user-card p {
+  font-size: 11px !important;
+  color: #9d7bb0 !important;
+}
+
+/* Stats — compact 3 column */
+.profile-stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3,1fr) !important;
+  gap: 8px !important;
+  margin-top: 12px !important;
+}
+
+.profile-stats-grid > div {
+  background: #f8f4ff !important;
+  border: 0.5px solid #f0ebf8 !important;
+  border-radius: 10px !important;
+  padding: 8px !important;
+  text-align: center !important;
+  box-shadow: none !important;
+}
+
+.profile-stats-grid .profile-stat-value,
+.profile-stats-grid h3 {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: #5e2080 !important;
+}
+
+.profile-stats-grid .profile-stat-label,
+.profile-stats-grid p {
+  font-size: 9px !important;
+  color: #9d7bb0 !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.3px !important;
+}
+
+/* Info cards */
+.profile-info-card,
+.profile-address-card,
+.profile-section-card {
+  background: #ffffff !important;
+  border: 0.5px solid #f0ebf8 !important;
+  border-radius: 14px !important;
+  margin: 0 16px 10px !important;
+  padding: 12px 14px !important;
+  box-shadow: 0 2px 8px rgba(94,32,128,0.06) !important;
+}
+
+.profile-info-label,
+.profile-field-label {
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  color: #9d7bb0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin-bottom: 4px !important;
+}
+
+.profile-info-value,
+.profile-field-value {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #1e0a3c !important;
+}
+
+/* Edit button */
+.profile-edit-btn {
+  background: #f3ecff !important;
+  color: #5e2080 !important;
+  border: 0.5px solid #e8d5ff !important;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  min-height: unset !important;
+}
+
+/* Quick actions */
+.profile-quick-actions,
+.profile-actions-card {
+  background: #ffffff !important;
+  border: 0.5px solid #f0ebf8 !important;
+  border-radius: 14px !important;
+  margin: 0 16px 10px !important;
+  padding: 14px !important;
+  box-shadow: 0 2px 8px rgba(94,32,128,0.06) !important;
+}
+
+.profile-quick-actions h3,
+.profile-actions-title {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #9d7bb0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin-bottom: 10px !important;
+}
+
+/* Shop Now — gold */
+.profile-quick-actions button:first-of-type,
+.profile-shop-btn {
+  background: #c9a84c !important;
+  color: #1e0a3c !important;
+  border: none !important;
+  border-radius: 10px !important;
+  box-shadow: 0 3px 10px rgba(201,168,76,0.35) !important;
+  font-weight: 700 !important;
+  min-height: 42px !important;
+  margin-bottom: 8px !important;
+}
+
+/* Open Cart — purple */
+.profile-quick-actions button:nth-of-type(2),
+.profile-cart-btn {
+  background: #5e2080 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  box-shadow: 0 3px 10px rgba(94,32,128,0.3) !important;
+  font-weight: 700 !important;
+  min-height: 42px !important;
+  margin-bottom: 8px !important;
+}
+
+/* View Orders — outlined */
+.profile-quick-actions button:nth-of-type(3) {
+  background: #f3ecff !important;
+  color: #5e2080 !important;
+  border: 0.5px solid #e8d5ff !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  min-height: 42px !important;
+  margin-bottom: 8px !important;
+  box-shadow: none !important;
+}
+
+/* Logout */
+.profile-quick-actions button:last-of-type,
+.profile-logout-btn {
+  background: #fff5f5 !important;
+  color: #dc2626 !important;
+  border: 0.5px solid #fecaca !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  min-height: 42px !important;
+  box-shadow: none !important;
+}
+
+/* Hide shopping tips */
+.profile-tips-card,
+.profile-tips,
+.profile-shopping-tips {
+  display: none !important;
+}
+
+/* Account type badge */
+.profile-role-badge,
+.profile-account-type-badge {
+  background: #f3ecff !important;
+  color: #5e2080 !important;
+  border: 0.5px solid #e8d5ff !important;
+  border-radius: 999px !important;
+  padding: 4px 12px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+/* Dark mode */
+.dark-mode .profile-user-card,
+.dark-mode .profile-info-card,
+.dark-mode .profile-quick-actions {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+}
+
+.dark-mode .profile-name { color: #f0e6ff !important; }
+.dark-mode .profile-info-value { color: #f0e6ff !important; }
+.dark-mode .profile-stats-grid > div { background: #2d1a45 !important; border-color: #3d2560 !important; }
