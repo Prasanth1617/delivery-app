@@ -819,6 +819,13 @@ button[class*="edit"] {
   margin-bottom: 14px !important;
 }
 
+.profile-stats-row {
+  display: grid !important;
+  grid-template-columns: repeat(3,1fr) !important;
+  gap: 8px !important;
+  margin-bottom: 14px !important;
+}
+
 .profile-stat-box {
   background: #f8f4ff !important;
   border: 0.5px solid #f0ebf8 !important;
@@ -826,13 +833,7 @@ button[class*="edit"] {
   padding: 8px !important;
   text-align: center !important;
   box-shadow: none !important;
-}
-
-.profile-stat-value {
-  font-size: 18px !important;
-  font-weight: 800 !important;
-  color: #5e2080 !important;
-  margin: 0 0 3px 0 !important;
+  transform: none !important;
 }
 
 .profile-stat-label {

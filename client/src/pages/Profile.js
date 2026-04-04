@@ -120,10 +120,9 @@ function Profile() {
               {user?.role === "admin" ? "⚙️ Admin Account" : "✨ My Account"}
             </div>
 
-            <h2 className="app-section-title profile-top-title">
-              {user?.role === "admin" ? "Admin Profile" : "Welcome Back"}
-            </h2>
-
+           <h2 className="app-section-title profile-top-title">
+  {user?.role === "admin" ? "Admin Profile" : `Hi, ${user?.name?.split(" ")[0] || "there"}`}
+</h2>
             <p className="app-section-subtitle profile-top-subtitle">
               {user?.role === "admin"
                 ? "Manage your admin account, platform access and operational actions from one place."
