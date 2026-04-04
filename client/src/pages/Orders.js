@@ -131,8 +131,8 @@ function Orders() {
       <div className="app-container">
 
         {/* ── Hero ── */}
-     <div className="orders-top-card">
-  <div className="orders-top-left">
+<div className="orders-top-card">
+  <div>
     <h2 className="orders-top-title">My Orders</h2>
     <p className="orders-top-subtitle">
       {orders.length} {orders.length === 1 ? "order" : "orders"} found
