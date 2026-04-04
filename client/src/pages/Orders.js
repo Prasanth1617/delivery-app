@@ -131,21 +131,21 @@ function Orders() {
       <div className="app-container">
 
         {/* ── Hero ── */}
-        <div className="orders-top-card">
-          <div className="orders-top-left">
-            <h2 className="orders-top-title">My Orders</h2>
-            <p className="orders-top-subtitle">
-              {orders.length} {orders.length === 1 ? "order" : "orders"} found
-            </p>
-          </div>
-          <button
-            className="orders-shop-btn"
-            onClick={() => navigate("/products")}
-            type="button"
-          >
-            + Shop More
-          </button>
-        </div>
+     <div className="orders-top-card">
+  <div className="orders-top-left">
+    <h2 className="orders-top-title">My Orders</h2>
+    <p className="orders-top-subtitle">
+      {orders.length} {orders.length === 1 ? "order" : "orders"} found
+    </p>
+  </div>
+  <button
+    className="orders-shop-btn"
+    onClick={() => navigate("/products")}
+    type="button"
+  >
+    + Shop More
+  </button>
+</div>
 
         {/* ── Empty state ── */}
         {orders.length === 0 ? (
