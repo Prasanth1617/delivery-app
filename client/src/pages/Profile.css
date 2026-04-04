@@ -1068,3 +1068,36 @@ button[class*="edit"] {
 .dark-mode .profile-info-address {
   color: #f0e6ff !important;
 }
+.profile-stats-row .profile-stat-box {
+  background: #f8f4ff !important;
+  border: 0.5px solid #f0ebf8 !important;
+  border-radius: 10px !important;
+  padding: 8px !important;
+  text-align: center !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+.profile-stats-row .profile-stat-box:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.profile-stats-row .profile-stat-value {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: #5e2080 !important;
+  margin: 0 0 3px 0 !important;
+  display: block !important;
+}
+
+.profile-stats-row .profile-stat-label {
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  color: #9d7bb0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.3px !important;
+  margin: 0 !important;
+  display: block !important;
+}
