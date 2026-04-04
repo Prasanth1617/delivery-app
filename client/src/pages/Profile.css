@@ -703,3 +703,367 @@ button[class*="edit"] {
 .dark-mode .profile-name { color: #f0e6ff !important; }
 .dark-mode .profile-info-value { color: #f0e6ff !important; }
 .dark-mode .profile-stats-grid > div { background: #2d1a45 !important; border-color: #3d2560 !important; }
+
+
+/* ══ Profile Final Fix ══ */
+
+/* Page */
+.profile-page.app-page {
+  background: #f4f0f8 !important;
+  padding: 0 !important;
+  padding-bottom: 90px !important;
+}
+
+.profile-page .app-container {
+  padding: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  display: block !important;
+}
+
+/* Hero */
+.profile-top-card {
+  background: #1e0a3c !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 14px 16px !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.profile-top-pill { display: none !important; }
+
+.profile-top-title {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  margin: 0 !important;
+}
+
+.profile-top-subtitle { display: none !important; }
+
+/* Logout in hero — hide it */
+.profile-top-card .profile-logout-btn {
+  background: rgba(220,38,38,0.15) !important;
+  border: 1px solid rgba(220,38,38,0.25) !important;
+  color: #fca5a5 !important;
+  border-radius: 8px !important;
+  padding: 7px 12px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  min-height: unset !important;
+  width: auto !important;
+  box-shadow: none !important;
+}
+
+/* Grid — single column mobile */
+.profile-grid {
+  display: block !important;
+  padding: 0 !important;
+}
+
+/* Main card */
+.profile-main-card {
+  background: #ffffff !important;
+  border: 0.5px solid #f0ebf8 !important;
+  border-radius: 14px !important;
+  margin: 12px 16px !important;
+  padding: 14px !important;
+  box-shadow: 0 2px 8px rgba(94,32,128,0.07) !important;
+}
+
+/* Avatar */
+.profile-user-head {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 14px !important;
+}
+
+.profile-avatar {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 14px !important;
+  background: #5e2080 !important;
+  color: #c9a84c !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 2px solid rgba(201,168,76,0.3) !important;
+  flex-shrink: 0 !important;
+}
+
+.profile-user-name {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: #1e0a3c !important;
+  margin: 0 0 3px 0 !important;
+}
+
+.profile-user-subtext {
+  font-size: 11px !important;
+  color: #9d7bb0 !important;
+  margin: 0 !important;
+}
+
+/* Stats — compact 3 col */
+.profile-stats-row {
+  display: grid !important;
+  grid-template-columns: repeat(3,1fr) !important;
+  gap: 8px !important;
+  margin-bottom: 14px !important;
+}
+
+.profile-stat-box {
+  background: #f8f4ff !important;
+  border: 0.5px solid #f0ebf8 !important;
+  border-radius: 10px !important;
+  padding: 8px !important;
+  text-align: center !important;
+  box-shadow: none !important;
+}
+
+.profile-stat-value {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: #5e2080 !important;
+  margin: 0 0 3px 0 !important;
+}
+
+.profile-stat-label {
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  color: #9d7bb0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.3px !important;
+  margin: 0 !important;
+}
+
+/* Info list */
+.profile-info-list {
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.profile-info-box {
+  background: #f8f4ff !important;
+  border: 0.5px solid #f0ebf8 !important;
+  border-radius: 10px !important;
+  padding: 10px 12px !important;
+}
+
+.profile-info-label {
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  color: #9d7bb0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin: 0 0 4px 0 !important;
+}
+
+.profile-info-value {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #1e0a3c !important;
+  margin: 0 !important;
+}
+
+.profile-info-address {
+  font-size: 13px !important;
+  color: #1e0a3c !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+  line-height: 1.5 !important;
+}
+
+.profile-address-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 6px !important;
+}
+
+.profile-address-header .profile-info-label { margin: 0 !important; }
+
+.profile-edit-btn {
+  background: #f3ecff !important;
+  color: #5e2080 !important;
+  border: 0.5px solid #e8d5ff !important;
+  border-radius: 7px !important;
+  padding: 5px 10px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  min-height: unset !important;
+  cursor: pointer !important;
+}
+
+.profile-status-box {
+  background: #f8f4ff !important;
+  border: 0.5px solid #f0ebf8 !important;
+  border-radius: 10px !important;
+  padding: 10px 12px !important;
+}
+
+.profile-status-label {
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  color: #9d7bb0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin: 0 0 4px 0 !important;
+}
+
+.profile-status-value {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: #1e0a3c !important;
+  margin: 0 !important;
+}
+
+/* Side grid */
+.profile-side-grid {
+  display: grid !important;
+  gap: 0 !important;
+}
+
+.profile-side-card {
+  background: #ffffff !important;
+  border: 0.5px solid #f0ebf8 !important;
+  border-radius: 14px !important;
+  margin: 0 16px 10px !important;
+  padding: 14px !important;
+  box-shadow: 0 2px 8px rgba(94,32,128,0.07) !important;
+}
+
+.profile-side-title {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #9d7bb0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin: 0 0 12px 0 !important;
+}
+
+/* Actions */
+.profile-actions {
+  display: grid !important;
+  gap: 8px !important;
+}
+
+.profile-action-btn {
+  width: 100% !important;
+  border-radius: 10px !important;
+  min-height: 42px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+/* primary = Shop Now — gold */
+.primary-btn.profile-action-btn {
+  background: #c9a84c !important;
+  color: #1e0a3c !important;
+  box-shadow: 0 3px 10px rgba(201,168,76,0.35) !important;
+}
+
+/* secondary = Open Cart — purple */
+.secondary-btn.profile-action-btn {
+  background: #5e2080 !important;
+  color: #ffffff !important;
+  box-shadow: 0 3px 10px rgba(94,32,128,0.3) !important;
+}
+
+.profile-ghost-action {
+  width: 100% !important;
+  border-radius: 10px !important;
+  min-height: 42px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  background: #f3ecff !important;
+  color: #5e2080 !important;
+  border: 0.5px solid #e8d5ff !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+}
+
+.profile-danger-action {
+  width: 100% !important;
+  border-radius: 10px !important;
+  min-height: 42px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  background: #fff5f5 !important;
+  color: #dc2626 !important;
+  border: 0.5px solid #fecaca !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+}
+
+/* Hide Shopping Tips for users — keep Admin Notes */
+.profile-side-card:last-child {
+  display: none !important;
+}
+
+/* Address edit */
+.profile-address-textarea {
+  border: 0.5px solid #e8e0f0 !important;
+  border-radius: 10px !important;
+  background: #faf8ff !important;
+  font-size: 13px !important;
+  color: #1e0a3c !important;
+  margin-bottom: 8px !important;
+}
+
+.profile-address-actions {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+.profile-save-btn {
+  background: #5e2080 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  flex: 1 !important;
+  min-height: unset !important;
+  padding: 8px !important;
+  font-size: 12px !important;
+  box-shadow: none !important;
+}
+
+.profile-cancel-btn {
+  background: #f3ecff !important;
+  color: #5e2080 !important;
+  border-radius: 8px !important;
+  flex: 1 !important;
+  min-height: unset !important;
+  padding: 8px !important;
+  font-size: 12px !important;
+  box-shadow: none !important;
+}
+
+/* Dark mode */
+.dark-mode .profile-main-card,
+.dark-mode .profile-side-card {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+}
+
+.dark-mode .profile-stat-box,
+.dark-mode .profile-info-box,
+.dark-mode .profile-status-box {
+  background: #2d1a45 !important;
+  border-color: #3d2560 !important;
+}
+
+.dark-mode .profile-user-name,
+.dark-mode .profile-info-value,
+.dark-mode .profile-status-value,
+.dark-mode .profile-info-address {
+  color: #f0e6ff !important;
+}
