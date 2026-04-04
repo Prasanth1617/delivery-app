@@ -163,20 +163,20 @@ function Profile() {
 
             {/* ✅ ADDED - Stats row for user */}
             {user?.role !== "admin" && (
-              <div className="profile-stats-row">
-                <div className="profile-stat-box">
-                  <p className="profile-stat-value">{orderCount ?? "—"}</p>
-                  <p className="profile-stat-label">Total Orders</p>
-                </div>
-                <div className="profile-stat-box">
-                  <p className="profile-stat-value">💵</p>
-                  <p className="profile-stat-label">COD Ready</p>
-                </div>
-                <div className="profile-stat-box">
-                  <p className="profile-stat-value">✅</p>
-                  <p className="profile-stat-label">Active Account</p>
-                </div>
-              </div>
+             <div style={{display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"8px", marginBottom:"14px"}}>
+  <div style={{background:"#f8f4ff", border:"0.5px solid #f0ebf8", borderRadius:"10px", padding:"8px", textAlign:"center"}}>
+    <p style={{fontSize:"18px", fontWeight:"800", color:"#5e2080", margin:"0 0 3px 0"}}>{orderCount ?? "—"}</p>
+    <p style={{fontSize:"9px", fontWeight:"700", color:"#9d7bb0", textTransform:"uppercase", letterSpacing:"0.3px", margin:0}}>Total Orders</p>
+  </div>
+  <div style={{background:"#f8f4ff", border:"0.5px solid #f0ebf8", borderRadius:"10px", padding:"8px", textAlign:"center"}}>
+    <p style={{fontSize:"18px", fontWeight:"800", color:"#5e2080", margin:"0 0 3px 0"}}>💵</p>
+    <p style={{fontSize:"9px", fontWeight:"700", color:"#9d7bb0", textTransform:"uppercase", letterSpacing:"0.3px", margin:0}}>COD Ready</p>
+  </div>
+  <div style={{background:"#f8f4ff", border:"0.5px solid #f0ebf8", borderRadius:"10px", padding:"8px", textAlign:"center"}}>
+    <p style={{fontSize:"18px", fontWeight:"800", color:"#5e2080", margin:"0 0 3px 0"}}>✅</p>
+    <p style={{fontSize:"9px", fontWeight:"700", color:"#9d7bb0", textTransform:"uppercase", letterSpacing:"0.3px", margin:0}}>Active Account</p>
+  </div>
+</div>
             )}
 
             <div className="profile-info-list">
