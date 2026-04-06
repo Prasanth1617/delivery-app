@@ -544,3 +544,64 @@
   .orders-list { padding: 12px 0 80px !important; }
   .orders-card { margin: 0 !important; }
 }
+/* ── Desktop Order Card Fix ── */
+@media (min-width: 768px) {
+  .orders-page .app-container {
+    max-width: 900px !important;
+    margin: 0 auto !important;
+    padding: 0 24px 80px !important;
+  }
+
+  .orders-top-card {
+    border-radius: 16px !important;
+    margin: 24px 0 0 !important;
+  }
+
+  .orders-list {
+    padding: 12px 0 80px !important;
+    display: grid !important;
+    gap: 16px !important;
+  }
+
+  .orders-card {
+    margin: 0 !important;
+    border-radius: 16px !important;
+  }
+
+  .orders-stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3,1fr) !important;
+    gap: 10px !important;
+    padding: 12px 14px !important;
+    border-bottom: 0.5px solid #f8f4ff !important;
+  }
+
+  .orders-soft-box {
+    background: #f8f4ff !important;
+    border: 0.5px solid #f0ebf8 !important;
+    border-radius: 10px !important;
+    padding: 10px !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  .orders-soft-box:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  .orders-item-row {
+    background: #f8f4ff !important;
+    border: 0.5px solid #f0ebf8 !important;
+    border-radius: 10px !important;
+  }
+
+  .orders-item-price {
+    color: #5e2080 !important;
+  }
+
+  .orders-timeline-grid {
+    display: flex !important;
+    align-items: center !important;
+  }
+}
