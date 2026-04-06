@@ -344,3 +344,17 @@
 .dark-mode .admin-orders-card-title,
 .dark-mode .admin-orders-address-text,
 .dark-mode .admin-orders-item-name { color: #f0e6ff; }
+@media (min-width: 768px) {
+  .admin-orders-page .app-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 24px 24px 80px !important;
+  }
+  .admin-orders-top-card {
+    border-radius: 16px !important;
+    margin: 0 !important;
+  }
+  .admin-orders-count-row { padding: 12px 0 6px !important; }
+  .admin-orders-list { padding: 0 0 80px !important; }
+  .admin-orders-card { margin: 0 !important; }
+}

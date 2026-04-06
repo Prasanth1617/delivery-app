@@ -531,3 +531,16 @@
 .dark-mode .orders-timeline-card { border-color: #2d1a45; }
 .dark-mode .orders-card-header { border-color: #2d1a45; }
 .dark-mode .orders-stats-grid  { border-color: #2d1a45; }
+@media (min-width: 768px) {
+  .orders-page .app-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 24px 24px 80px !important;
+  }
+  .orders-top-card {
+    border-radius: 16px !important;
+    margin: 0 !important;
+  }
+  .orders-list { padding: 12px 0 80px !important; }
+  .orders-card { margin: 0 !important; }
+}

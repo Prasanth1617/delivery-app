@@ -621,3 +621,16 @@
 .dark-mode .admin-products-section-title { color: #f0e6ff; }
 .dark-mode .admin-products-modal-card { background: #1e1030; border-color: #2d1a45; }
 .dark-mode .admin-products-modal-title { color: #f0e6ff; }
+@media (min-width: 768px) {
+  .admin-products-page .app-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 24px 24px 80px !important;
+  }
+  .admin-products-top-card {
+    border-radius: 16px !important;
+    margin: 0 !important;
+  }
+  .admin-products-grid { padding: 0 !important; }
+  .admin-products-list-card { margin: 12px 0 0 !important; }
+}

@@ -384,3 +384,21 @@
 .dark-mode .admin-dashboard-panel   { background: #1e1030; border-color: #2d1a45; }
 .dark-mode .admin-dashboard-stat-value { color: #f0e6ff; }
 .dark-mode .admin-dashboard-chart-title { color: #f0e6ff; }
+
+@media (min-width: 768px) {
+  .admin-dashboard-page .app-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 24px 24px 80px !important;
+  }
+  .admin-dashboard-top-card {
+    border-radius: 16px !important;
+    margin: 0 !important;
+  }
+  .admin-dashboard-stats {
+    padding: 0 !important;
+    grid-template-columns: repeat(5,1fr) !important;
+  }
+  .admin-dashboard-charts-grid { padding: 0 !important; }
+  .admin-dashboard-panels { padding: 0 !important; }
+}

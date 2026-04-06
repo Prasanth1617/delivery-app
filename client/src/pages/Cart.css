@@ -529,3 +529,14 @@
 .cart-checkout-btn {
   margin-bottom: 0;
 }
+@media (min-width: 768px) {
+  .cart-page .app-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 24px 80px !important;
+  }
+  .cart-top-card { border-radius: 16px !important; margin: 24px 0 0 !important; }
+  .cart-grid { padding: 16px 0 80px !important; grid-template-columns: 1.6fr 1fr !important; }
+  .cart-item-card { margin: 0 0 10px !important; }
+  .cart-summary-card { margin: 0 !important; }
+}

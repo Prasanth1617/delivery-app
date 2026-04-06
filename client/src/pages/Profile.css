@@ -1101,3 +1101,15 @@ button[class*="edit"] {
   margin: 0 !important;
   display: block !important;
 }
+@media (min-width: 768px) {
+  .profile-page .app-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 24px 80px !important;
+  }
+  .profile-top-card { border-radius: 16px !important; margin: 24px 0 0 !important; }
+  .profile-grid { display: grid !important; grid-template-columns: 1.2fr 1fr !important; gap: 16px !important; padding: 16px 0 0 !important; }
+  .profile-main-card { margin: 0 !important; }
+  .profile-side-grid { gap: 12px !important; }
+  .profile-side-card { margin: 0 !important; }
+}

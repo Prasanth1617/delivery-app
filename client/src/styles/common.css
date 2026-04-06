@@ -374,11 +374,10 @@ ul, ol {
 .page-container,
 .main-container {
   width: 100%;
-  max-width: var(--container-xl, 1200px);
+  max-width: 1200px;
   margin: 0 auto;
   padding: var(--space-9, 24px) var(--space-8, 20px);
 }
-
 /* ─── Premium Cards ─── */
 .card,
 .section-card,
