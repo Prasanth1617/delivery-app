@@ -289,3 +289,35 @@
     grid-template-columns: repeat(4,1fr) !important;
   }
 }
+/* Dark mode products */
+.dark-mode .products-page { background: #0f0a1a !important; }
+.dark-mode .products-top-card { background: #1e0a3c !important; }
+.dark-mode .products-filter-card { background: #0f0a1a !important; }
+.dark-mode .products-input {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+  color: #f0e6ff !important;
+}
+.dark-mode .products-category-btn {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+  color: #9d7bb0 !important;
+}
+.dark-mode .products-category-btn.active {
+  background: #5e2080 !important;
+  border-color: #5e2080 !important;
+  color: #fff !important;
+}
+.dark-mode .pcard {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+}
+.dark-mode .pcard-name { color: #f0e6ff !important; }
+.dark-mode .pcard-price { color: #f0e6ff !important; }
+.dark-mode .pcard-image-wrap { background: #2d1a45 !important; }
+.dark-mode .pcard-category { background: #2d1a45 !important; color: #c9a84c !important; }
+.dark-mode .pcard-qty-minus { background: #2d1a45 !important; color: #c9a84c !important; }
+.dark-mode .pcard-qty-val { background: #2d1a45 !important; color: #c9a84c !important; border-color: #3d2560 !important; }
+.dark-mode .pcard-add-btn { background: #5e2080 !important; }
+.dark-mode .pcard-out-overlay { background: rgba(20,10,40,0.75) !important; }
+.dark-mode .products-count-pill { color: #9d7bb0 !important; }

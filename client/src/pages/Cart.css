@@ -540,3 +540,50 @@
   .cart-item-card { margin: 0 0 10px !important; }
   .cart-summary-card { margin: 0 !important; }
 }
+/* Dark mode cart */
+.dark-mode .cart-page { background: #0f0a1a !important; }
+.dark-mode .cart-top-card { background: #1e0a3c !important; }
+.dark-mode .cart-item-card {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+}
+.dark-mode .cart-item-name { color: #f0e6ff !important; }
+.dark-mode .cart-item-price { color: #9d7bb0 !important; }
+.dark-mode .cart-summary-card {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+}
+.dark-mode .cart-summary-box {
+  background: #2d1a45 !important;
+  border-color: #3d2560 !important;
+}
+.dark-mode .cart-summary-row { color: #9d7bb0 !important; border-color: #2d1a45 !important; }
+.dark-mode .cart-summary-total { color: #f0e6ff !important; border-color: #2d1a45 !important; }
+.dark-mode .cart-payment-option {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+}
+.dark-mode .cart-payment-option.active {
+  background: #2d1a45 !important;
+  border-color: #5e2080 !important;
+}
+.dark-mode .cart-payment-title { color: #f0e6ff !important; }
+.dark-mode .cart-address-input {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+  color: #f0e6ff !important;
+}
+.dark-mode .cart-remove-btn {
+  background: rgba(220,38,38,0.15) !important;
+  border-color: rgba(220,38,38,0.3) !important;
+  color: #fca5a5 !important;
+}
+.dark-mode .cart-qty-minus {
+  background: #2d1a45 !important;
+  color: #c9a84c !important;
+}
+.dark-mode .cart-qty-value {
+  background: #2d1a45 !important;
+  color: #c9a84c !important;
+}
+.dark-mode .cart-section-title { color: #9d7bb0 !important; }

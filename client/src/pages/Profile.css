@@ -1113,3 +1113,25 @@ button[class*="edit"] {
   .profile-side-grid { gap: 12px !important; }
   .profile-side-card { margin: 0 !important; }
 }
+/* Dark mode profile */
+.dark-mode .profile-page { background: #0f0a1a !important; }
+.dark-mode .profile-top-card { background: #1e0a3c !important; }
+.dark-mode .profile-main-card,
+.dark-mode .profile-side-card {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+}
+.dark-mode .profile-user-name { color: #f0e6ff !important; }
+.dark-mode .profile-info-box,
+.dark-mode .profile-status-box {
+  background: #2d1a45 !important;
+  border-color: #3d2560 !important;
+}
+.dark-mode .profile-info-value,
+.dark-mode .profile-status-value,
+.dark-mode .profile-info-address { color: #f0e6ff !important; }
+.dark-mode .profile-address-input {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+  color: #f0e6ff !important;
+}

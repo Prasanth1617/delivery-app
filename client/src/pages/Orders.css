@@ -577,3 +577,44 @@
     padding: 10px 14px !important;
   }
 }
+/* Dark mode orders */
+.dark-mode .orders-page { background: #0f0a1a !important; }
+.dark-mode .orders-top-card { background: #1e0a3c !important; }
+.dark-mode .orders-card {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+}
+.dark-mode .orders-card-header { border-color: #2d1a45 !important; }
+.dark-mode .orders-card-title { color: #f0e6ff !important; }
+.dark-mode .orders-timeline-card { border-color: #2d1a45 !important; }
+.dark-mode .orders-timeline-dot {
+  background: #2d1a45 !important;
+  border-color: #3d2560 !important;
+  color: #9d7bb0 !important;
+}
+.dark-mode .orders-timeline-dot.completed {
+  background: #5e2080 !important;
+  color: #fff !important;
+}
+.dark-mode .orders-timeline-dot.current {
+  background: #c9a84c !important;
+  color: #1e0a3c !important;
+}
+.dark-mode .orders-stats-grid { border-color: #2d1a45 !important; }
+.dark-mode .orders-soft-box {
+  background: #2d1a45 !important;
+  border-color: #3d2560 !important;
+}
+.dark-mode .orders-box-value { color: #f0e6ff !important; }
+.dark-mode .orders-box-value-purple { color: #c9a84c !important; }
+.dark-mode .orders-address-box {
+  background: #2d1a45 !important;
+  border-color: #3d2560 !important;
+}
+.dark-mode .orders-address-text { color: #f0e6ff !important; }
+.dark-mode .orders-item-row {
+  background: #2d1a45 !important;
+  border-color: #3d2560 !important;
+}
+.dark-mode .orders-item-name { color: #f0e6ff !important; }
+.dark-mode .orders-item-price { color: #c9a84c !important; }
