@@ -348,13 +348,49 @@
   .admin-orders-page .app-container {
     max-width: 1200px !important;
     margin: 0 auto !important;
-    padding: 24px 24px 80px !important;
+    padding: 0 24px 80px !important;
   }
   .admin-orders-top-card {
     border-radius: 16px !important;
-    margin: 0 !important;
+    margin: 24px 0 0 !important;
   }
   .admin-orders-count-row { padding: 12px 0 6px !important; }
-  .admin-orders-list { padding: 0 0 80px !important; }
-  .admin-orders-card { margin: 0 !important; }
+  .admin-orders-list { padding: 12px 0 80px !important; gap: 16px !important; }
+  .admin-orders-card {
+    margin: 0 !important;
+    padding: 16px !important;
+  }
+  .admin-orders-stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3,1fr) !important;
+    gap: 8px !important;
+    margin-bottom: 14px !important;
+  }
+  .admin-orders-soft-box {
+    background: #f8f4ff !important;
+    border: 0.5px solid #f0ebf8 !important;
+    border-radius: 10px !important;
+    padding: 10px !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  .admin-orders-soft-box:hover { transform: none !important; box-shadow: none !important; }
+  .admin-orders-box-value { font-size: 16px !important; color: #1e0a3c !important; }
+  .admin-orders-box-value.amount { color: #5e2080 !important; }
+  .admin-orders-item-row {
+    background: #f8f4ff !important;
+    border: 0.5px solid #f0ebf8 !important;
+    border-radius: 10px !important;
+    padding: 10px 14px !important;
+  }
+  .admin-orders-item-price { color: #5e2080 !important; }
+  .admin-orders-address-box {
+    background: #f8f4ff !important;
+    border: 0.5px solid #f0ebf8 !important;
+    border-radius: 10px !important;
+    padding: 10px 14px !important;
+    margin-bottom: 14px !important;
+  }
+  .admin-orders-card-title { color: #1e0a3c !important; }
+  .admin-orders-card-badges { margin-bottom: 10px !important; }
 }
