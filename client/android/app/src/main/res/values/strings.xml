@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Theni Retail</string>
+    <string name="title_activity_main">Theni Retail</string>
+    <string name="package_name">com.theniretail.app</string>
+    <string name="custom_url_scheme">com.theniretail.app</string>
+</resources>

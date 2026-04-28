@@ -15,11 +15,7 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://delivery-app-alpha-five.vercel.app"
-  ],
+  origin: true,
   credentials: true
 }));
 
