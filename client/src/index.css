@@ -1,4 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+/* Force light mode always */
+:root {
+  color-scheme: light;
+}
+
+html, body {
+  background: #fafafa !important;
+  color: #1e0a3c !important;
+}
 
 /* ─── Premium Page Background - Elegant & Luxurious ─── */
 body {

@@ -9,18 +9,8 @@ function Navbar() {
   const { token, role, logout } = useAuth();
 
   const [cartCount, setCartCount]     = useState(0);
-  const [darkMode, setDarkMode]       = useState(() => localStorage.getItem("darkMode") === "true");
 
-  const toggleDarkMode = () => {
-    const next = !darkMode;
-    setDarkMode(next);
-    localStorage.setItem("darkMode", String(next));
-    document.documentElement.classList.toggle("dark-mode", next);
-  };
 
-  useEffect(() => {
-    if (darkMode) document.documentElement.classList.add("dark-mode");
-  }, [darkMode]);
 
   const updateCartCount = () => {
     const cart  = JSON.parse(localStorage.getItem("cart")) || [];
@@ -86,10 +76,7 @@ function Navbar() {
           {/* Right side */}
           <div className="navbar-right">
 
-            {/* Dark mode toggle */}
-            <button className="navbar-icon-btn" onClick={toggleDarkMode} type="button" title="Toggle dark mode">
-              {darkMode ? "☀️" : "🌙"}
-            </button>
+       
 
             {/* Cart icon — user only */}
             {token && role !== "admin" && (
