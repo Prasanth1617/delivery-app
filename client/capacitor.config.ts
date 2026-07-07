@@ -5,20 +5,29 @@ const config: CapacitorConfig = {
   appName: 'Theni Retail',
   webDir: 'build',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    cleartext: false,
   },
   android: {
-    allowMixedContent: true,
-    captureInput: true,
-    webContentsDebuggingEnabled: false
+    allowMixedContent: false,
+    captureInput: true,           // KEY: routes native input events into WebView
+    webContentsDebuggingEnabled: true,  // remove before Play Store upload
+    appendUserAgent: 'TheniRetail/1.0',
+    backgroundColor: '#1e0a3c',
   },
   plugins: {
     SplashScreen: {
-      launchShowDuration: 2000,
+      launchShowDuration: 1500,
       backgroundColor: '#1e0a3c',
-      showSpinner: false
-    }
-  }
+      androidSplashResourceName: 'splash',
+      showSpinner: false,
+    },
+    Keyboard: {
+      resize: 'body',             // KEY: body resizes with keyboard, not native scroll
+      style: 'dark',
+      resizeOnFullScreen: true,
+    },
+  },
 };
 
 export default config;

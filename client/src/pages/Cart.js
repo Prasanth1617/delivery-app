@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import CouponSection from "../components/CouponSection";
 import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 import "./Cart.css";
 
 function Cart() {
@@ -16,13 +17,14 @@ function Cart() {
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [fetchingLocation, setFetchingLocation] = useState(false);
   const [locationDenied, setLocationDenied] = useState(false);
-  const [locationStatus, setLocationStatus] = useState(""); // ✅ debug status
+  const [locationStatus, setLocationStatus] = useState("");
+
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("address", address);
   }, [address]);
 
-  // ✅ Check permission status on load
   useEffect(() => {
     if (navigator.permissions) {
       navigator.permissions.query({ name: "geolocation" }).then((result) => {
@@ -55,9 +57,7 @@ function Cart() {
 
   const decreaseQuantity = (id) => {
     const updatedCart = cart.map((item) =>
-      item._id === id
-        ? { ...item, quantity: Math.max(1, item.quantity - 1) }
-        : item
+      item._id === id ? { ...item, quantity: Math.max(1, item.quantity - 1) } : item
     );
     saveCart(updatedCart);
   };
@@ -76,36 +76,30 @@ function Cart() {
   };
 
   const fetchLocation = () => {
-    // ✅ Step 1 — check if geolocation exists
     if (!navigator.geolocation) {
-      toast.error("❌ Step 1 Failed: Geolocation not supported on this device/browser");
+      toast.error("Geolocation not supported");
       setLocationStatus("Geolocation NOT supported");
       return;
     }
 
-    toast.info("📍 Step 1: Geolocation supported ✅ — requesting position...");
+    toast.info("Requesting position...");
     setLocationStatus("Requesting position...");
     setFetchingLocation(true);
     setLocationDenied(false);
 
-    // ✅ Step 2 — request position
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        // ✅ Step 3 — got coordinates
         const { latitude, longitude } = position.coords;
-        toast.success(`✅ Step 2: Got coordinates — ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+        toast.success(`Got coordinates — ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
         setLocationStatus(`Got coords: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
 
         try {
-          // ✅ Step 4 — reverse geocode
-          toast.info("🗺️ Step 3: Converting to address...");
           const res = await axios.get(
             `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
             { headers: { "Accept-Language": "en" } }
           );
 
           const addr = res.data.address;
-
           const parts = [
             addr.house_number,
             addr.road || addr.pedestrian || addr.footway,
@@ -119,9 +113,9 @@ function Cart() {
           const fullAddress = parts.join(", ");
           setAddress(fullAddress);
           setLocationStatus("Address filled ✅");
-          toast.success("📍 Address detected successfully!");
+          toast.success("Address detected successfully!");
         } catch (err) {
-          toast.error("❌ Step 3 Failed: Could not convert to address — type manually");
+          toast.error("Could not convert to address — type manually");
           setLocationStatus("Geocoding failed");
         } finally {
           setFetchingLocation(false);
@@ -129,27 +123,17 @@ function Cart() {
       },
       (error) => {
         setFetchingLocation(false);
-
-        // ✅ Show exact error code and message
         const errorMessages = {
-          1: "❌ Permission DENIED (code 1) — browser blocked location",
-          2: "❌ Position UNAVAILABLE (code 2) — GPS signal not available",
-          3: "❌ TIMEOUT (code 3) — took too long to get location",
+          1: "Permission DENIED — browser blocked location",
+          2: "Position UNAVAILABLE — GPS signal not available",
+          3: "TIMEOUT — took too long to get location",
         };
-
-        const msg = errorMessages[error.code] || `❌ Unknown error (code ${error.code}): ${error.message}`;
+        const msg = errorMessages[error.code] || `Unknown error (code ${error.code}): ${error.message}`;
         toast.error(msg);
         setLocationStatus(msg);
-
-        if (error.code === 1) {
-          setLocationDenied(true);
-        }
+        if (error.code === 1) setLocationDenied(true);
       },
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0,
-      }
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
   };
 
@@ -157,6 +141,12 @@ function Cart() {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  const deliveryFee = totalAmount >= 500 ? 0 : 40;
+
+  const discountAmount = appliedCoupon?.discountAmount || 0;
+  const deliveryAfterCoupon = appliedCoupon?.freeDelivery ? 0 : deliveryFee;
+  const finalAmount = Math.max(0, totalAmount + deliveryAfterCoupon - discountAmount);
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -176,9 +166,13 @@ function Cart() {
           price: p.price,
           quantity: p.quantity,
         })),
-        totalAmount,
+        totalAmount: finalAmount,
+        subtotal: totalAmount,
+        deliveryFee: deliveryAfterCoupon,
+        discountAmount,
         address,
         paymentMethod,
+        couponCode: appliedCoupon?.code || null,
       };
 
       await axios.post(
@@ -190,6 +184,7 @@ function Cart() {
       localStorage.removeItem("cart");
       localStorage.removeItem("address");
       setCart([]);
+      setAppliedCoupon(null);
       window.dispatchEvent(new Event("cartUpdated"));
       toast.success("Order placed successfully ✅");
       navigate("/orders");
@@ -207,10 +202,15 @@ function Cart() {
           <div className="cart-top-inner">
             <div className="cart-top-left">
               <div className="cart-top-pill">🛒 Premium Cart Experience</div>
-             <h2 className="cart-top-title">Your Cart</h2>
-<p className="cart-top-subtitle">
-  {cart.length} item{cart.length !== 1 ? "s" : ""} · ₹{totalAmount} total
-</p>
+              <h2 className="cart-top-title">Your Cart</h2>
+              <p className="cart-top-subtitle">
+                {cart.length} item{cart.length !== 1 ? "s" : ""} · 
+                {appliedCoupon ? (
+                  <>₹{totalAmount} - ₹{discountAmount} = <span style={{ color: "#c9a84c", fontWeight: 700 }}>₹{finalAmount}</span></>
+                ) : (
+                  <>₹{totalAmount} total</>
+                )}
+              </p>
             </div>
 
             <div className="cart-top-actions">
@@ -261,29 +261,28 @@ function Cart() {
                       <span className="cart-qty-value">{item.quantity}</span>
                       <button onClick={() => increaseQuantity(item._id)} className="cart-qty-btn cart-qty-btn-plus" type="button">+</button>
                     </div>
-                      <button 
-  onClick={() => removeItem(item._id)} 
-  className="cart-remove-btn" 
-  type="button"
-  style={{
-    padding: "6px 10px",
-    borderRadius: "7px",
-    background: "#fff5f5",
-    border: "0.5px solid #fecaca",
-    color: "#dc2626",
-    fontSize: "11px",
-    fontWeight: "600",
-    cursor: "pointer",
-    minHeight: "unset",
-    whiteSpace: "nowrap",
-    width: "auto",
-    flexShrink: 0
-  }}
->
-  ✕ Remove
-</button>
-                    </div>
-                  
+                    <button 
+                      onClick={() => removeItem(item._id)} 
+                      className="cart-remove-btn" 
+                      type="button"
+                      style={{
+                        padding: "6px 10px",
+                        borderRadius: "7px",
+                        background: "#fff5f5",
+                        border: "0.5px solid #fecaca",
+                        color: "#dc2626",
+                        fontSize: "11px",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        minHeight: "unset",
+                        whiteSpace: "nowrap",
+                        width: "auto",
+                        flexShrink: 0
+                      }}
+                    >
+                      ✕ Remove
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -301,11 +300,31 @@ function Cart() {
                   <span>Total Quantity</span>
                   <span>{totalItems}</span>
                 </div>
+                <div className="cart-summary-row">
+                  <span>Delivery Fee</span>
+                  <span>{deliveryFee === 0 ? (
+                    <span style={{ color: "#16a34a", fontWeight: 600 }}>FREE</span>
+                  ) : `₹${deliveryFee}`}</span>
+                </div>
+                {appliedCoupon && (
+                  <div className="cart-summary-row cart-summary-discount">
+                    <span>Discount</span>
+                    <span>-₹{discountAmount}</span>
+                  </div>
+                )}
                 <div className="cart-summary-row cart-summary-total">
-                  <span>Total Amount</span>
-                  <span className="cart-summary-total-value">₹{totalAmount}</span>
+                  <span>{appliedCoupon ? "Final Total" : "Total Amount"}</span>
+                  <span className="cart-summary-total-value">₹{finalAmount}</span>
                 </div>
               </div>
+
+              <CouponSection
+                cartTotal={totalAmount}
+                deliveryFee={deliveryFee}
+                appliedCoupon={appliedCoupon}
+                onCouponApplied={setAppliedCoupon}
+                onRemoveCoupon={() => setAppliedCoupon(null)}
+              />
 
               {/* Payment Method */}
               <label className="label-text" style={{ marginTop: "16px", display: "block" }}>
@@ -349,14 +368,12 @@ function Cart() {
                 )}
               </div>
 
-              {/* ✅ Debug status box — shows what's happening */}
               {locationStatus && process.env.NODE_ENV === "development" && (
-              <div className="cart-location-debug">
-              🔍 {locationStatus}
+                <div className="cart-location-debug">
+                  🔍 {locationStatus}
                 </div>
-)}
+              )}
 
-              {/* Spinner */}
               {fetchingLocation && (
                 <div className="cart-location-detecting">
                   <div className="cart-location-spinner" />
@@ -364,7 +381,6 @@ function Cart() {
                 </div>
               )}
 
-              {/* Permission denied guide */}
               {locationDenied && (
                 <div className="cart-location-denied-box">
                   <p className="cart-location-denied-title">📍 Location Permission Blocked</p>

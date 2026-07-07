@@ -795,3 +795,53 @@ button[type="submit"]:disabled {
 .dark-mode textarea::placeholder {
   color: #6b4f8a !important;
 }
+
+/* ── Android WebView input tap fix ─────────────────────────── */
+input,
+textarea,
+select {
+  -webkit-user-select: text;
+  user-select: text;
+  /* Prevent WebView from swallowing tap events on inputs */
+  touch-action: manipulation;
+  /* Remove iOS/Android auto-styling that can block focus */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="password"],
+input[type="email"],
+input[type="text"],
+input[type="tel"],
+input[type="number"] {
+  /* Minimum 48px tap target per Material guidelines */
+  min-height: 48px;
+  font-size: 16px;  /* Prevents iOS/Android auto-zoom on focus */
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1.5px solid #5e2080;
+  background: #f3ecff;
+  color: #1e0a3c;
+  width: 100%;
+  box-sizing: border-box;
+  /* KEY: position must be relative or WebView offset bug triggers */
+  position: relative;
+  z-index: 1;
+}
+
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="text"]:focus {
+  outline: none;
+  border-color: #c9a84c;
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.2);
+  background: #ffffff;
+}
+
+/* Fix: scrollable containers trap WebView touch events */
+.scroll-container,
+.page-content,
+main {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}

@@ -187,7 +187,7 @@ login(res.data);
             {/* Password */}
             <div className="login-field">
               <label>Password</label>
-              <div style={{ position: "relative" }}>
+              <div style={{ position: "relative", display: "flex", alignItems: "stretch" }}>
                 <input
                   type={showPassword ? "text" : "password"}
                   className="login-input"
@@ -197,23 +197,27 @@ login(res.data);
                   onChange={(e) => setPassword(e.target.value)}
                   style={{ paddingRight: "48px" }}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{
-                    position: "absolute",
-                    right: "14px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                    color: "#64748b",
-                    padding: "0",
-                    lineHeight: 1,
-                  }}
-                >
+              <button
+  type="button"
+  onClick={() => setShowPassword(!showPassword)}
+  style={{
+    position: "absolute",
+    right: "0",
+    top: "0",
+    bottom: "0",
+    width: "48px",
+    background: "none",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "18px",
+    color: "#5e2080",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    touchAction: "manipulation",   // prevents 300ms tap delay
+    WebkitTapHighlightColor: "transparent",
+  }}
+>
                   {showPassword ? "🙈" : "👁️"}
                 </button>
               </div>

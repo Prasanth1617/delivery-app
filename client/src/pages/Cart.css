@@ -306,6 +306,11 @@
   color: #5e2080;
 }
 
+.cart-summary-row.cart-summary-discount {
+  color: #16a34a;
+  font-weight: 600;
+}
+
 /* ── Payment method ── */
 .cart-payment-options {
   display: grid;
