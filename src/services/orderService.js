@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Order   = require("../models/Order");
 const Product = require("../models/Product");
+const couponService = require("./couponService");
 
 const makeError = (message, statusCode = 400) => {
   const err = new Error(message);
@@ -8,7 +9,7 @@ const makeError = (message, statusCode = 400) => {
   return err;
 };
 
-const createOrder = async ({ userId, items, totalAmount, address, paymentMethod }) => {
+const createOrder = async ({ userId, items, totalAmount, subtotal, deliveryFee, discountAmount: clientDiscount, address, paymentMethod, couponCode }) => {
   if (!items || items.length === 0)
     throw makeError("Cart is empty");
 
@@ -26,21 +27,50 @@ const createOrder = async ({ userId, items, totalAmount, address, paymentMethod 
         throw makeError(`${item.name} not found`, 404);
 
       if (product.stock < item.quantity)
-        throw makeError(`Only ${product.stock} left for ${product.name}`);
+        throw makeError(`Only ${product.stock} left for ${item.name}`);
 
       product.stock -= item.quantity;
       await product.save({ session });
     }
 
+    const rawCartTotal = subtotal || totalAmount;
+    const rawDeliveryFee = deliveryFee || 0;
+
+    let discountAmount = 0;
+    let appliedCouponCode = null;
+
+    if (couponCode) {
+      const couponResult = await couponService.validateCoupon({
+        code: couponCode,
+        cartTotal: rawCartTotal,
+        deliveryFee: rawDeliveryFee,
+        userId,
+      });
+
+      discountAmount = couponResult.discountAmount;
+      appliedCouponCode = couponResult.code;
+
+      await couponService.markCouponUsed(
+        couponResult.couponId,
+        userId,
+        session
+      );
+    }
+
+    const finalTotal = Math.max(0, rawCartTotal + rawDeliveryFee - discountAmount);
+
     const [order] = await Order.create(
       [{
         userId,
         items,
-        totalAmount,
+        totalAmount: finalTotal,
+        deliveryFee: rawDeliveryFee,
         deliveryAddress: address.trim(),
         status:        "Pending",
         paymentMethod: paymentMethod || "COD",
         paymentStatus: "Pending",
+        discountAmount,
+        couponCode: appliedCouponCode,
       }],
       { session }
     );
