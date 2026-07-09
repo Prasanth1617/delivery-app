@@ -133,7 +133,7 @@ function AdminCoupons() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this coupon?")) return;
+    if (!window.confirm("Delete this coupon?")) return;
     try {
       const token = localStorage.getItem("token");
       await axios.delete(
