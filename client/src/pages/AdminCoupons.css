@@ -1,0 +1,236 @@
+/* ════ ADMIN COUPONS — Deep Purple + Gold ════ */
+.admin-coupons-page {
+  background: #f4f0f8;
+  min-height: 100vh;
+}
+
+.admin-coupons-top-card {
+  background: #1e0a3c;
+  border: none;
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: none;
+}
+
+.admin-coupons-layout {
+  align-items: start;
+}
+
+.admin-coupons-form-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-coupons-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-coupons-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.admin-coupons-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.admin-coupons-form-actions .primary-btn {
+  background: #5e2080 !important;
+  color: #ffffff !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 12px rgba(94, 32, 128, 0.35) !important;
+}
+
+.admin-coupons-form-actions .secondary-btn {
+  background: transparent !important;
+  border: 1px solid #5e2080 !important;
+  color: #5e2080 !important;
+  border-radius: 10px !important;
+}
+
+.admin-coupons-list-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-coupons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.admin-coupon-item {
+  background: #ffffff;
+  border: 0.5px solid #f0ebf8;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  box-shadow: 0 1px 4px rgba(94, 32, 128, 0.05);
+}
+
+.admin-coupon-item.inactive,
+.admin-coupon-item.expired {
+  opacity: 0.7;
+}
+
+.admin-coupon-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-coupon-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-coupon-code {
+  font-weight: 800;
+  font-size: 14px;
+  color: #1e0a3c;
+  letter-spacing: 0.3px;
+}
+
+.admin-coupon-badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #f3ecff;
+  color: #5e2080;
+  border: 0.5px solid #e8d5ff;
+}
+
+.admin-coupon-badge.flat {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fcd34d;
+}
+
+.admin-coupon-badge.percentage {
+  background: #f3ecff;
+  color: #5e2080;
+  border-color: #e8d5ff;
+}
+
+.admin-coupon-badge.free_delivery {
+  background: #d1fae5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.admin-coupon-desc {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: #9d7bb0;
+}
+
+.admin-coupon-meta {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #6b4f8a;
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+
+.admin-coupon-expiry {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: #9d7bb0;
+  font-weight: 600;
+}
+
+.admin-coupon-expiry.text-red {
+  color: #dc2626;
+}
+
+.admin-coupon-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.admin-coupon-edit-btn {
+  padding: 6px 12px;
+  background: #f3ecff;
+  border: 1px solid #e8d5ff;
+  color: #5e2080;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.admin-coupon-edit-btn:hover {
+  background: #ede4ff;
+}
+
+.admin-coupon-delete-btn {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid #dc2626;
+  color: #dc2626;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.admin-coupon-delete-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.admin-coupons-empty {
+  text-align: center;
+  color: #9d7bb0;
+  padding: 30px;
+  font-weight: 600;
+}
+
+@media (min-width: 769px) {
+  .admin-coupons-form-card {
+    position: sticky;
+    top: 80px;
+  }
+}
+
+/* Dark mode */
+.dark-mode .admin-coupons-page {
+  background: #0f0a1a !important;
+}
+
+.dark-mode .admin-coupon-item {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+}
+
+.dark-mode .admin-coupon-code {
+  color: #f0e6ff !important;
+}
+
+.dark-mode .admin-coupon-desc {
+  color: #9d7bb0 !important;
+}
+
+.dark-mode .admin-coupon-meta {
+  color: #c9a84c !important;
+}
+
+.dark-mode .admin-coupons-empty {
+  color: #9d7bb0 !important;
+}

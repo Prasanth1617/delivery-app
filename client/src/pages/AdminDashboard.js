@@ -335,6 +335,13 @@ function AdminDashboard() {
                 Open Products Panel
               </button>
               <button
+                className="secondary-btn admin-dashboard-action-btn"
+                onClick={() => navigate("/admin/coupons")}
+                type="button"
+              >
+                Manage Coupons
+              </button>
+              <button
                 className="admin-dashboard-switch-btn"
                 onClick={() => navigate("/products")}
                 type="button"
