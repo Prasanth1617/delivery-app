@@ -8,9 +8,6 @@ function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);           // ✅ ADDED
   const [orderCount, setOrderCount] = useState(null);     // ✅ ADDED
-  const [editingAddress, setEditingAddress] = useState(false); // ✅ ADDED
-  const [newAddress, setNewAddress] = useState("");        // ✅ ADDED
-  const [savingAddress, setSavingAddress] = useState(false); // ✅ ADDED
   const [addresses, setAddresses] = useState([]);
   const [addingAddress, setAddingAddress] = useState(false);
   const [savingNewAddr, setSavingNewAddr] = useState(false);
@@ -34,7 +31,6 @@ function Profile() {
         );
 
         setUser(res.data);
-        setNewAddress(res.data.address || "");
         setAddresses(res.data.addresses || []);
 
         // ✅ ADDED - fetch order count silently
@@ -59,33 +55,6 @@ function Profile() {
 
     fetchProfile();
   }, [navigate]);
-
-  // ✅ ADDED - Save address to backend
-  const handleSaveAddress = async () => {
-    try {
-      if (!newAddress.trim()) {
-        toast.warning("Please enter an address");
-        return;
-      }
-
-      setSavingAddress(true);
-      const token = localStorage.getItem("token");
-
-      await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/auth/update-address`,
-        { address: newAddress },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setUser((prev) => ({ ...prev, address: newAddress }));
-      setEditingAddress(false);
-      toast.success("Address updated successfully ✅");
-    } catch (err) {
-      toast.error("Failed to update address ❌");
-    } finally {
-      setSavingAddress(false);
-    }
-  };
 
   const handleAddAddress = async () => {
     if (!newAddrName.trim())   { toast.warning("Enter name"); return; }
