@@ -11,6 +11,15 @@ function Profile() {
   const [editingAddress, setEditingAddress] = useState(false); // ✅ ADDED
   const [newAddress, setNewAddress] = useState("");        // ✅ ADDED
   const [savingAddress, setSavingAddress] = useState(false); // ✅ ADDED
+  const [addresses, setAddresses] = useState([]);
+  const [addingAddress, setAddingAddress] = useState(false);
+  const [savingNewAddr, setSavingNewAddr] = useState(false);
+  const [newAddrName, setNewAddrName] = useState("");
+  const [newAddrPhone, setNewAddrPhone] = useState("");
+  const [newAddrStreet, setNewAddrStreet] = useState("");
+  const [newAddrArea, setNewAddrArea] = useState("");
+  const [newAddrLandmark, setNewAddrLandmark] = useState("");
+  const [newAddrPincode, setNewAddrPincode] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,6 +35,7 @@ function Profile() {
 
         setUser(res.data);
         setNewAddress(res.data.address || "");
+        setAddresses(res.data.addresses || []);
 
         // ✅ ADDED - fetch order count silently
         try {
@@ -75,6 +85,41 @@ function Profile() {
     } finally {
       setSavingAddress(false);
     }
+  };
+
+  const handleAddAddress = async () => {
+    if (!newAddrName.trim())   { toast.warning("Enter name"); return; }
+    if (!newAddrPhone.trim())  { toast.warning("Enter phone"); return; }
+    if (!newAddrStreet.trim()) { toast.warning("Enter street"); return; }
+    if (!newAddrArea.trim())   { toast.warning("Enter area"); return; }
+    try {
+      setSavingNewAddr(true);
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/auth/addresses`,
+        { name: newAddrName, phone: newAddrPhone, street: newAddrStreet,
+          area: newAddrArea, landmark: newAddrLandmark, pincode: newAddrPincode },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setAddresses(res.data.addresses);
+      setAddingAddress(false);
+      setNewAddrName(""); setNewAddrPhone(""); setNewAddrStreet("");
+      setNewAddrArea(""); setNewAddrLandmark(""); setNewAddrPincode("");
+      toast.success("Address saved ✅");
+    } catch { toast.error("Failed to save address"); }
+    finally { setSavingNewAddr(false); }
+  };
+
+  const handleDeleteAddress = async (idx) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.delete(
+        `${process.env.REACT_APP_API_URL}/api/auth/addresses/${idx}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setAddresses(res.data.addresses);
+      toast.success("Address removed");
+    } catch { toast.error("Failed to remove address"); }
   };
 
   const handleLogout = () => {
@@ -187,57 +232,85 @@ function Profile() {
                 <p className="profile-info-value">{user?.phone}</p>
               </div>
 
-              {/* ✅ ADDED - Address with edit */}
+              {/* ✅ ADDED - Addresses */}
               <div className="profile-info-box">
                 <div className="profile-address-header">
-                  <p className="profile-info-label">
-                    📍 {user?.role === "admin" ? "Admin Address" : "Delivery Address"}
-                  </p>
-                  {!editingAddress && (
-                    <button
-                      className="profile-edit-btn"
-                      onClick={() => setEditingAddress(true)}
-                      type="button"
-                    >
-                      ✏️ Edit
+                  <p className="profile-info-label">📍 Saved Addresses</p>
+                  {!addingAddress && (
+                    <button className="profile-edit-btn" onClick={() => setAddingAddress(true)} type="button">
+                      + Add
                     </button>
                   )}
                 </div>
 
-                {editingAddress ? (
-                  <div className="profile-address-edit">
-                    <textarea
-                      className="input-field profile-address-textarea"
-                      value={newAddress}
-                      onChange={(e) => setNewAddress(e.target.value)}
-                      rows={3}
-                      placeholder="Enter your delivery address"
-                    />
-                    <div className="profile-address-actions">
-                      <button
-                        className="primary-btn profile-save-btn"
-                        onClick={handleSaveAddress}
-                        disabled={savingAddress}
-                        type="button"
-                      >
-                        {savingAddress ? "Saving..." : "Save Address"}
+                {addresses.length === 0 && !addingAddress && (
+                  <p className="profile-info-address">No addresses saved yet — add one for faster checkout</p>
+                )}
+
+                {addresses.map((addr, idx) => (
+                  <div key={idx} style={{
+                    background: "#f3ecff", border: "1px solid #e2d5f5", borderRadius: "10px",
+                    padding: "12px", marginBottom: "8px", position: "relative"
+                  }}>
+                    <p style={{ margin: "0 0 4px", fontWeight: 700, color: "#1e0a3c", fontSize: "14px" }}>
+                      {addr.name} · {addr.phone}
+                    </p>
+                    <p style={{ margin: "0 0 2px", fontSize: "12px", color: "#6b5b8a" }}>{addr.street}, {addr.area}</p>
+                    {addr.landmark && <p style={{ margin: "0 0 2px", fontSize: "12px", color: "#6b5b8a" }}>Near: {addr.landmark}</p>}
+                    {addr.pincode  && <p style={{ margin: 0, fontSize: "12px", color: "#6b5b8a" }}>PIN: {addr.pincode}</p>}
+                    <button onClick={() => handleDeleteAddress(idx)} type="button" style={{
+                      position: "absolute", top: "10px", right: "10px",
+                      background: "#fff5f5", border: "1px solid #fecaca", color: "#dc2626",
+                      borderRadius: "6px", fontSize: "11px", fontWeight: 600, padding: "3px 8px", cursor: "pointer"
+                    }}>✕</button>
+                  </div>
+                ))}
+
+                {addingAddress && (
+                  <div style={{ background: "#f9f6ff", border: "1px solid #e2d5f5", borderRadius: "12px", padding: "14px", marginTop: "8px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "10px" }}>
+                      <div>
+                        <label className="label-text">Full Name *</label>
+                        <input className="input-field" placeholder="Name" value={newAddrName}
+                          onChange={(e) => setNewAddrName(e.target.value)} style={{ fontSize: "15px", touchAction: "manipulation" }} />
+                      </div>
+                      <div>
+                        <label className="label-text">Phone *</label>
+                        <input className="input-field" placeholder="Phone" inputMode="numeric" maxLength={10} value={newAddrPhone}
+                          onChange={(e) => setNewAddrPhone(e.target.value.replace(/\D/g, ""))} style={{ fontSize: "15px", touchAction: "manipulation" }} />
+                      </div>
+                      <div style={{ gridColumn: "1/-1" }}>
+                        <label className="label-text">Street / House No *</label>
+                        <input className="input-field" placeholder="e.g. 12/3, Gandhi Street" value={newAddrStreet}
+                          onChange={(e) => setNewAddrStreet(e.target.value)} style={{ fontSize: "15px", touchAction: "manipulation" }} />
+                      </div>
+                      <div style={{ gridColumn: "1/-1" }}>
+                        <label className="label-text">Area / Town *</label>
+                        <input className="input-field" placeholder="e.g. Cumbum, Theni" value={newAddrArea}
+                          onChange={(e) => setNewAddrArea(e.target.value)} style={{ fontSize: "15px", touchAction: "manipulation" }} />
+                      </div>
+                      <div>
+                        <label className="label-text">Landmark</label>
+                        <input className="input-field" placeholder="Near Temple" value={newAddrLandmark}
+                          onChange={(e) => setNewAddrLandmark(e.target.value)} style={{ fontSize: "15px", touchAction: "manipulation" }} />
+                      </div>
+                      <div>
+                        <label className="label-text">Pincode</label>
+                        <input className="input-field" placeholder="625516" inputMode="numeric" maxLength={6} value={newAddrPincode}
+                          onChange={(e) => setNewAddrPincode(e.target.value.replace(/\D/g, ""))} style={{ fontSize: "15px", touchAction: "manipulation" }} />
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      <button className="primary-btn" onClick={handleAddAddress} disabled={savingNewAddr} type="button"
+                        style={{ flex: 1 }}>
+                        {savingNewAddr ? "Saving..." : "Save Address"}
                       </button>
-                      <button
-                        className="secondary-btn profile-cancel-btn"
-                        onClick={() => {
-                          setEditingAddress(false);
-                          setNewAddress(user?.address || "");
-                        }}
-                        type="button"
-                      >
+                      <button className="secondary-btn" onClick={() => setAddingAddress(false)} type="button"
+                        style={{ flex: 1 }}>
                         Cancel
                       </button>
                     </div>
                   </div>
-                ) : (
-                  <p className="profile-info-address">
-                    {user?.address || "No address saved — tap Edit to add one"}
-                  </p>
                 )}
               </div>
 
