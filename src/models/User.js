@@ -16,12 +16,18 @@ const userSchema = new mongoose.Schema(
       enum:    ["user", "admin"],
       default: "user"
     },
-    // Keep old single address for backward compatibility
     address:      { type: String },
-    // New multiple addresses array
-    addresses:    [addressSchema],
+    addresses: [
+      {
+        name:     { type: String, required: true },
+        phone:    { type: String, required: true },
+        street:   { type: String, required: true },
+        area:     { type: String, required: true },
+        landmark: { type: String, default: "" },
+        pincode:  { type: String, default: "" },
+      }
+    ],
     secretAnswer: { type: String, default: "" },
-    // Future features
     walletBalance: { type: Number, default: 0 },
     referralCode:  { type: String },
     loyaltyPoints: { type: Number, default: 0 }

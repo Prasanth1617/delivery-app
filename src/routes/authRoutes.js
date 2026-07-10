@@ -8,6 +8,8 @@ router.post("/register",       authController.register);
 router.post("/login",          authController.login);
 router.get ("/profile",        authMiddleware, authController.getProfile);
 router.put ("/update-address", authMiddleware, authController.updateAddress);
+router.post("/addresses",        authMiddleware, authController.addAddress);
+router.delete("/addresses/:idx", authMiddleware, authController.deleteAddress);
 router.post("/verify-secret",  authController.verifySecret);
 router.post("/reset-password", authController.resetPassword);
 

@@ -1,4 +1,36 @@
 const authService = require("../services/authService");
+const User = require("../models/User");
+
+const addAddress = async (req, res, next) => {
+  try {
+    const { name, phone, street, area, landmark, pincode } = req.body;
+    if (!name || !phone || !street || !area) {
+      return res.status(400).json({ message: "Name, phone, street and area are required" });
+    }
+    const user = await User.findById(req.user._id);
+    if (!user.addresses) user.addresses = [];
+    user.addresses.push({ name, phone, street, area, landmark: landmark || "", pincode: pincode || "" });
+    await user.save();
+    res.status(201).json({ success: true, addresses: user.addresses });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteAddress = async (req, res, next) => {
+  try {
+    const idx = parseInt(req.params.idx);
+    const user = await User.findById(req.user._id);
+    if (!user.addresses || idx < 0 || idx >= user.addresses.length) {
+      return res.status(404).json({ message: "Address not found" });
+    }
+    user.addresses.splice(idx, 1);
+    await user.save();
+    res.status(200).json({ success: true, addresses: user.addresses });
+  } catch (err) {
+    next(err);
+  }
+};
 
 const register = async (req, res, next) => {
   try {
@@ -47,6 +79,8 @@ module.exports = {
   login,
   getProfile,
   updateAddress,
+  addAddress,
+  deleteAddress,
   verifySecret,
   resetPassword
 };
