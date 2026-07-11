@@ -15,8 +15,6 @@ function Cart() {
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [fetchingLocation, setFetchingLocation] = useState(false);
-  const [locationDenied, setLocationDenied] = useState(false);
-  const [locationStatus, setLocationStatus] = useState("");
 
   const [appliedCoupon, setAppliedCoupon] = useState(null);
 
@@ -31,23 +29,6 @@ function Cart() {
   const [addrArea, setAddrArea] = useState("");
   const [addrLandmark, setAddrLandmark] = useState("");
   const [addrPincode, setAddrPincode] = useState("");
-
-  useEffect(() => {
-    if (navigator.permissions) {
-      navigator.permissions.query({ name: "geolocation" }).then((result) => {
-        setLocationStatus(`Permission: ${result.state}`);
-        if (result.state === "denied") setLocationDenied(true);
-        result.onchange = () => {
-          setLocationStatus(`Permission changed: ${result.state}`);
-          setLocationDenied(result.state === "denied");
-        };
-      }).catch(() => {
-        setLocationStatus("Permission API not supported");
-      });
-    } else {
-      setLocationStatus("navigator.permissions not available");
-    }
-  }, []);
 
   useEffect(() => {
     const fetchSavedAddresses = async () => {
@@ -67,7 +48,7 @@ function Cart() {
       } catch { }
     };
     fetchSavedAddresses();
-  }, []);
+  }, [selectedAddressIdx]);
 
   const saveCart = (updatedCart) => {
     setCart(updatedCart);
