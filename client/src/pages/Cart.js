@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import CouponSection from "../components/CouponSection";
 import { toast } from "react-toastify";
@@ -19,7 +19,6 @@ function Cart() {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
 
   const [savedAddresses, setSavedAddresses] = useState([]);
-  const [showNewForm, setShowNewForm] = useState(false);
   const [selectedAddressIdx, setSelectedAddressIdx] = useState(null);
   const [saveToProfile, setSaveToProfile] = useState(false);
 
@@ -39,16 +38,11 @@ function Cart() {
           `${process.env.REACT_APP_API_URL}/api/auth/profile`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        const addrs = res.data.addresses || [];
-        setSavedAddresses(addrs);
-        if (addrs.length > 0 && selectedAddressIdx === null) {
-          setSelectedAddressIdx(0);
-          setShowNewForm(false);
-        }
+        setSavedAddresses(res.data.addresses || []);
       } catch { }
     };
     fetchSavedAddresses();
-  }, [selectedAddressIdx]);
+  }, []);
 
   const saveCart = (updatedCart) => {
     setCart(updatedCart);
@@ -175,7 +169,6 @@ function Cart() {
       localStorage.removeItem("cart");
       setCart([]);
       setAppliedCoupon(null);
-      setShowNewForm(false);
       setSelectedAddressIdx(null);
       setSaveToProfile(false);
       setAddrName(""); setAddrPhone(""); setAddrStreet(""); setAddrArea(""); setAddrLandmark(""); setAddrPincode("");
@@ -350,25 +343,15 @@ function Cart() {
               {/* ── Delivery Address ── */}
               <div style={{ marginTop: "20px" }}>
 
-                {/* Header row */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-                  <label className="label-text" style={{ margin: 0 }}>📍 Delivery Address</label>
-                  {savedAddresses.length > 0 && (
-                    <button type="button"
-                      onClick={() => { setShowNewForm(!showNewForm); setSelectedAddressIdx(showNewForm ? 0 : null); }}
-                      style={{ background: "none", border: "none", color: "#5e2080", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
-                      {showNewForm ? "← Use Saved" : "+ New Address"}
-                    </button>
-                  )}
-                </div>
+                <label className="label-text" style={{ margin: 0, display: "block", marginBottom: "10px" }}>📍 Delivery Address</label>
 
-                {/* Saved address picker */}
-                {!showNewForm && savedAddresses.length > 0 && (
-                  <div className="cart-saved-addresses">
+                {/* Saved addresses - always visible if any exist */}
+                {savedAddresses.length > 0 && (
+                  <div className="cart-saved-addresses" style={{ marginBottom: "12px" }}>
                     {savedAddresses.map((addr, idx) => (
                       <div key={idx}
                         className={"cart-saved-addr-card" + (selectedAddressIdx === idx ? " selected" : "")}
-                        onClick={() => setSelectedAddressIdx(idx)}>
+                        onClick={() => { setSelectedAddressIdx(idx); setAddrName(""); setAddrPhone(""); setAddrStreet(""); setAddrArea(""); setAddrLandmark(""); setAddrPincode(""); }}>
                         <div className="cart-addr-radio">{selectedAddressIdx === idx ? "🔵" : "⚪"}</div>
                         <div className="cart-addr-details">
                           <p className="cart-addr-name">{addr.name} · {addr.phone}</p>
@@ -378,83 +361,76 @@ function Cart() {
                         </div>
                       </div>
                     ))}
-                    <button type="button"
-                      onClick={() => { setShowNewForm(true); setSelectedAddressIdx(null); }}
-                      className="cart-add-new-addr-btn">
-                      + Add New Address
-                    </button>
                   </div>
                 )}
 
-                {/* New address form */}
-                {showNewForm && (
-                  <div className="cart-addr-form">
+                {/* Manual entry form - always visible */}
+                <div className="cart-addr-form">
 
-                    {/* Location detect button */}
-                    <button type="button" onClick={fetchLocation} disabled={fetchingLocation}
-                      style={{
-                        width: "100%", marginBottom: "14px",
-                        padding: "12px", borderRadius: "10px",
-                        background: fetchingLocation ? "#f3ecff" : "#1e0a3c",
-                        color: fetchingLocation ? "#5e2080" : "#c9a84c",
-                        border: "none", fontWeight: 700, fontSize: "14px",
-                        cursor: fetchingLocation ? "not-allowed" : "pointer",
-                        display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-                        touchAction: "manipulation",
-                      }}>
-                      {fetchingLocation ? "⏳ Detecting location..." : "📍 Auto-detect My Location"}
-                    </button>
+                  {/* Location detect button */}
+                  <button type="button" onClick={fetchLocation} disabled={fetchingLocation}
+                    style={{
+                      width: "100%", marginBottom: "14px",
+                      padding: "12px", borderRadius: "10px",
+                      background: fetchingLocation ? "#f3ecff" : "#1e0a3c",
+                      color: fetchingLocation ? "#5e2080" : "#c9a84c",
+                      border: "none", fontWeight: 700, fontSize: "14px",
+                      cursor: fetchingLocation ? "not-allowed" : "pointer",
+                      display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+                      touchAction: "manipulation",
+                    }}>
+                    {fetchingLocation ? "⏳ Detecting location..." : "📍 Auto-detect My Location"}
+                  </button>
 
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
-                      <div style={{ flex: 1, height: "1px", background: "#e2d5f5" }} />
-                      <span style={{ fontSize: "11px", color: "#9d7bb0", fontWeight: 500 }}>or enter manually</span>
-                      <div style={{ flex: 1, height: "1px", background: "#e2d5f5" }} />
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                    <div style={{ flex: 1, height: "1px", background: "#e2d5f5" }} />
+                    <span style={{ fontSize: "11px", color: "#9d7bb0", fontWeight: 500 }}>or enter manually</span>
+                    <div style={{ flex: 1, height: "1px", background: "#e2d5f5" }} />
+                  </div>
+
+                  <div className="cart-addr-form-grid">
+                    <div className="cart-addr-field">
+                      <label className="label-text">Full Name *</label>
+                      <input className="input-field cart-addr-input" placeholder="e.g. Prasanth Kumar"
+                        value={addrName} onChange={(e) => { setAddrName(e.target.value); setSelectedAddressIdx(null); }} />
                     </div>
-
-                    <div className="cart-addr-form-grid">
-                      <div className="cart-addr-field">
-                        <label className="label-text">Full Name *</label>
-                        <input className="input-field cart-addr-input" placeholder="e.g. Prasanth Kumar"
-                          value={addrName} onChange={(e) => setAddrName(e.target.value)} />
-                      </div>
-                      <div className="cart-addr-field">
-                        <label className="label-text">Phone Number *</label>
-                        <input className="input-field cart-addr-input" placeholder="e.g. 9876543210"
-                          inputMode="numeric" maxLength={10}
-                          value={addrPhone} onChange={(e) => setAddrPhone(e.target.value.replace(/\D/g, ""))} />
-                      </div>
-                      <div className="cart-addr-field cart-addr-field-full">
-                        <label className="label-text">House No / Street *</label>
-                        <input className="input-field cart-addr-input" placeholder="e.g. 12/3, Gandhi Street"
-                          value={addrStreet} onChange={(e) => setAddrStreet(e.target.value)} />
-                      </div>
-                      <div className="cart-addr-field cart-addr-field-full">
-                        <label className="label-text">Area / Town *</label>
-                        <input className="input-field cart-addr-input" placeholder="e.g. Cumbum, Theni"
-                          value={addrArea} onChange={(e) => setAddrArea(e.target.value)} />
-                      </div>
-                      <div className="cart-addr-field">
-                        <label className="label-text">Landmark</label>
-                        <input className="input-field cart-addr-input" placeholder="Near Temple"
-                          value={addrLandmark} onChange={(e) => setAddrLandmark(e.target.value)} />
-                      </div>
-                      <div className="cart-addr-field">
-                        <label className="label-text">Pincode</label>
-                        <input className="input-field cart-addr-input" placeholder="e.g. 625516"
-                          inputMode="numeric" maxLength={6}
-                          value={addrPincode} onChange={(e) => setAddrPincode(e.target.value.replace(/\D/g, ""))} />
-                      </div>
+                    <div className="cart-addr-field">
+                      <label className="label-text">Phone Number *</label>
+                      <input className="input-field cart-addr-input" placeholder="e.g. 9876543210"
+                        inputMode="numeric" maxLength={10}
+                        value={addrPhone} onChange={(e) => { setAddrPhone(e.target.value.replace(/\D/g, "")); setSelectedAddressIdx(null); }} />
                     </div>
-
-                    {/* Save to profile toggle */}
-                    <div className="cart-save-addr-toggle" onClick={() => setSaveToProfile(!saveToProfile)}>
-                      <div className={"cart-save-checkbox" + (saveToProfile ? " checked" : "")}>
-                        {saveToProfile && "✓"}
-                      </div>
-                      <span>Save this address to my profile for future orders</span>
+                    <div className="cart-addr-field cart-addr-field-full">
+                      <label className="label-text">House No / Street *</label>
+                      <input className="input-field cart-addr-input" placeholder="e.g. 12/3, Gandhi Street"
+                        value={addrStreet} onChange={(e) => { setAddrStreet(e.target.value); setSelectedAddressIdx(null); }} />
+                    </div>
+                    <div className="cart-addr-field cart-addr-field-full">
+                      <label className="label-text">Area / Town *</label>
+                      <input className="input-field cart-addr-input" placeholder="e.g. Cumbum, Theni"
+                        value={addrArea} onChange={(e) => { setAddrArea(e.target.value); setSelectedAddressIdx(null); }} />
+                    </div>
+                    <div className="cart-addr-field">
+                      <label className="label-text">Landmark</label>
+                      <input className="input-field cart-addr-input" placeholder="Near Temple"
+                        value={addrLandmark} onChange={(e) => { setAddrLandmark(e.target.value); setSelectedAddressIdx(null); }} />
+                    </div>
+                    <div className="cart-addr-field">
+                      <label className="label-text">Pincode</label>
+                      <input className="input-field cart-addr-input" placeholder="e.g. 625516"
+                        inputMode="numeric" maxLength={6}
+                        value={addrPincode} onChange={(e) => { setAddrPincode(e.target.value.replace(/\D/g, "")); setSelectedAddressIdx(null); }} />
                     </div>
                   </div>
-                )}
+
+                  {/* Save to profile toggle */}
+                  <div className="cart-save-addr-toggle" onClick={() => setSaveToProfile(!saveToProfile)}>
+                    <div className={"cart-save-checkbox" + (saveToProfile ? " checked" : "")}>
+                      {saveToProfile && "✓"}
+                    </div>
+                    <span>Save this address to my profile for future orders</span>
+                  </div>
+                </div>
               </div>
 
               <button
