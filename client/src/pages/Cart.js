@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import CouponSection from "../components/CouponSection";
 import { toast } from "react-toastify";
