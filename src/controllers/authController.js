@@ -7,7 +7,14 @@ const addAddress = async (req, res, next) => {
     if (!name || !phone || !street || !area) {
       return res.status(400).json({ message: "Name, phone, street and area are required" });
     }
-    const user = await User.findById(req.user._id);
+
+    const userId = req.user._id || req.user.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     if (!user.addresses) user.addresses = [];
     user.addresses.push({ name, phone, street, area, landmark: landmark || "", pincode: pincode || "" });
     await user.save();
@@ -20,7 +27,13 @@ const addAddress = async (req, res, next) => {
 const deleteAddress = async (req, res, next) => {
   try {
     const idx = parseInt(req.params.idx);
-    const user = await User.findById(req.user._id);
+    const userId = req.user._id || req.user.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     if (!user.addresses || idx < 0 || idx >= user.addresses.length) {
       return res.status(404).json({ message: "Address not found" });
     }
