@@ -592,3 +592,204 @@
   color: #c9a84c !important;
 }
 .dark-mode .cart-section-title { color: #9d7bb0 !important; }
+
+/* ── Cart Address Section ── */
+.cart-saved-addresses {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.cart-saved-addr-card {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background: #f8f4ff;
+  border: 1px solid #e8d5ff;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cart-saved-addr-card.selected {
+  background: #f3ecff;
+  border-color: #5e2080;
+  box-shadow: 0 0 0 2px rgba(94, 32, 128, 0.15);
+}
+
+.cart-addr-radio {
+  font-size: 16px;
+  line-height: 1;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.cart-addr-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.cart-addr-name {
+  margin: 0 0 3px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #1e0a3c;
+}
+
+.cart-addr-line {
+  margin: 0 0 2px;
+  font-size: 12px;
+  color: #6b5b8a;
+  line-height: 1.4;
+}
+
+.cart-add-new-addr-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1.5px dashed #c9a84c;
+  color: #5e2080;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cart-add-new-addr-btn:hover {
+  background: #f3ecff;
+}
+
+.cart-addr-form {
+  background: #ffffff;
+  border: 0.5px solid #f0ebf8;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 2px 8px rgba(94, 32, 128, 0.06);
+}
+
+.cart-addr-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.cart-addr-field-full {
+  grid-column: 1 / -1;
+}
+
+.cart-addr-input {
+  min-height: 44px;
+  font-size: 15px;
+  touch-action: manipulation;
+}
+
+.cart-save-addr-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px 12px;
+  background: #f8f4ff;
+  border: 0.5px solid #f0ebf8;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #5e2080;
+  font-weight: 600;
+  user-select: none;
+}
+
+.cart-save-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1.5px solid #c9a84c;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: #1e0a3c;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.cart-save-checkbox.checked {
+  background: #c9a84c;
+  border-color: #c9a84c;
+  color: #1e0a3c;
+}
+
+@media (min-width: 769px) {
+  .cart-addr-form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .cart-addr-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .cart-addr-field-full {
+    grid-column: 1;
+  }
+}
+
+/* Dark mode */
+.dark-mode .cart-saved-addr-card {
+  background: #2d1a45 !important;
+  border-color: #3d2560 !important;
+}
+
+.dark-mode .cart-saved-addr-card.selected {
+  background: #3d2560 !important;
+  border-color: #c9a84c !important;
+}
+
+.dark-mode .cart-addr-name {
+  color: #f0e6ff !important;
+}
+
+.dark-mode .cart-addr-line {
+  color: #c9a84c !important;
+}
+
+.dark-mode .cart-add-new-addr-btn {
+  color: #c9a84c !important;
+  border-color: #5e2080 !important;
+}
+
+.dark-mode .cart-add-new-addr-btn:hover {
+  background: #2d1a45 !important;
+}
+
+.dark-mode .cart-addr-form {
+  background: #1e1030 !important;
+  border-color: #2d1a45 !important;
+}
+
+.dark-mode .cart-addr-input {
+  background: #2d1a45 !important;
+  border-color: #3d2560 !important;
+  color: #f0e6ff !important;
+}
+
+.dark-mode .cart-save-addr-toggle {
+  background: #2d1a45 !important;
+  border-color: #3d2560 !important;
+  color: #c9a84c !important;
+}
+
+.dark-mode .cart-save-checkbox {
+  background: #1e1030 !important;
+  border-color: #c9a84c !important;
+}
+
+.dark-mode .cart-save-checkbox.checked {
+  background: #c9a84c !important;
+  color: #1e0a3c !important;
+}

@@ -12,7 +12,6 @@ function Cart() {
     return JSON.parse(localStorage.getItem("cart")) || [];
   });
 
-  const [address, setAddress] = useState(localStorage.getItem("address") || "");
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [fetchingLocation, setFetchingLocation] = useState(false);
@@ -21,9 +20,17 @@ function Cart() {
 
   const [appliedCoupon, setAppliedCoupon] = useState(null);
 
-  useEffect(() => {
-    localStorage.setItem("address", address);
-  }, [address]);
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [showNewForm, setShowNewForm] = useState(false);
+  const [selectedAddressIdx, setSelectedAddressIdx] = useState(null);
+  const [saveToProfile, setSaveToProfile] = useState(false);
+
+  const [addrName, setAddrName] = useState("");
+  const [addrPhone, setAddrPhone] = useState("");
+  const [addrStreet, setAddrStreet] = useState("");
+  const [addrArea, setAddrArea] = useState("");
+  const [addrLandmark, setAddrLandmark] = useState("");
+  const [addrPincode, setAddrPincode] = useState("");
 
   useEffect(() => {
     if (navigator.permissions) {
@@ -40,6 +47,26 @@ function Cart() {
     } else {
       setLocationStatus("navigator.permissions not available");
     }
+  }, []);
+
+  useEffect(() => {
+    const fetchSavedAddresses = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/auth/profile`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const addrs = res.data.addresses || [];
+        setSavedAddresses(addrs);
+        if (addrs.length > 0 && selectedAddressIdx === null) {
+          setSelectedAddressIdx(0);
+          setShowNewForm(false);
+        }
+      } catch { }
+    };
+    fetchSavedAddresses();
   }, []);
 
   const saveCart = (updatedCart) => {
@@ -75,63 +102,36 @@ function Cart() {
     toast.success("Cart cleared successfully");
   };
 
-  const fetchLocation = () => {
+  const fetchLocation = async () => {
     if (!navigator.geolocation) {
-      toast.error("Geolocation not supported");
-      setLocationStatus("Geolocation NOT supported");
+      toast.error("Geolocation not supported on this device");
       return;
     }
-
-    toast.info("Requesting position...");
-    setLocationStatus("Requesting position...");
     setFetchingLocation(true);
-    setLocationDenied(false);
-
+    toast.info("Detecting your location...");
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
-        toast.success(`Got coordinates — ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
-        setLocationStatus(`Got coords: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
-
         try {
           const res = await axios.get(
             `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
             { headers: { "Accept-Language": "en" } }
           );
-
           const addr = res.data.address;
-          const parts = [
-            addr.house_number,
-            addr.road || addr.pedestrian || addr.footway,
-            addr.neighbourhood || addr.suburb || addr.quarter,
-            addr.city || addr.town || addr.village || addr.county,
-            addr.state_district,
-            addr.state,
-            addr.postcode,
-          ].filter(Boolean);
-
-          const fullAddress = parts.join(", ");
-          setAddress(fullAddress);
-          setLocationStatus("Address filled ✅");
-          toast.success("Address detected successfully!");
-        } catch (err) {
-          toast.error("Could not convert to address — type manually");
-          setLocationStatus("Geocoding failed");
+          setAddrStreet([addr.house_number, addr.road || addr.pedestrian || addr.footway].filter(Boolean).join(", "));
+          setAddrArea([addr.neighbourhood || addr.suburb || addr.quarter, addr.city || addr.town || addr.village || addr.county].filter(Boolean).join(", "));
+          setAddrPincode(addr.postcode || "");
+          toast.success("Location detected — please add your name and phone");
+        } catch {
+          toast.error("Could not detect address — please enter manually");
         } finally {
           setFetchingLocation(false);
         }
       },
       (error) => {
         setFetchingLocation(false);
-        const errorMessages = {
-          1: "Permission DENIED — browser blocked location",
-          2: "Position UNAVAILABLE — GPS signal not available",
-          3: "TIMEOUT — took too long to get location",
-        };
-        const msg = errorMessages[error.code] || `Unknown error (code ${error.code}): ${error.message}`;
-        toast.error(msg);
-        setLocationStatus(msg);
-        if (error.code === 1) setLocationDenied(true);
+        const msgs = { 1: "Location permission denied", 2: "Location unavailable", 3: "Location timed out" };
+        toast.error(msgs[error.code] || "Location error — please enter manually");
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
@@ -155,7 +155,17 @@ function Cart() {
       const token = localStorage.getItem("token");
       if (!token) { navigate("/"); return; }
       if (cart.length === 0) { toast.warning("Cart is empty 🛒"); return; }
-      if (!address.trim()) { toast.warning("Please enter your delivery address"); return; }
+
+      let deliveryAddress = "";
+      if (selectedAddressIdx !== null && savedAddresses[selectedAddressIdx]) {
+        const a = savedAddresses[selectedAddressIdx];
+        deliveryAddress = `${a.name}, ${a.phone}, ${a.street}, ${a.area}${a.landmark ? `, Near: ${a.landmark}` : ""}${a.pincode ? `, PIN: ${a.pincode}` : ""}`;
+      } else {
+        const parts = [addrName, addrPhone, addrStreet, addrArea, addrLandmark, addrPincode].filter(Boolean);
+        deliveryAddress = parts.join(", ");
+      }
+
+      if (!deliveryAddress.trim()) { toast.warning("Please enter your delivery address"); return; }
 
       setLoading(true);
 
@@ -170,7 +180,7 @@ function Cart() {
         subtotal: totalAmount,
         deliveryFee: deliveryAfterCoupon,
         discountAmount,
-        address,
+        address: deliveryAddress,
         paymentMethod,
         couponCode: appliedCoupon?.code || null,
       };
@@ -182,9 +192,12 @@ function Cart() {
       );
 
       localStorage.removeItem("cart");
-      localStorage.removeItem("address");
       setCart([]);
       setAppliedCoupon(null);
+      setShowNewForm(false);
+      setSelectedAddressIdx(null);
+      setSaveToProfile(false);
+      setAddrName(""); setAddrPhone(""); setAddrStreet(""); setAddrArea(""); setAddrLandmark(""); setAddrPincode("");
       window.dispatchEvent(new Event("cartUpdated"));
       toast.success("Order placed successfully ✅");
       navigate("/orders");
@@ -353,61 +366,115 @@ function Cart() {
                 </div>
               </div>
 
-              {/* Address + location */}
-              <div className="cart-address-header">
-                <label className="label-text">Delivery Address</label>
-                {!locationDenied && (
-                  <button
-                    type="button"
-                    className="cart-location-btn"
-                    onClick={fetchLocation}
-                    disabled={fetchingLocation}
-                  >
-                    {fetchingLocation ? "⏳ Detecting..." : "📍 Use My Location"}
-                  </button>
+              {/* ── Delivery Address ── */}
+              <div style={{ marginTop: "20px" }}>
+
+                {/* Header row */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+                  <label className="label-text" style={{ margin: 0 }}>📍 Delivery Address</label>
+                  {savedAddresses.length > 0 && (
+                    <button type="button"
+                      onClick={() => { setShowNewForm(!showNewForm); setSelectedAddressIdx(showNewForm ? 0 : null); }}
+                      style={{ background: "none", border: "none", color: "#5e2080", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+                      {showNewForm ? "← Use Saved" : "+ New Address"}
+                    </button>
+                  )}
+                </div>
+
+                {/* Saved address picker */}
+                {!showNewForm && savedAddresses.length > 0 && (
+                  <div className="cart-saved-addresses">
+                    {savedAddresses.map((addr, idx) => (
+                      <div key={idx}
+                        className={"cart-saved-addr-card" + (selectedAddressIdx === idx ? " selected" : "")}
+                        onClick={() => setSelectedAddressIdx(idx)}>
+                        <div className="cart-addr-radio">{selectedAddressIdx === idx ? "🔵" : "⚪"}</div>
+                        <div className="cart-addr-details">
+                          <p className="cart-addr-name">{addr.name} · {addr.phone}</p>
+                          <p className="cart-addr-line">{addr.street}, {addr.area}</p>
+                          {addr.landmark && <p className="cart-addr-line">Near: {addr.landmark}</p>}
+                          {addr.pincode  && <p className="cart-addr-line">PIN: {addr.pincode}</p>}
+                        </div>
+                      </div>
+                    ))}
+                    <button type="button"
+                      onClick={() => { setShowNewForm(true); setSelectedAddressIdx(null); }}
+                      className="cart-add-new-addr-btn">
+                      + Add New Address
+                    </button>
+                  </div>
+                )}
+
+                {/* New address form */}
+                {showNewForm && (
+                  <div className="cart-addr-form">
+
+                    {/* Location detect button */}
+                    <button type="button" onClick={fetchLocation} disabled={fetchingLocation}
+                      style={{
+                        width: "100%", marginBottom: "14px",
+                        padding: "12px", borderRadius: "10px",
+                        background: fetchingLocation ? "#f3ecff" : "#1e0a3c",
+                        color: fetchingLocation ? "#5e2080" : "#c9a84c",
+                        border: "none", fontWeight: 700, fontSize: "14px",
+                        cursor: fetchingLocation ? "not-allowed" : "pointer",
+                        display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+                        touchAction: "manipulation",
+                      }}>
+                      {fetchingLocation ? "⏳ Detecting location..." : "📍 Auto-detect My Location"}
+                    </button>
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                      <div style={{ flex: 1, height: "1px", background: "#e2d5f5" }} />
+                      <span style={{ fontSize: "11px", color: "#9d7bb0", fontWeight: 500 }}>or enter manually</span>
+                      <div style={{ flex: 1, height: "1px", background: "#e2d5f5" }} />
+                    </div>
+
+                    <div className="cart-addr-form-grid">
+                      <div className="cart-addr-field">
+                        <label className="label-text">Full Name *</label>
+                        <input className="input-field cart-addr-input" placeholder="e.g. Prasanth Kumar"
+                          value={addrName} onChange={(e) => setAddrName(e.target.value)} />
+                      </div>
+                      <div className="cart-addr-field">
+                        <label className="label-text">Phone Number *</label>
+                        <input className="input-field cart-addr-input" placeholder="e.g. 9876543210"
+                          inputMode="numeric" maxLength={10}
+                          value={addrPhone} onChange={(e) => setAddrPhone(e.target.value.replace(/\D/g, ""))} />
+                      </div>
+                      <div className="cart-addr-field cart-addr-field-full">
+                        <label className="label-text">House No / Street *</label>
+                        <input className="input-field cart-addr-input" placeholder="e.g. 12/3, Gandhi Street"
+                          value={addrStreet} onChange={(e) => setAddrStreet(e.target.value)} />
+                      </div>
+                      <div className="cart-addr-field cart-addr-field-full">
+                        <label className="label-text">Area / Town *</label>
+                        <input className="input-field cart-addr-input" placeholder="e.g. Cumbum, Theni"
+                          value={addrArea} onChange={(e) => setAddrArea(e.target.value)} />
+                      </div>
+                      <div className="cart-addr-field">
+                        <label className="label-text">Landmark</label>
+                        <input className="input-field cart-addr-input" placeholder="Near Temple"
+                          value={addrLandmark} onChange={(e) => setAddrLandmark(e.target.value)} />
+                      </div>
+                      <div className="cart-addr-field">
+                        <label className="label-text">Pincode</label>
+                        <input className="input-field cart-addr-input" placeholder="e.g. 625516"
+                          inputMode="numeric" maxLength={6}
+                          value={addrPincode} onChange={(e) => setAddrPincode(e.target.value.replace(/\D/g, ""))} />
+                      </div>
+                    </div>
+
+                    {/* Save to profile toggle */}
+                    <div className="cart-save-addr-toggle" onClick={() => setSaveToProfile(!saveToProfile)}>
+                      <div className={"cart-save-checkbox" + (saveToProfile ? " checked" : "")}>
+                        {saveToProfile && "✓"}
+                      </div>
+                      <span>Save this address to my profile for future orders</span>
+                    </div>
+                  </div>
                 )}
               </div>
-
-              {locationStatus && process.env.NODE_ENV === "development" && (
-                <div className="cart-location-debug">
-                  🔍 {locationStatus}
-                </div>
-              )}
-
-              {fetchingLocation && (
-                <div className="cart-location-detecting">
-                  <div className="cart-location-spinner" />
-                  <p>Getting your location, please wait...</p>
-                </div>
-              )}
-
-              {locationDenied && (
-                <div className="cart-location-denied-box">
-                  <p className="cart-location-denied-title">📍 Location Permission Blocked</p>
-                  <p className="cart-location-denied-text">To enable location access:</p>
-                  <ul className="cart-location-denied-steps">
-                    <li><strong>Chrome Android:</strong> Tap 🔒 lock → Permissions → Location → Allow</li>
-                    <li><strong>Edge:</strong> Tap 🔒 lock → Site permissions → Location → Allow</li>
-                    <li><strong>iPhone Safari:</strong> Settings → Safari → Location → Allow</li>
-                  </ul>
-                  <p className="cart-location-denied-or">— or just type your address below —</p>
-                  <button
-                    type="button"
-                    className="cart-location-retry-btn"
-                    onClick={() => { setLocationDenied(false); setTimeout(fetchLocation, 300); }}
-                  >
-                    🔄 Try Again After Enabling
-                  </button>
-                </div>
-              )}
-
-              <textarea
-                placeholder="Tap 'Use My Location' or type your address here"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                rows={4}
-                className="input-field cart-address-input"
-              />
 
               <button
                 onClick={handleCheckout}
