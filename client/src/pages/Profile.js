@@ -219,20 +219,22 @@ function Profile() {
                 {addresses.map((addr, idx) => (
                   <div key={idx} style={{
                     background: "#f3ecff", border: "1px solid #e2d5f5", borderRadius: "10px",
-                    padding: "12px 38px 12px 12px", marginBottom: "8px", position: "relative"
+                    padding: "12px", marginBottom: "8px"
                   }}>
-                    <p style={{ margin: "0 0 4px", fontWeight: 700, color: "#1e0a3c", fontSize: "14px" }}>
-                      {addr.name} · {addr.phone}
-                    </p>
-                    <p style={{ margin: "0 0 2px", fontSize: "12px", color: "#6b5b8a" }}>{addr.street}, {addr.area}</p>
-                    {addr.landmark && <p style={{ margin: "0 0 2px", fontSize: "12px", color: "#6b5b8a" }}>Near: {addr.landmark}</p>}
-                    {addr.pincode  && <p style={{ margin: 0, fontSize: "12px", color: "#6b5b8a" }}>PIN: {addr.pincode}</p>}
-                    <button onClick={() => handleDeleteAddress(idx)} type="button" aria-label="Delete address" style={{
-                      position: "absolute", top: "10px", right: "10px",
-                      width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center",
-                      background: "#fff5f5", border: "1px solid #fecaca", color: "#dc2626",
-                      borderRadius: "6px", fontSize: "13px", fontWeight: 700, padding: 0, cursor: "pointer", lineHeight: 1
-                    }}>✕</button>
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px" }}>
+                      <p style={{ margin: 0, fontWeight: 700, color: "#1e0a3c", fontSize: "14px", wordBreak: "break-word" }}>
+                        {addr.name} · {addr.phone}
+                      </p>
+                      <button onClick={() => handleDeleteAddress(idx)} type="button" aria-label="Delete address" style={{
+                        flexShrink: 0,
+                        width: "26px", height: "26px", display: "flex", alignItems: "center", justifyContent: "center",
+                        background: "#fff5f5", border: "1px solid #fecaca", color: "#dc2626",
+                        borderRadius: "6px", fontSize: "13px", fontWeight: 700, padding: 0, cursor: "pointer", lineHeight: 1
+                      }}>✕</button>
+                    </div>
+                    <p style={{ margin: "4px 0 0", fontSize: "12px", color: "#6b5b8a", wordBreak: "break-word" }}>{addr.street}, {addr.area}</p>
+                    {addr.landmark && <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#6b5b8a" }}>Near: {addr.landmark}</p>}
+                    {addr.pincode  && <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#6b5b8a" }}>PIN: {addr.pincode}</p>}
                   </div>
                 ))}
 
