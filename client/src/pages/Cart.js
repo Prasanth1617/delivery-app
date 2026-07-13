@@ -5,6 +5,17 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import "./Cart.css";
 
+const loadRazorpayScript = () => {
+  return new Promise((resolve) => {
+    if (window.Razorpay) return resolve(true);
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
 function Cart() {
   const navigate = useNavigate();
 
@@ -125,59 +136,150 @@ function Cart() {
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  const buildAddressString = () => {
+    if (selectedAddressIdx !== null && savedAddresses[selectedAddressIdx]) {
+      const a = savedAddresses[selectedAddressIdx];
+      return `${a.name}, ${a.phone}, ${a.street}, ${a.area}${a.landmark ? `, Near: ${a.landmark}` : ""}${a.pincode ? `, PIN: ${a.pincode}` : ""}`;
+    }
+    const parts = [addrName, addrPhone, addrStreet, addrArea, addrLandmark, addrPincode].filter(Boolean);
+    return parts.join(", ");
+  };
+
+  const validateBeforeCheckout = () => {
+    const token = localStorage.getItem("token");
+    if (!token) { navigate("/"); return null; }
+    if (cart.length === 0) { toast.warning("Cart is empty 🛒"); return null; }
+
+    const deliveryAddress = buildAddressString();
+    if (!deliveryAddress.trim()) { toast.warning("Please enter your delivery address"); return null; }
+
+    return token;
+  };
+
+  const finalizeOrder = async () => {
+    localStorage.removeItem("cart");
+    setCart([]);
+    setAppliedCoupon(null);
+    setSelectedAddressIdx(null);
+    setSaveToProfile(false);
+    setAddrName(""); setAddrPhone(""); setAddrStreet(""); setAddrArea(""); setAddrLandmark(""); setAddrPincode("");
+    window.dispatchEvent(new Event("cartUpdated"));
+    toast.success("Order placed successfully ✅");
+    navigate("/orders");
+  };
+
   const handleCheckout = async () => {
+    const token = validateBeforeCheckout();
+    if (!token) return;
+
+    if (saveToProfile) {
+      try {
+        await axios.post(
+          `${process.env.REACT_APP_API_URL}/api/auth/addresses`,
+          { name: addrName, phone: addrPhone, street: addrStreet, area: addrArea, landmark: addrLandmark, pincode: addrPincode },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch { /* non-blocking */ }
+    }
+
+    if (paymentMethod === "Online") {
+      await handleRazorpayPayment(token);
+      return;
+    }
+
     try {
-      const token = localStorage.getItem("token");
-      if (!token) { navigate("/"); return; }
-      if (cart.length === 0) { toast.warning("Cart is empty 🛒"); return; }
-
-      let deliveryAddress = "";
-      if (selectedAddressIdx !== null && savedAddresses[selectedAddressIdx]) {
-        const a = savedAddresses[selectedAddressIdx];
-        deliveryAddress = `${a.name}, ${a.phone}, ${a.street}, ${a.area}${a.landmark ? `, Near: ${a.landmark}` : ""}${a.pincode ? `, PIN: ${a.pincode}` : ""}`;
-      } else {
-        const parts = [addrName, addrPhone, addrStreet, addrArea, addrLandmark, addrPincode].filter(Boolean);
-        deliveryAddress = parts.join(", ");
-      }
-
-      if (!deliveryAddress.trim()) { toast.warning("Please enter your delivery address"); return; }
-
       setLoading(true);
-
+      const address = buildAddressString();
       const payload = {
-        items: cart.map((p) => ({
-          productId: p._id,
-          name: p.name,
-          price: p.price,
-          quantity: p.quantity,
-        })),
+        items: cart.map((p) => ({ productId: p._id, name: p.name, price: p.price, quantity: p.quantity })),
         totalAmount: finalAmount,
         subtotal: totalAmount,
         deliveryFee: deliveryAfterCoupon,
         discountAmount,
-        address: deliveryAddress,
+        address,
         paymentMethod,
         couponCode: appliedCoupon?.code || null,
       };
-
-      await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/orders/create`,
-        payload,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      localStorage.removeItem("cart");
-      setCart([]);
-      setAppliedCoupon(null);
-      setSelectedAddressIdx(null);
-      setSaveToProfile(false);
-      setAddrName(""); setAddrPhone(""); setAddrStreet(""); setAddrArea(""); setAddrLandmark(""); setAddrPincode("");
-      window.dispatchEvent(new Event("cartUpdated"));
-      toast.success("Order placed successfully ✅");
-      navigate("/orders");
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/orders/create`, payload, { headers: { Authorization: `Bearer ${token}` } });
+      await finalizeOrder();
     } catch (err) {
       toast.error(err.response?.data?.message || "Checkout failed ❌");
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRazorpayPayment = async (token) => {
+    try {
+      setLoading(true);
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        toast.error("Unable to load payment gateway. Check your connection.");
+        setLoading(false);
+        return;
+      }
+
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/orders/razorpay/create-order`,
+        { amount: finalAmount },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const address = buildAddressString();
+      const phoneForPrefill = selectedAddressIdx !== null && savedAddresses[selectedAddressIdx]
+        ? savedAddresses[selectedAddressIdx].phone
+        : addrPhone;
+      const nameForPrefill = selectedAddressIdx !== null && savedAddresses[selectedAddressIdx]
+        ? savedAddresses[selectedAddressIdx].name
+        : addrName;
+
+      const options = {
+        key: data.keyId,
+        amount: data.amount,
+        currency: data.currency,
+        order_id: data.orderId,
+        name: "Theni Retail",
+        description: "Grocery Order Payment",
+        prefill: { name: nameForPrefill, contact: phoneForPrefill },
+        theme: { color: "#5e2080" },
+        handler: async (response) => {
+          try {
+            const verifyPayload = {
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              items: cart.map((p) => ({ productId: p._id, name: p.name, price: p.price, quantity: p.quantity })),
+              totalAmount: finalAmount,
+              subtotal: totalAmount,
+              deliveryFee: deliveryAfterCoupon,
+              discountAmount,
+              address,
+              couponCode: appliedCoupon?.code || null,
+            };
+            await axios.post(
+              `${process.env.REACT_APP_API_URL}/api/orders/razorpay/verify`,
+              verifyPayload,
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            await finalizeOrder();
+          } catch (err) {
+            toast.error(err.response?.data?.message || "Payment verification failed ❌");
+          } finally {
+            setLoading(false);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setLoading(false);
+            toast.info("Payment cancelled");
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Unable to start payment ❌");
       setLoading(false);
     }
   };
@@ -331,12 +433,10 @@ function Cart() {
                   {paymentMethod === "COD" && <span className="cart-payment-check">✓</span>}
                 </div>
 
-                <div className="cart-payment-option disabled" style={{ opacity: 0.5, cursor: "not-allowed" }}>
+                <div className={`cart-payment-option ${paymentMethod === "Online" ? "active" : ""}`} onClick={() => setPaymentMethod("Online")}>
                   <span className="cart-payment-icon">💳</span>
-                  <div>
-                    <p className="cart-payment-title">Online Payment</p>
-                    <p className="cart-payment-desc">UPI, GPay, Cards — Coming Soon</p>
-                  </div>
+                  <div><p className="cart-payment-title">Online Payment</p><p className="cart-payment-desc">UPI, GPay, Cards via Razorpay</p></div>
+                  {paymentMethod === "Online" && <span className="cart-payment-check">✓</span>}
                 </div>
               </div>
 
