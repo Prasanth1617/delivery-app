@@ -7,6 +7,7 @@ const connectDB    = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
 
 dotenv.config();
+console.log("DEBUG Razorpay Key ID present:", !!process.env.RAZORPAY_KEY_ID, "| starts with:", process.env.RAZORPAY_KEY_ID ? process.env.RAZORPAY_KEY_ID.slice(0, 8) : "MISSING");
 connectDB();
 
 const app = express();
