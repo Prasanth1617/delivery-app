@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.theniretail.app',
-  appName: 'Theni Retail',
+  appId: 'com.v2mart.app',
+  appName: 'V2 Mart',
   webDir: 'build',
   server: {
     androidScheme: 'https',
@@ -12,7 +12,7 @@ const config: CapacitorConfig = {
     allowMixedContent: false,
     captureInput: true,           // KEY: routes native input events into WebView
     webContentsDebuggingEnabled: true,  // remove before Play Store upload
-    appendUserAgent: 'TheniRetail/1.0',
+    appendUserAgent: 'V2Mart/1.0',
     backgroundColor: '#1e0a3c',
   },
   plugins: {
