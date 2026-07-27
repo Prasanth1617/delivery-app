@@ -3,6 +3,7 @@ const axios = require("axios");
 const WHATSAPP_API_URL = `https://graph.facebook.com/v20.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`;
 
 const sendOrderAlert = async (order) => {
+  console.log("DEBUG: sendOrderAlert called for order", order._id);
   try {
     const itemsList = order.items
       .map((item) => `- ${item.name} x${item.quantity}`)
@@ -16,7 +17,7 @@ const sendOrderAlert = async (order) => {
       `Payment: ${order.paymentMethod}\n` +
       `Delivery Address: ${order.deliveryAddress}`;
 
-    await axios.post(
+    const response = await axios.post(
       WHATSAPP_API_URL,
       {
         messaging_product: "whatsapp",
@@ -31,6 +32,7 @@ const sendOrderAlert = async (order) => {
         },
       }
     );
+    console.log("DEBUG: WhatsApp API success response:", JSON.stringify(response.data));
   } catch (err) {
     console.error("WhatsApp notification failed:", err.response?.data || err.message);
   }
