@@ -4,6 +4,7 @@ const Razorpay = require("razorpay");
 const Order   = require("../models/Order");
 const Product = require("../models/Product");
 const couponService = require("./couponService");
+const whatsappService = require("./whatsappService");
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -86,6 +87,10 @@ const createOrder = async ({ userId, items, totalAmount, subtotal, deliveryFee, 
     );
 
     await session.commitTransaction();
+
+    // Fire-and-forget: don't block order response on WhatsApp delivery
+    whatsappService.sendOrderAlert(order);
+
     return order;
 
   } catch (err) {
