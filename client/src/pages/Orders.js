@@ -202,6 +202,30 @@ function Orders() {
                   </div>
                 </div>
 
+                {/* Savings breakdown */}
+                {(order.discountAmount > 0 || order.pointsDiscount > 0) && (
+                  <div style={{
+                    display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "10px"
+                  }}>
+                    {order.discountAmount > 0 && (
+                      <span style={{
+                        background: "#f3ecff", color: "#5e2080", fontSize: "12px", fontWeight: 700,
+                        padding: "6px 12px", borderRadius: "8px", border: "1px solid #e2d5f5"
+                      }}>
+                        🏷️ Coupon: -₹{order.discountAmount}
+                      </span>
+                    )}
+                    {order.pointsDiscount > 0 && (
+                      <span style={{
+                        background: "#fff9ec", color: "#a3853a", fontSize: "12px", fontWeight: 700,
+                        padding: "6px 12px", borderRadius: "8px", border: "1px solid #f5e6bf"
+                      }}>
+                        🎁 Points Redeemed: -₹{order.pointsDiscount} ({order.pointsUsed} pts)
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 {/* Address */}
                 <div className="orders-address-box">
                   <p className="orders-box-label">📍 Delivery Address</p>

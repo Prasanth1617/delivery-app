@@ -17,7 +17,7 @@ const verifyAndCreateOrder = async (req, res, next) => {
   try {
     const {
       razorpayOrderId, razorpayPaymentId, razorpaySignature,
-      items, totalAmount, subtotal, deliveryFee, discountAmount, address, couponCode
+      items, totalAmount, subtotal, deliveryFee, discountAmount, address, couponCode, pointsUsed
     } = req.body;
 
     orderService.verifyPaymentSignature({ razorpayOrderId, razorpayPaymentId, razorpaySignature });
@@ -27,6 +27,7 @@ const verifyAndCreateOrder = async (req, res, next) => {
       items, totalAmount, subtotal, deliveryFee, discountAmount, address,
       paymentMethod: "Online",
       couponCode,
+      pointsUsed,
       razorpayOrderId, razorpayPaymentId, razorpaySignature,
     });
 
@@ -36,7 +37,7 @@ const verifyAndCreateOrder = async (req, res, next) => {
 
 const createOrder = async (req, res, next) => {
   try {
-    const { items, totalAmount, subtotal, deliveryFee, discountAmount, address, paymentMethod, couponCode } = req.body;
+    const { items, totalAmount, subtotal, deliveryFee, discountAmount, address, paymentMethod, couponCode, pointsUsed } = req.body;
     const order = await orderService.createOrder({
       userId: req.user.id,
       items,
@@ -47,6 +48,7 @@ const createOrder = async (req, res, next) => {
       address,
       paymentMethod,
       couponCode,
+      pointsUsed,
     });
     res.status(201).json({ message: "Order placed successfully", order });
   } catch (err) { next(err); }
