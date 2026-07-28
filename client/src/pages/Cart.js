@@ -28,6 +28,8 @@ function Cart() {
   const [fetchingLocation, setFetchingLocation] = useState(false);
 
   const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [userPoints, setUserPoints] = useState(0);
+  const [pointsApplied, setPointsApplied] = useState(false);
 
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressIdx, setSelectedAddressIdx] = useState(null);
@@ -50,6 +52,7 @@ function Cart() {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setSavedAddresses(res.data.addresses || []);
+        setUserPoints(res.data.loyaltyPoints || 0);
       } catch { }
     };
     fetchSavedAddresses();
@@ -130,9 +133,15 @@ function Cart() {
 
   const deliveryFee = totalAmount >= 500 ? 0 : 40;
 
-  const discountAmount = appliedCoupon?.discountAmount || 0;
+  const discountAmount      = appliedCoupon?.discountAmount || 0;
   const deliveryAfterCoupon = appliedCoupon?.freeDelivery ? 0 : deliveryFee;
-  const finalAmount = Math.max(0, totalAmount + deliveryAfterCoupon - discountAmount);
+  const amountAfterCoupon   = Math.max(0, totalAmount + deliveryAfterCoupon - discountAmount);
+
+  const maxPointsValue    = Math.floor(userPoints / 10);            // ₹ value of all points
+  const pointsDiscount    = pointsApplied ? Math.min(maxPointsValue, amountAfterCoupon) : 0;
+  const pointsUsed        = pointsDiscount * 10;                    // actual points consumed
+
+  const finalAmount = Math.max(0, amountAfterCoupon - pointsDiscount);
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -199,6 +208,7 @@ function Cart() {
         address,
         paymentMethod,
         couponCode: appliedCoupon?.code || null,
+        pointsUsed,
       };
       await axios.post(`${process.env.REACT_APP_API_URL}/api/orders/create`, payload, { headers: { Authorization: `Bearer ${token}` } });
       await finalizeOrder();
@@ -255,6 +265,7 @@ function Cart() {
               discountAmount,
               address,
               couponCode: appliedCoupon?.code || null,
+              pointsUsed,
             };
             await axios.post(
               `${process.env.REACT_APP_API_URL}/api/orders/razorpay/verify`,
@@ -397,8 +408,14 @@ function Cart() {
                 </div>
                 {appliedCoupon && (
                   <div className="cart-summary-row cart-summary-discount">
-                    <span>Discount</span>
+                    <span>Coupon Discount</span>
                     <span>-₹{discountAmount}</span>
+                  </div>
+                )}
+                {pointsApplied && pointsDiscount > 0 && (
+                  <div className="cart-summary-row cart-summary-discount">
+                    <span>Points Redeemed</span>
+                    <span>-₹{pointsDiscount}</span>
                   </div>
                 )}
                 <div className="cart-summary-row cart-summary-total">
@@ -414,6 +431,31 @@ function Cart() {
                 onCouponApplied={setAppliedCoupon}
                 onRemoveCoupon={() => setAppliedCoupon(null)}
               />
+
+              {userPoints >= 10 && (
+                <div style={{
+                  marginTop: "14px", background: "#fff9ec", border: "1px solid #f5e6bf",
+                  borderRadius: "12px", padding: "12px 14px", display: "flex",
+                  alignItems: "center", justifyContent: "space-between", gap: "10px"
+                }}>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: "13px", color: "#a3853a" }}>
+                      🎁 You have {userPoints} points
+                    </p>
+                    <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#8a7030" }}>
+                      Redeemable for ₹{maxPointsValue} off
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPointsApplied(!pointsApplied)}
+                    className={pointsApplied ? "secondary-btn" : "primary-btn"}
+                    style={{ padding: "8px 14px", fontSize: "12px", whiteSpace: "nowrap" }}
+                  >
+                    {pointsApplied ? `✓ ₹${pointsDiscount} Applied` : "Redeem Points"}
+                  </button>
+                </div>
+              )}
 
               {/* Payment Method */}
               <label className="label-text" style={{ marginTop: "16px", display: "block" }}>

@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const Razorpay = require("razorpay");
 const Order   = require("../models/Order");
 const Product = require("../models/Product");
+const User    = require("../models/User");
 const couponService = require("./couponService");
 const whatsappService = require("./whatsappService");
 
@@ -17,7 +18,7 @@ const makeError = (message, statusCode = 400) => {
   return err;
 };
 
-const createOrder = async ({ userId, items, totalAmount, subtotal, deliveryFee, discountAmount: clientDiscount, address, paymentMethod, couponCode, razorpayOrderId, razorpayPaymentId, razorpaySignature }) => {
+const createOrder = async ({ userId, items, totalAmount, subtotal, deliveryFee, discountAmount: clientDiscount, address, paymentMethod, couponCode, razorpayOrderId, razorpayPaymentId, razorpaySignature, pointsUsed }) => {
   if (!items || items.length === 0)
     throw makeError("Cart is empty");
 
@@ -65,7 +66,29 @@ const createOrder = async ({ userId, items, totalAmount, subtotal, deliveryFee, 
       );
     }
 
-    const finalTotal = Math.max(0, rawCartTotal + rawDeliveryFee - discountAmount);
+    const amountAfterCoupon = Math.max(0, rawCartTotal + rawDeliveryFee - discountAmount);
+
+    // Server-side points validation — never trust the frontend's math
+    let pointsDiscount = 0;
+    let actualPointsUsed = 0;
+
+    if (pointsUsed && pointsUsed > 0) {
+      const user = await User.findById(userId).session(session);
+      if (!user) throw makeError("User not found", 404);
+
+      const requestedDiscount = Math.floor(pointsUsed / 10);
+      const maxAffordableDiscount = Math.floor(user.loyaltyPoints / 10);
+
+      pointsDiscount = Math.min(requestedDiscount, maxAffordableDiscount, amountAfterCoupon);
+      actualPointsUsed = pointsDiscount * 10;
+
+      if (actualPointsUsed > 0) {
+        user.loyaltyPoints -= actualPointsUsed;
+        await user.save({ session });
+      }
+    }
+
+    const finalTotal = Math.max(0, amountAfterCoupon - pointsDiscount);
 
     const isOnline = paymentMethod === "Online";
 
@@ -81,6 +104,8 @@ const createOrder = async ({ userId, items, totalAmount, subtotal, deliveryFee, 
         paymentStatus: isOnline ? "Paid" : "Pending",
         discountAmount,
         couponCode: appliedCouponCode,
+        pointsUsed: actualPointsUsed,
+        pointsDiscount,
         ...(isOnline && { razorpayOrderId, razorpayPaymentId, razorpaySignature }),
       }],
       { session }
