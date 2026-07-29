@@ -46,9 +46,11 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Auto calculate finalAmount before saving
+// finalAmount mirrors totalAmount, which is already the fully-calculated
+// final price (subtotal + delivery - coupon discount - points discount),
+// computed once in orderService.js at order creation time.
 orderSchema.pre("save", function (next) {
-  this.finalAmount = (this.totalAmount + this.deliveryFee) - this.discountAmount;
+  this.finalAmount = this.totalAmount;
   next();
 });
 

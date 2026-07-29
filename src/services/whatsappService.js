@@ -9,7 +9,7 @@ const sendOrderAlert = async (order) => {
       .join(", ");
 
     const orderIdShort = String(order._id).slice(-8);
-    const totalAmount = order.finalAmount || order.totalAmount;
+    const totalAmount = order.totalAmount; // already the fully-calculated final price
 
     const response = await axios.post(
       WHATSAPP_API_URL,
