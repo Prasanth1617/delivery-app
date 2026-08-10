@@ -9,6 +9,10 @@ const router = express.Router();
 router.get("/orders",            authMiddleware, adminMiddleware, adminController.getAllOrders);
 router.put("/orders/:id/status", authMiddleware, adminMiddleware, adminController.updateOrderStatus);
 
+router.post("/delivery-staff",   authMiddleware, adminMiddleware, adminController.createDeliveryStaff);
+router.get ("/delivery-staff",   authMiddleware, adminMiddleware, adminController.getDeliveryStaff);
+router.put ("/orders/:id/assign", authMiddleware, adminMiddleware, adminController.assignOrderToStaff);
+
 router.get("/coupons",  authMiddleware, adminMiddleware, couponController.getAllCoupons);
 router.post("/coupons", authMiddleware, adminMiddleware, couponController.createCoupon);
 router.put("/coupons/:id", authMiddleware, adminMiddleware, couponController.updateCoupon);

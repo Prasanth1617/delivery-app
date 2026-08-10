@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.v2mart.app',
-  appName: 'V2 Mart',
+  appName: 'V2 MART',
   webDir: 'build',
   server: {
     androidScheme: 'https',

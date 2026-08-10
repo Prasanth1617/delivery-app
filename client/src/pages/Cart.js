@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import CouponSection from "../components/CouponSection";
-import { toast } from "react-toastify";
+import { Capacitor } from "@capacitor/core";
+import { toast } from "../utils/notify";
 import { Link, useNavigate } from "react-router-dom";
 import "./Cart.css";
 
@@ -222,12 +223,6 @@ function Cart() {
   const handleRazorpayPayment = async (token) => {
     try {
       setLoading(true);
-      const scriptLoaded = await loadRazorpayScript();
-      if (!scriptLoaded) {
-        toast.error("Unable to load payment gateway. Check your connection.");
-        setLoading(false);
-        return;
-      }
 
       const { data } = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/orders/razorpay/create-order`,
@@ -243,52 +238,98 @@ function Cart() {
         ? savedAddresses[selectedAddressIdx].name
         : addrName;
 
-      const options = {
-        key: data.keyId,
-        amount: data.amount,
-        currency: data.currency,
-        order_id: data.orderId,
-        name: "Theni Retail",
-        description: "Grocery Order Payment",
-        prefill: { name: nameForPrefill, contact: phoneForPrefill },
-        theme: { color: "#5e2080" },
-        handler: async (response) => {
-          try {
-            const verifyPayload = {
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature,
-              items: cart.map((p) => ({ productId: p._id, name: p.name, price: p.price, quantity: p.quantity })),
-              totalAmount: finalAmount,
-              subtotal: totalAmount,
-              deliveryFee: deliveryAfterCoupon,
-              discountAmount,
-              address,
-              couponCode: appliedCoupon?.code || null,
-              pointsUsed,
-            };
-            await axios.post(
-              `${process.env.REACT_APP_API_URL}/api/orders/razorpay/verify`,
-              verifyPayload,
-              { headers: { Authorization: `Bearer ${token}` } }
-            );
-            await finalizeOrder();
-          } catch (err) {
-            toast.error(err.response?.data?.message || "Payment verification failed ❌");
-          } finally {
-            setLoading(false);
-          }
-        },
-        modal: {
-          ondismiss: () => {
-            setLoading(false);
-            toast.info("Payment cancelled");
-          },
-        },
+      const verifyAndFinalize = async (razorpay_order_id, razorpay_payment_id, razorpay_signature) => {
+        const verifyPayload = {
+          razorpayOrderId: razorpay_order_id,
+          razorpayPaymentId: razorpay_payment_id,
+          razorpaySignature: razorpay_signature,
+          items: cart.map((p) => ({ productId: p._id, name: p.name, price: p.price, quantity: p.quantity })),
+          totalAmount: finalAmount,
+          subtotal: totalAmount,
+          deliveryFee: deliveryAfterCoupon,
+          discountAmount,
+          address,
+          couponCode: appliedCoupon?.code || null,
+          pointsUsed,
+        };
+        await axios.post(
+          `${process.env.REACT_APP_API_URL}/api/orders/razorpay/verify`,
+          verifyPayload,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        await finalizeOrder();
       };
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      if (Capacitor.isNativePlatform()) {
+        // Native Android app — use Razorpay's native SDK via the Capacitor plugin
+        // for full UPI app support (GPay, PhonePe, etc.)
+        const { Checkout } = await import("capacitor-razorpay");
+
+        const options = {
+          key: data.keyId,
+          amount: String(data.amount),
+          currency: data.currency,
+          order_id: data.orderId,
+          name: "V2 Mart",
+          description: "Grocery Order Payment",
+          prefill: { name: nameForPrefill, contact: phoneForPrefill },
+          theme: { color: "#5e2080" },
+        };
+
+        try {
+          const result = await Checkout.open(options);
+          const response = typeof result.response === "string" ? JSON.parse(result.response) : result.response;
+          await verifyAndFinalize(
+            response.razorpay_order_id,
+            response.razorpay_payment_id,
+            response.razorpay_signature
+          );
+        } catch (err) {
+          toast.error("Payment cancelled or failed");
+          setLoading(false);
+        }
+      } else {
+        // Web (Vercel) — existing web checkout script
+        const scriptLoaded = await loadRazorpayScript();
+        if (!scriptLoaded) {
+          toast.error("Unable to load payment gateway. Check your connection.");
+          setLoading(false);
+          return;
+        }
+
+        const options = {
+          key: data.keyId,
+          amount: data.amount,
+          currency: data.currency,
+          order_id: data.orderId,
+          name: "V2 Mart",
+          description: "Grocery Order Payment",
+          prefill: { name: nameForPrefill, contact: phoneForPrefill },
+          theme: { color: "#5e2080" },
+          handler: async (response) => {
+            try {
+              await verifyAndFinalize(
+                response.razorpay_order_id,
+                response.razorpay_payment_id,
+                response.razorpay_signature
+              );
+            } catch (err) {
+              toast.error(err.response?.data?.message || "Payment verification failed ❌");
+            } finally {
+              setLoading(false);
+            }
+          },
+          modal: {
+            ondismiss: () => {
+              setLoading(false);
+              toast.info("Payment cancelled");
+            },
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || "Unable to start payment ❌");
       setLoading(false);

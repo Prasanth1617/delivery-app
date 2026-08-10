@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const Order = require("../models/Order");
 const User  = require("../models/User");
 
@@ -38,7 +39,46 @@ const updateOrderStatus = async (orderId, status) => {
   return existingOrder;
 };
 
+const createDeliveryStaff = async ({ name, phone, password }) => {
+  if (!name || !phone || !password)
+    throw makeError("Name, phone and password are required");
+
+  const exists = await User.findOne({ phone });
+  if (exists) throw makeError("A user with this phone number already exists");
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const staff = await User.create({
+    name,
+    phone,
+    password: hashedPassword,
+    role: "delivery"
+  });
+
+  return { id: staff._id, name: staff.name, phone: staff.phone, role: staff.role };
+};
+
+const getDeliveryStaff = async () => {
+  return await User.find({ role: "delivery" }).select("-password -secretAnswer");
+};
+
+const assignOrderToStaff = async (orderId, staffId) => {
+  const staff = await User.findOne({ _id: staffId, role: "delivery" });
+  if (!staff) throw makeError("Delivery staff not found", 404);
+
+  const order = await Order.findById(orderId);
+  if (!order) throw makeError("Order not found", 404);
+
+  order.deliveryStaffId = staffId;
+  await order.save();
+
+  return order;
+};
+
 module.exports = {
   getAllOrders,
-  updateOrderStatus
+  updateOrderStatus,
+  createDeliveryStaff,
+  getDeliveryStaff,
+  assignOrderToStaff
 };

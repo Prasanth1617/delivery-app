@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "../utils/notify";
 import "./Login.css";
 import { useAuth } from "../context/AuthContext";
 

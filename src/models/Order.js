@@ -32,6 +32,11 @@ const orderSchema = new mongoose.Schema(
       enum:    ["COD", "Online"],
       default: "COD"
     },
+    deliveryStaffId: {
+      type:    mongoose.Schema.Types.ObjectId,
+      ref:     "User",
+      default: null
+    },
     paymentStatus: {
       type:    String,
       enum:    ["Pending", "Paid", "Failed"],

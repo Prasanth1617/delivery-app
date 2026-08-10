@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     role: {
       type:    String,
-      enum:    ["user", "admin"],
+      enum:    ["user", "admin", "delivery"],
       default: "user"
     },
     address:      { type: String },
@@ -30,7 +30,13 @@ const userSchema = new mongoose.Schema(
     secretAnswer: { type: String, default: "" },
     walletBalance: { type: Number, default: 0 },
     referralCode:  { type: String },
-    loyaltyPoints: { type: Number, default: 0 }
+    loyaltyPoints: { type: Number, default: 0 },
+    currentLocation: {
+      lat:       { type: Number },
+      lng:       { type: Number },
+      updatedAt: { type: Date }
+    },
+    isAvailable: { type: Boolean, default: true }
   },
   { timestamps: true }
 );

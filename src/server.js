@@ -22,11 +22,13 @@ app.use(cors({
 }));
 
 const couponRoutes    = require("./routes/couponRoutes");
+const deliveryRoutes  = require("./routes/deliveryRoutes");
 
 app.use("/api/auth",      require("./routes/authRoutes"));
 app.use("/api/products",  require("./routes/productRoutes"));
 app.use("/api/orders",    require("./routes/orderRoutes"));
 app.use("/api/admin",     require("./routes/adminRoutes"));
+app.use("/api/delivery",  deliveryRoutes);
 app.use("/api/coupons",   couponRoutes);
 app.use("/api/dashboard", require("./routes/dashboardRoutes"));
 

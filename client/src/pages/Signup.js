@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "../utils/notify";
 import "./Signup.css";
 
 const SECURITY_QUESTIONS = [
