@@ -34,4 +34,14 @@ const updateLocation = async (staffId, lat, lng) => {
   return { message: "Location updated" };
 };
 
-module.exports = { getMyOrders, updateMyOrderStatus, updateLocation };
+const orderService = require("./orderService");
+
+const generateQR = async (staffId, orderId) => {
+  return await orderService.generateOrderQR(orderId, staffId);
+};
+
+const markOrderPaid = async (staffId, orderId) => {
+  return await orderService.markCodOrderPaid(orderId, staffId);
+};
+
+module.exports = { getMyOrders, updateMyOrderStatus, updateLocation, generateQR, markOrderPaid };

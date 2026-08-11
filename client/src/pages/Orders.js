@@ -55,6 +55,16 @@ function Orders() {
     }
   };
 
+  const getEstimatedTime = (status) => {
+    switch (status) {
+      case "Pending":          return "Order received · Est. 30–35 mins";
+      case "Packed":            return "Being packed · Est. 20–25 mins";
+      case "Out for Delivery":  return "On the way · Est. 10–15 mins";
+      case "Delivered":         return "Delivered ✅";
+      default:                  return null;
+    }
+  };
+
   const getPaymentBadge = (method, pStatus) => {
     if (method === "Online" && pStatus === "Paid") {
       return <span className="orders-payment-badge paid">💳 Paid Online</span>;
@@ -82,6 +92,15 @@ function Orders() {
     return (
       <div className="orders-timeline-card">
         <p className="orders-timeline-title">📍 Delivery Progress</p>
+        {getEstimatedTime(status) && (
+          <p style={{
+            fontSize: "13px", fontWeight: 600, color: "#5e2080",
+            background: "#f3ecff", padding: "6px 12px", borderRadius: "8px",
+            display: "inline-block", marginBottom: "10px"
+          }}>
+            ⏱️ {getEstimatedTime(status)}
+          </p>
+        )}
         <div className="orders-timeline-grid">
           {orderSteps.map((step, index) => {
             const isCompleted = index <= activeIndex;

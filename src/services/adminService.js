@@ -12,7 +12,7 @@ const ALLOWED_STATUSES = ["Pending", "Packed", "Out for Delivery", "Delivered", 
 const POINTS_PER_50_RUPEES = 2;
 
 const getAllOrders = async () => {
-  return await Order.find().sort({ createdAt: -1 });
+  return await Order.find().populate("deliveryStaffId", "name phone").sort({ createdAt: -1 });
 };
 
 const updateOrderStatus = async (orderId, status) => {

@@ -52,7 +52,12 @@ function Navbar() {
     { path: "/profile",         icon: "👤", label: "Profile" },
   ];
 
-  const tabs = role === "admin" ? adminTabs : userTabs;
+  const deliveryTabs = [
+    { path: "/delivery/dashboard", icon: "🚴", label: "Deliveries" },
+    { path: "/profile",            icon: "👤", label: "Profile" },
+  ];
+
+  const tabs = role === "admin" ? adminTabs : role === "delivery" ? deliveryTabs : userTabs;
 
   return (
     <>
@@ -63,7 +68,7 @@ function Navbar() {
           {/* Brand */}
           <div
             className="navbar-brand"
-            onClick={() => navigate(token ? (role === "admin" ? "/admin/dashboard" : "/products") : "/")}
+            onClick={() => navigate(token ? (role === "admin" ? "/admin/dashboard" : role === "delivery" ? "/delivery/dashboard" : "/products") : "/")}
             style={{ cursor: "pointer" }}
           >
             <div className="navbar-logo">🛒</div>
@@ -79,7 +84,7 @@ function Navbar() {
        
 
             {/* Cart icon — user only */}
-            {token && role !== "admin" && (
+            {token && role === "user" && (
               <Link to="/cart" className="navbar-icon-btn navbar-cart-btn">
                 🛒
                 {cartCount > 0 && (

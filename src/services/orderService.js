@@ -155,9 +155,47 @@ const verifyPaymentSignature = ({ razorpayOrderId, razorpayPaymentId, razorpaySi
   return true;
 };
 
+const generateOrderQR = async (orderId, staffId) => {
+  const order = await Order.findOne({ _id: orderId, deliveryStaffId: staffId });
+  if (!order) throw makeError("Order not found or not assigned to you", 404);
+
+  if (order.paymentMethod !== "COD")
+    throw makeError("This order is not Cash on Delivery");
+
+  if (order.paymentStatus === "Paid")
+    throw makeError("This order is already paid");
+
+  const qr = await razorpay.qrCode.create({
+    type: "upi_qr",
+    name: `Order ${order._id.toString().slice(-8).toUpperCase()}`,
+    usage: "single_use",
+    fixed_amount: true,
+    payment_amount: Math.round(order.totalAmount * 100),
+    description: `V2 Mart order payment`,
+    close_by: Math.floor(Date.now() / 1000) + 60 * 30,
+  });
+
+  order.razorpayQrId = qr.id;
+  await order.save();
+
+  return { qrImageUrl: qr.image_url, qrId: qr.id, amount: order.totalAmount };
+};
+
+const markCodOrderPaid = async (orderId, staffId) => {
+  const order = await Order.findOne({ _id: orderId, deliveryStaffId: staffId });
+  if (!order) throw makeError("Order not found or not assigned to you", 404);
+
+  order.paymentStatus = "Paid";
+  await order.save();
+
+  return order;
+};
+
 module.exports = {
   createOrder,
   getMyOrders,
   createRazorpayOrder,
-  verifyPaymentSignature
+  verifyPaymentSignature,
+  generateOrderQR,
+  markCodOrderPaid
 };

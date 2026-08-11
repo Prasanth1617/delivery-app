@@ -24,4 +24,20 @@ const updateLocation = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { getMyOrders, updateMyOrderStatus, updateLocation };
+const generateQR = async (req, res, next) => {
+  try {
+    const staffId = req.user._id || req.user.id;
+    const data = await deliveryService.generateQR(staffId, req.params.id);
+    res.json(data);
+  } catch (err) { next(err); }
+};
+
+const markOrderPaid = async (req, res, next) => {
+  try {
+    const staffId = req.user._id || req.user.id;
+    const order = await deliveryService.markOrderPaid(staffId, req.params.id);
+    res.json(order);
+  } catch (err) { next(err); }
+};
+
+module.exports = { getMyOrders, updateMyOrderStatus, updateLocation, generateQR, markOrderPaid };

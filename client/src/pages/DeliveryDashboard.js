@@ -9,6 +9,8 @@ function DeliveryDashboard() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tracking, setTracking] = useState(false);
+  const [qrModal, setQrModal] = useState(null);
+  const [qrLoading, setQrLoading] = useState(false);
   const watchIdRef = useRef(null);
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -42,6 +44,41 @@ function DeliveryDashboard() {
     } catch (err) {
       console.log(err);
       toast.error("Status update failed");
+    }
+  };
+
+  const generateQR = async (orderId) => {
+    try {
+      setQrLoading(true);
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/delivery/orders/${orderId}/generate-qr`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setQrModal({ ...res.data, orderId });
+    } catch (err) {
+      console.log(err);
+      toast.error(err.response?.data?.message || "Could not generate QR");
+    } finally {
+      setQrLoading(false);
+    }
+  };
+
+  const markPaid = async (orderId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/api/delivery/orders/${orderId}/mark-paid`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("Marked as paid");
+      setQrModal(null);
+      fetchOrders();
+    } catch (err) {
+      console.log(err);
+      toast.error("Could not mark as paid");
     }
   };
 
@@ -84,7 +121,14 @@ function DeliveryDashboard() {
       toast.success("You're now online 🟢");
     } catch (err) {
       console.log(err);
-      toast.error("Could not start location tracking");
+      const msg = err?.message || "";
+      if (msg.toLowerCase().includes("location") && msg.toLowerCase().includes("not enabled")) {
+        toast.error("Please turn on Location/GPS in your phone settings, then try again");
+      } else if (msg.toLowerCase().includes("denied")) {
+        toast.error("Location permission denied. Enable it in phone Settings > Apps > V2 Mart > Permissions");
+      } else {
+        toast.error("Could not start location tracking");
+      }
     }
   };
 
@@ -95,6 +139,17 @@ function DeliveryDashboard() {
     }
     setTracking(false);
     toast.info("You're offline 🔴");
+  };
+
+  const getPaymentBadge = (method, pStatus) => {
+    if (method === "Online" && pStatus === "Paid") {
+      return <span style={{ background: "#e8f9ee", color: "#1a7a3c", fontSize: "12px", fontWeight: 700, padding: "4px 10px", borderRadius: "8px" }}>💳 Paid Online</span>;
+    }
+    return <span style={{ background: "#fff3e0", color: "#b5620a", fontSize: "12px", fontWeight: 700, padding: "4px 10px", borderRadius: "8px" }}>💵 Cash on Delivery</span>;
+  };
+
+  const getMapLink = (address) => {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
   };
 
   useEffect(() => {
@@ -153,8 +208,25 @@ function DeliveryDashboard() {
             <div key={order._id} className="app-card">
               <p><strong>Order #{order._id.slice(-8).toUpperCase()}</strong></p>
               <p>Status: {order.status}</p>
-              <p>Amount: ₹{order.totalAmount}</p>
-              <p>📍 {order.deliveryAddress}</p>
+              <p>Amount: ₹{order.totalAmount} {getPaymentBadge(order.paymentMethod, order.paymentStatus)}</p>
+              <p>
+                📍 {order.deliveryAddress}{" "}
+                <a href={getMapLink(order.deliveryAddress)} target="_blank" rel="noreferrer" style={{ color: "#5e2080", fontWeight: 700 }}>
+                  🧭 Navigate
+                </a>
+              </p>
+
+              {order.paymentMethod === "COD" && order.paymentStatus !== "Paid" && (
+                <button
+                  className="secondary-btn"
+                  onClick={() => generateQR(order._id)}
+                  disabled={qrLoading}
+                  type="button"
+                  style={{ marginTop: "8px" }}
+                >
+                  {qrLoading ? "Loading..." : "📲 Show Payment QR"}
+                </button>
+              )}
 
               {order.status === "Packed" && (
                 <button
@@ -177,6 +249,49 @@ function DeliveryDashboard() {
               )}
             </div>
           ))
+        )}
+
+        {qrModal && (
+          <div
+            style={{
+              position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)",
+              display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000
+            }}
+            onClick={() => setQrModal(null)}
+          >
+            <div
+              className="app-card"
+              style={{ maxWidth: "320px", textAlign: "center" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3>Scan to Pay</h3>
+              <p style={{ fontSize: "18px", fontWeight: 700, color: "#5e2080" }}>₹{qrModal.amount}</p>
+              <img
+                src={qrModal.qrImageUrl}
+                alt="Payment QR"
+                style={{ width: "220px", height: "220px", margin: "12px auto" }}
+              />
+              <p style={{ fontSize: "13px", color: "#666" }}>
+                Ask the customer to scan with any UPI app
+              </p>
+              <button
+                className="primary-btn"
+                onClick={() => markPaid(qrModal.orderId)}
+                type="button"
+                style={{ marginTop: "10px", width: "100%" }}
+              >
+                ✅ Mark as Paid
+              </button>
+              <button
+                className="secondary-btn"
+                onClick={() => setQrModal(null)}
+                type="button"
+                style={{ marginTop: "8px", width: "100%" }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </div>
