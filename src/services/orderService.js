@@ -165,26 +165,18 @@ const generateOrderQR = async (orderId, staffId) => {
   if (order.paymentStatus === "Paid")
     throw makeError("This order is already paid");
 
-  let qr;
-  try {
-    qr = await razorpay.qrCode.create({
-      type: "upi_qr",
-      name: `Order ${order._id.toString().slice(-8).toUpperCase()}`,
-      usage: "single_use",
-      fixed_amount: true,
-      payment_amount: Math.round(order.totalAmount * 100), // paise
-      description: `V2 Mart order payment`,
-      close_by: Math.floor(Date.now() / 1000) + 60 * 30, // expires in 30 mins
-    });
-  } catch (razorpayErr) {
-    console.log("RAZORPAY QR ERROR:", JSON.stringify(razorpayErr?.error || razorpayErr));
-    throw makeError(razorpayErr?.error?.description || "Could not generate QR code", 400);
-  }
+  if (!process.env.UPI_ID)
+    throw makeError("UPI ID not configured on server");
 
-  order.razorpayQrId = qr.id;
-  await order.save();
+  const upiId = process.env.UPI_ID;
+  const payeeName = process.env.UPI_PAYEE_NAME || "V2 Mart";
+  const note = `Order ${order._id.toString().slice(-8).toUpperCase()}`;
 
-  return { qrImageUrl: qr.image_url, qrId: qr.id, amount: order.totalAmount };
+  const upiUri = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=${encodeURIComponent(payeeName)}&am=${order.totalAmount}&cu=INR&tn=${encodeURIComponent(note)}`;
+
+  const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiUri)}`;
+
+  return { qrImageUrl, amount: order.totalAmount, upiUri };
 };
 
 const markCodOrderPaid = async (orderId, staffId) => {
