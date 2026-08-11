@@ -51,7 +51,9 @@ login(res.data);
       toast.success("Welcome back! ✅");
 
       const role = res.data.role;
-      if (role === "admin") {
+      if (role === "delivery") {
+        navigate("/delivery/dashboard", { replace: true });
+      } else if (role === "admin") {
         if (
           redirectPath.startsWith("/admin") ||
           redirectPath === "/profile" ||

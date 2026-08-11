@@ -15,6 +15,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import AdminOrders from "./pages/AdminOrders";
 import AdminProducts from "./pages/AdminProducts";
 import AdminCoupons from "./pages/AdminCoupons";
+import DeliveryDashboard from "./pages/DeliveryDashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import AppLayout from "./components/AppLayout";
 
@@ -110,6 +111,15 @@ function App() {
             element={
               <PrivateRoute adminOnly={true}>
                 <AdminCoupons />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/delivery/dashboard"
+            element={
+              <PrivateRoute deliveryOnly={true}>
+                <DeliveryDashboard />
               </PrivateRoute>
             }
           />

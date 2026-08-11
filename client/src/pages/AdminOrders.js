@@ -7,6 +7,7 @@ import "./AdminOrders.css";
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [staffList, setStaffList] = useState([]);
   const navigate = useNavigate();
 
   const lastSeenCount = parseInt(
@@ -55,6 +56,35 @@ function AdminOrders() {
     }
   };
 
+  const fetchStaff = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/admin/delivery-staff`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setStaffList(res.data || []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const assignStaff = async (orderId, staffId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/api/admin/orders/${orderId}/assign`,
+        { staffId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("Delivery staff assigned");
+      fetchOrders();
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to assign staff");
+    }
+  };
+
   const getStatusClass = (status) => {
     switch (status) {
       case "Delivered":
@@ -99,6 +129,7 @@ function AdminOrders() {
 
   useEffect(() => {
     fetchOrders();
+    fetchStaff();
   }, []);
 
   if (loading) {
@@ -256,6 +287,22 @@ function AdminOrders() {
                       <option value="Out for Delivery">🚚 Out for Delivery</option>
                       <option value="Delivered">✅ Delivered</option>
                       <option value="Cancelled">❌ Cancelled</option>
+                    </select>
+                  </div>
+
+                  <div className="admin-orders-status-section">
+                    <p className="admin-orders-section-label">🚴 Assign Delivery Staff</p>
+                    <select
+                      value={order.deliveryStaffId?._id || ""}
+                      onChange={(e) => assignStaff(order._id, e.target.value)}
+                      className="input-field admin-orders-select"
+                    >
+                      <option value="">-- Unassigned --</option>
+                      {staffList.map((staff) => (
+                        <option key={staff._id} value={staff._id}>
+                          {staff.name} ({staff.phone})
+                        </option>
+                      ))}
                     </select>
                   </div>
 

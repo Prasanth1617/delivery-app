@@ -27,6 +27,9 @@ const config: CapacitorConfig = {
       style: 'dark',
       resizeOnFullScreen: true,
     },
+    Geolocation: {
+      permissions: ['location'],
+    },
   },
 };
 
