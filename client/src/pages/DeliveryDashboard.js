@@ -10,7 +10,7 @@ function DeliveryDashboard() {
   const [loading, setLoading] = useState(true);
   const [tracking, setTracking] = useState(false);
   const [qrModal, setQrModal] = useState(null);
-  const [qrLoading, setQrLoading] = useState(false);
+  const [qrLoadingId, setQrLoadingId] = useState(null);
   const watchIdRef = useRef(null);
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -49,7 +49,7 @@ function DeliveryDashboard() {
 
   const generateQR = async (orderId) => {
     try {
-      setQrLoading(true);
+      setQrLoadingId(orderId);
       const token = localStorage.getItem("token");
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/delivery/orders/${orderId}/generate-qr`,
@@ -61,7 +61,7 @@ function DeliveryDashboard() {
       console.log(err);
       toast.error(err.response?.data?.message || "Could not generate QR");
     } finally {
-      setQrLoading(false);
+      setQrLoadingId(null);
     }
   };
 
@@ -220,11 +220,11 @@ function DeliveryDashboard() {
                 <button
                   className="secondary-btn"
                   onClick={() => generateQR(order._id)}
-                  disabled={qrLoading}
+                  disabled={qrLoadingId === order._id}
                   type="button"
                   style={{ marginTop: "8px" }}
                 >
-                  {qrLoading ? "Loading..." : "📲 Show Payment QR"}
+                  {qrLoadingId === order._id ? "Loading..." : "📲 Show Payment QR"}
                 </button>
               )}
 
