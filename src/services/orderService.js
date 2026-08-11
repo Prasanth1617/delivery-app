@@ -165,15 +165,21 @@ const generateOrderQR = async (orderId, staffId) => {
   if (order.paymentStatus === "Paid")
     throw makeError("This order is already paid");
 
-  const qr = await razorpay.qrCode.create({
-    type: "upi_qr",
-    name: `Order ${order._id.toString().slice(-8).toUpperCase()}`,
-    usage: "single_use",
-    fixed_amount: true,
-    payment_amount: Math.round(order.totalAmount * 100),
-    description: `V2 Mart order payment`,
-    close_by: Math.floor(Date.now() / 1000) + 60 * 30,
-  });
+  let qr;
+  try {
+    qr = await razorpay.qrCode.create({
+      type: "upi_qr",
+      name: `Order ${order._id.toString().slice(-8).toUpperCase()}`,
+      usage: "single_use",
+      fixed_amount: true,
+      payment_amount: Math.round(order.totalAmount * 100), // paise
+      description: `V2 Mart order payment`,
+      close_by: Math.floor(Date.now() / 1000) + 60 * 30, // expires in 30 mins
+    });
+  } catch (razorpayErr) {
+    console.log("RAZORPAY QR ERROR:", JSON.stringify(razorpayErr?.error || razorpayErr));
+    throw makeError(razorpayErr?.error?.description || "Could not generate QR code", 400);
+  }
 
   order.razorpayQrId = qr.id;
   await order.save();
