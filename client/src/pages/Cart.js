@@ -42,6 +42,9 @@ function Cart() {
   const [addrArea, setAddrArea] = useState("");
   const [addrLandmark, setAddrLandmark] = useState("");
   const [addrPincode, setAddrPincode] = useState("");
+  const [addrLat, setAddrLat] = useState(null);
+  const [addrLng, setAddrLng] = useState(null);
+  const [locatingCart, setLocatingCart] = useState(false);
 
   useEffect(() => {
     const fetchSavedAddresses = async () => {
@@ -127,6 +130,27 @@ function Cart() {
     );
   };
 
+  const captureLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Location not supported on this device");
+      return;
+    }
+    setLocatingCart(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setAddrLat(pos.coords.latitude);
+        setAddrLng(pos.coords.longitude);
+        setLocatingCart(false);
+        toast.success("Location captured 📍");
+      },
+      () => {
+        setLocatingCart(false);
+        toast.error("Could not get location — check permission");
+      },
+      { enableHighAccuracy: true, timeout: 15000 }
+    );
+  };
+
   const totalAmount = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -186,7 +210,7 @@ function Cart() {
       try {
         await axios.post(
           `${process.env.REACT_APP_API_URL}/api/auth/addresses`,
-          { name: addrName, phone: addrPhone, street: addrStreet, area: addrArea, landmark: addrLandmark, pincode: addrPincode },
+          { name: addrName, phone: addrPhone, street: addrStreet, area: addrArea, landmark: addrLandmark, pincode: addrPincode, lat: addrLat, lng: addrLng },
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } catch { /* non-blocking */ }
@@ -200,6 +224,9 @@ function Cart() {
     try {
       setLoading(true);
       const address = buildAddressString();
+      const selectedSaved = selectedAddressIdx !== null ? savedAddresses[selectedAddressIdx] : null;
+      const deliveryLat = selectedSaved ? selectedSaved.lat : addrLat;
+      const deliveryLng = selectedSaved ? selectedSaved.lng : addrLng;
       const payload = {
         items: cart.map((p) => ({ productId: p._id, name: p.name, price: p.price, quantity: p.quantity })),
         totalAmount: finalAmount,
@@ -207,6 +234,8 @@ function Cart() {
         deliveryFee: deliveryAfterCoupon,
         discountAmount,
         address,
+        deliveryLat,
+        deliveryLng,
         paymentMethod,
         couponCode: appliedCoupon?.code || null,
         pointsUsed,
@@ -605,6 +634,21 @@ function Cart() {
                         value={addrPincode} onChange={(e) => { setAddrPincode(e.target.value.replace(/\D/g, "")); setSelectedAddressIdx(null); }} />
                     </div>
                   </div>
+
+                    <button
+                      type="button"
+                      onClick={captureLocation}
+                      disabled={locatingCart}
+                      style={{
+                        width: "100%", marginBottom: "10px", padding: "10px",
+                        background: addrLat ? "#e8f9ee" : "#f3ecff",
+                        border: `1px solid ${addrLat ? "#bce8cb" : "#e2d5f5"}`,
+                        borderRadius: "8px", color: addrLat ? "#1a7a3c" : "#5e2080",
+                        fontWeight: 600, fontSize: "13px", cursor: "pointer"
+                      }}
+                    >
+                      {locatingCart ? "Locating..." : addrLat ? "✅ Location Captured" : "📍 Use My Current Location"}
+                    </button>
 
                   {/* Save to profile toggle */}
                   <div className="cart-save-addr-toggle" onClick={() => setSaveToProfile(!saveToProfile)}>

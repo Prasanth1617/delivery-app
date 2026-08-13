@@ -17,14 +17,14 @@ const verifyAndCreateOrder = async (req, res, next) => {
   try {
     const {
       razorpayOrderId, razorpayPaymentId, razorpaySignature,
-      items, totalAmount, subtotal, deliveryFee, discountAmount, address, couponCode, pointsUsed
+      items, totalAmount, subtotal, deliveryFee, discountAmount, address, deliveryLat, deliveryLng, couponCode, pointsUsed
     } = req.body;
 
     orderService.verifyPaymentSignature({ razorpayOrderId, razorpayPaymentId, razorpaySignature });
 
     const order = await orderService.createOrder({
       userId: req.user.id,
-      items, totalAmount, subtotal, deliveryFee, discountAmount, address,
+      items, totalAmount, subtotal, deliveryFee, discountAmount, address, deliveryLat, deliveryLng,
       paymentMethod: "Online",
       couponCode,
       pointsUsed,
@@ -37,7 +37,7 @@ const verifyAndCreateOrder = async (req, res, next) => {
 
 const createOrder = async (req, res, next) => {
   try {
-    const { items, totalAmount, subtotal, deliveryFee, discountAmount, address, paymentMethod, couponCode, pointsUsed } = req.body;
+    const { items, totalAmount, subtotal, deliveryFee, discountAmount, address, deliveryLat, deliveryLng, paymentMethod, couponCode, pointsUsed } = req.body;
     const order = await orderService.createOrder({
       userId: req.user.id,
       items,
@@ -46,6 +46,8 @@ const createOrder = async (req, res, next) => {
       deliveryFee,
       discountAmount,
       address,
+      deliveryLat,
+      deliveryLng,
       paymentMethod,
       couponCode,
       pointsUsed,

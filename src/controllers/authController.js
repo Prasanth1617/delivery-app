@@ -3,7 +3,7 @@ const User = require("../models/User");
 
 const addAddress = async (req, res, next) => {
   try {
-    const { name, phone, street, area, landmark, pincode } = req.body;
+    const { name, phone, street, area, landmark, pincode, lat, lng } = req.body;
     if (!name || !phone || !street || !area) {
       return res.status(400).json({ message: "Name, phone, street and area are required" });
     }
@@ -16,7 +16,7 @@ const addAddress = async (req, res, next) => {
     }
 
     if (!user.addresses) user.addresses = [];
-    user.addresses.push({ name, phone, street, area, landmark: landmark || "", pincode: pincode || "" });
+    user.addresses.push({ name, phone, street, area, landmark: landmark || "", pincode: pincode || "", lat, lng });
     await user.save();
     res.status(201).json({ success: true, addresses: user.addresses });
   } catch (err) {

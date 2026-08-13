@@ -17,6 +17,9 @@ function Profile() {
   const [newAddrArea, setNewAddrArea] = useState("");
   const [newAddrLandmark, setNewAddrLandmark] = useState("");
   const [newAddrPincode, setNewAddrPincode] = useState("");
+  const [newAddrLat, setNewAddrLat] = useState(null);
+  const [newAddrLng, setNewAddrLng] = useState(null);
+  const [locatingProfile, setLocatingProfile] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,13 +70,15 @@ function Profile() {
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/auth/addresses`,
         { name: newAddrName, phone: newAddrPhone, street: newAddrStreet,
-          area: newAddrArea, landmark: newAddrLandmark, pincode: newAddrPincode },
+          area: newAddrArea, landmark: newAddrLandmark, pincode: newAddrPincode,
+          lat: newAddrLat, lng: newAddrLng },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setAddresses(res.data.addresses);
       setAddingAddress(false);
       setNewAddrName(""); setNewAddrPhone(""); setNewAddrStreet("");
       setNewAddrArea(""); setNewAddrLandmark(""); setNewAddrPincode("");
+      setNewAddrLat(null); setNewAddrLng(null);
       toast.success("Address saved ✅");
     } catch { toast.error("Failed to save address"); }
     finally { setSavingNewAddr(false); }
@@ -89,6 +94,27 @@ function Profile() {
       setAddresses(res.data.addresses);
       toast.success("Address removed");
     } catch { toast.error("Failed to remove address"); }
+  };
+
+  const captureLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Location not supported on this device");
+      return;
+    }
+    setLocatingProfile(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setNewAddrLat(pos.coords.latitude);
+        setNewAddrLng(pos.coords.longitude);
+        setLocatingProfile(false);
+        toast.success("Location captured 📍");
+      },
+      () => {
+        setLocatingProfile(false);
+        toast.error("Could not get location — check permission");
+      },
+      { enableHighAccuracy: true, timeout: 15000 }
+    );
   };
 
   const handleLogout = () => {
@@ -276,6 +302,22 @@ function Profile() {
                           onChange={(e) => setNewAddrPincode(e.target.value.replace(/\D/g, ""))} style={{ fontSize: "15px", touchAction: "manipulation" }} />
                       </div>
                     </div>
+
+                    <button
+                      type="button"
+                      onClick={captureLocation}
+                      disabled={locatingProfile}
+                      style={{
+                        width: "100%", marginBottom: "10px", padding: "10px",
+                        background: newAddrLat ? "#e8f9ee" : "#f3ecff",
+                        border: `1px solid ${newAddrLat ? "#bce8cb" : "#e2d5f5"}`,
+                        borderRadius: "8px", color: newAddrLat ? "#1a7a3c" : "#5e2080",
+                        fontWeight: 600, fontSize: "13px", cursor: "pointer"
+                      }}
+                    >
+                      {locatingProfile ? "Locating..." : newAddrLat ? "✅ Location Captured" : "📍 Use My Current Location"}
+                    </button>
+
                     <div style={{ display: "flex", gap: "10px" }}>
                       <button className="primary-btn" onClick={handleAddAddress} disabled={savingNewAddr} type="button"
                         style={{ flex: 1 }}>

@@ -18,7 +18,7 @@ const makeError = (message, statusCode = 400) => {
   return err;
 };
 
-const createOrder = async ({ userId, items, totalAmount, subtotal, deliveryFee, discountAmount: clientDiscount, address, paymentMethod, couponCode, razorpayOrderId, razorpayPaymentId, razorpaySignature, pointsUsed }) => {
+const createOrder = async ({ userId, items, totalAmount, subtotal, deliveryFee, discountAmount: clientDiscount, address, deliveryLat, deliveryLng, paymentMethod, couponCode, razorpayOrderId, razorpayPaymentId, razorpaySignature, pointsUsed }) => {
   if (!items || items.length === 0)
     throw makeError("Cart is empty");
 
@@ -99,6 +99,8 @@ const createOrder = async ({ userId, items, totalAmount, subtotal, deliveryFee, 
         totalAmount: finalTotal,
         deliveryFee: rawDeliveryFee,
         deliveryAddress: address.trim(),
+        deliveryLat,
+        deliveryLng,
         status:        "Pending",
         paymentMethod: paymentMethod || "COD",
         paymentStatus: isOnline ? "Paid" : "Pending",
