@@ -1,4 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
 import axios from "axios";
 import CouponSection from "../components/CouponSection";
 import { Capacitor } from "@capacitor/core";
@@ -45,6 +54,11 @@ function Cart() {
   const [addrLat, setAddrLat] = useState(null);
   const [addrLng, setAddrLng] = useState(null);
 
+  const [showMapModal, setShowMapModal] = useState(false);
+  const mapContainerRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+  const markerRef = useRef(null);
+
   useEffect(() => {
     const fetchSavedAddresses = async () => {
       try {
@@ -60,6 +74,31 @@ function Cart() {
     };
     fetchSavedAddresses();
   }, []);
+
+  useEffect(() => {
+    if (!showMapModal || !mapContainerRef.current || addrLat === null) return;
+
+    const map = L.map(mapContainerRef.current).setView([addrLat, addrLng], 17);
+    mapInstanceRef.current = map;
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(map);
+
+    const marker = L.marker([addrLat, addrLng], { draggable: true }).addTo(map);
+    markerRef.current = marker;
+
+    marker.on("dragend", () => {
+      const pos = marker.getLatLng();
+      setAddrLat(pos.lat);
+      setAddrLng(pos.lng);
+    });
+
+    return () => {
+      map.remove();
+      mapInstanceRef.current = null;
+    };
+  }, [showMapModal]);
 
   const saveCart = (updatedCart) => {
     setCart(updatedCart);
@@ -106,6 +145,7 @@ function Cart() {
         const { latitude, longitude } = position.coords;
         setAddrLat(latitude);
         setAddrLng(longitude);
+        setShowMapModal(true);
         try {
           const res = await axios.get(
             `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
@@ -115,17 +155,23 @@ function Cart() {
           setAddrStreet([addr.house_number, addr.road || addr.pedestrian || addr.footway].filter(Boolean).join(", "));
           setAddrArea([addr.neighbourhood || addr.suburb || addr.quarter, addr.city || addr.town || addr.village || addr.county].filter(Boolean).join(", "));
           setAddrPincode(addr.postcode || "");
-          toast.success("Location detected — please add your name and phone");
         } catch {
-          toast.error("Address text lookup failed, but exact location was still captured — please fill address manually");
+          // silent — pin position is what matters, text is just a helper
         } finally {
           setFetchingLocation(false);
         }
       },
       (error) => {
         setFetchingLocation(false);
-        const msgs = { 1: "Location permission denied", 2: "Location unavailable", 3: "Location timed out" };
-        toast.error(msgs[error.code] || "Location error — please enter manually");
+        if (error.code === 1) {
+          toast.error("Location permission denied. Please allow location access and try again.");
+        } else if (error.code === 2) {
+          toast.error("📍 Please turn ON Location/GPS in your phone settings, then tap this button again.");
+        } else if (error.code === 3) {
+          toast.error("Location request timed out — please try again.");
+        } else {
+          toast.error("Location error — please enter address manually.");
+        }
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
     );
@@ -632,6 +678,33 @@ function Cart() {
                 type="button"
               >
                 {loading ? "Placing Order..." : `Place Order — ${paymentMethod} ✅`}
+              </button>
+            </div>
+          </div>
+        )}
+        {showMapModal && (
+          <div
+            style={{
+              position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)",
+              display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2000, padding: "16px"
+            }}
+          >
+            <div className="app-card" style={{ maxWidth: "420px", width: "100%" }}>
+              <h3 style={{ marginTop: 0 }}>📍 Confirm Your Exact Location</h3>
+              <p style={{ fontSize: "13px", color: "#666", marginBottom: "10px" }}>
+                Drag the pin to your exact house for accurate delivery
+              </p>
+              <div
+                ref={mapContainerRef}
+                style={{ width: "100%", height: "300px", borderRadius: "10px", overflow: "hidden" }}
+              />
+              <button
+                className="primary-btn"
+                onClick={() => setShowMapModal(false)}
+                type="button"
+                style={{ marginTop: "12px", width: "100%" }}
+              >
+                ✅ Confirm This Location
               </button>
             </div>
           </div>
