@@ -148,8 +148,11 @@ function DeliveryDashboard() {
     return <span style={{ background: "#fff3e0", color: "#b5620a", fontSize: "12px", fontWeight: 700, padding: "4px 10px", borderRadius: "8px" }}>💵 Cash on Delivery</span>;
   };
 
-  const getMapLink = (address) => {
-    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  const getMapLink = (order) => {
+    if (order.deliveryLat && order.deliveryLng) {
+      return `https://www.google.com/maps/dir/?api=1&destination=${order.deliveryLat},${order.deliveryLng}&travelmode=driving`;
+    }
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(order.deliveryAddress)}&travelmode=driving`;
   };
 
   useEffect(() => {
@@ -211,10 +214,15 @@ function DeliveryDashboard() {
               <p>Amount: ₹{order.totalAmount} {getPaymentBadge(order.paymentMethod, order.paymentStatus)}</p>
               <p>
                 📍 {order.deliveryAddress}{" "}
-                <a href={getMapLink(order.deliveryAddress)} target="_blank" rel="noreferrer" style={{ color: "#5e2080", fontWeight: 700 }}>
+                <a href={getMapLink(order)} target="_blank" rel="noreferrer" style={{ color: "#5e2080", fontWeight: 700 }}>
                   🧭 Navigate
                 </a>
               </p>
+              {order.deliveryLat && order.deliveryLng ? (
+                <p style={{ fontSize: "11px", color: "#1a7a3c", margin: "2px 0 0" }}>✅ Exact GPS location available</p>
+              ) : (
+                <p style={{ fontSize: "11px", color: "#b5620a", margin: "2px 0 0" }}>⚠️ Approximate location (customer didn't share GPS)</p>
+              )}
 
               {order.paymentMethod === "COD" && order.paymentStatus !== "Paid" && (
                 <button
