@@ -1,6 +1,12 @@
 import { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import CouponSection from "../components/CouponSection";
+import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { Capacitor } from "@capacitor/core";
+import "./Cart.css";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -8,12 +14,6 @@ L.Icon.Default.mergeOptions({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
-import axios from "axios";
-import CouponSection from "../components/CouponSection";
-import { Capacitor } from "@capacitor/core";
-import { toast } from "../utils/notify";
-import { Link, useNavigate } from "react-router-dom";
-import "./Cart.css";
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
