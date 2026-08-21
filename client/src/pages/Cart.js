@@ -35,7 +35,6 @@ function Cart() {
 
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("COD");
-  const [fetchingLocation, setFetchingLocation] = useState(false);
 
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [userPoints, setUserPoints] = useState(0);
@@ -44,6 +43,7 @@ function Cart() {
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressIdx, setSelectedAddressIdx] = useState(null);
   const [saveToProfile, setSaveToProfile] = useState(false);
+  const [showNewForm, setShowNewForm] = useState(false);
 
   const [addrName, setAddrName] = useState("");
   const [addrPhone, setAddrPhone] = useState("");
@@ -54,13 +54,16 @@ function Cart() {
   const [addrLat, setAddrLat] = useState(null);
   const [addrLng, setAddrLng] = useState(null);
 
+  const [profileName, setProfileName] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
+
   const [showMapModal, setShowMapModal] = useState(false);
+  const [mapDetecting, setMapDetecting] = useState(false);
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
-  const markerRef = useRef(null);
 
   useEffect(() => {
-    const fetchSavedAddresses = async () => {
+    const fetchAddresses = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
@@ -68,33 +71,76 @@ function Cart() {
           `${process.env.REACT_APP_API_URL}/api/auth/profile`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setSavedAddresses(res.data.addresses || []);
-        setUserPoints(res.data.loyaltyPoints || 0);
-      } catch { }
+        const addrs = res.data.addresses || [];
+        setSavedAddresses(addrs);
+        setProfileName(res.data.name || "");
+        setProfilePhone(res.data.phone || "");
+        setAddrName(res.data.name || "");
+        setAddrPhone(res.data.phone || "");
+        if (addrs.length > 0) {
+          setSelectedAddressIdx(0);
+          setShowNewForm(false);
+        } else {
+          setShowNewForm(true);
+        }
+      } catch {
+        setShowNewForm(true);
+      }
     };
-    fetchSavedAddresses();
+    fetchAddresses();
   }, []);
 
   useEffect(() => {
-    if (!showMapModal || !mapContainerRef.current || addrLat === null) return;
+    if (showNewForm) {
+      if (!addrName) setAddrName(profileName);
+      if (!addrPhone) setAddrPhone(profilePhone);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showNewForm]);
 
-    const map = L.map(mapContainerRef.current).setView([addrLat, addrLng], 17);
+  useEffect(() => {
+    if (!showMapModal || !mapContainerRef.current) return;
+
+    const defaultCenter = addrLat && addrLng ? [addrLat, addrLng] : [10.0104, 77.4768]; // Theni
+    const map = L.map(mapContainerRef.current, { zoomControl: false }).setView(defaultCenter, 15);
     mapInstanceRef.current = map;
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map);
 
-    const marker = L.marker([addrLat, addrLng], { draggable: true }).addTo(map);
-    markerRef.current = marker;
+    const reverseGeocode = async (lat, lng) => {
+      try {
+        const res = await axios.get(
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+          { headers: { "Accept-Language": "en" } }
+        );
+        const addr = res.data.address;
+        setAddrStreet([addr.house_number, addr.road || addr.pedestrian || addr.footway].filter(Boolean).join(", "));
+        setAddrArea([addr.neighbourhood || addr.suburb || addr.quarter, addr.city || addr.town || addr.village || addr.county].filter(Boolean).join(", "));
+        setAddrPincode(addr.postcode || "");
+      } catch {
+        // pin position is the source of truth, text is just a helper
+      }
+    };
 
-    marker.on("dragend", () => {
-      const pos = marker.getLatLng();
-      setAddrLat(pos.lat);
-      setAddrLng(pos.lng);
-    });
+    const handleMoveEnd = () => {
+      const center = map.getCenter();
+      setAddrLat(center.lat);
+      setAddrLng(center.lng);
+      reverseGeocode(center.lat, center.lng);
+    };
+
+    map.on("moveend", handleMoveEnd);
+
+    const initCenter = map.getCenter();
+    setAddrLat(initCenter.lat);
+    setAddrLng(initCenter.lng);
+
+    locateMe();
 
     return () => {
+      map.off("moveend", handleMoveEnd);
       map.remove();
       mapInstanceRef.current = null;
     };
@@ -134,44 +180,28 @@ function Cart() {
     toast.success("Cart cleared successfully");
   };
 
-  const fetchLocation = async () => {
+  const locateMe = () => {
     if (!navigator.geolocation) {
       toast.error("Geolocation not supported on this device");
       return;
     }
-    setFetchingLocation(true);
-    toast.info("Detecting your location...");
+    setMapDetecting(true);
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
+      (position) => {
         const { latitude, longitude } = position.coords;
-        setAddrLat(latitude);
-        setAddrLng(longitude);
-        setShowMapModal(true);
-        try {
-          const res = await axios.get(
-            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`,
-            { headers: { "Accept-Language": "en" } }
-          );
-          const addr = res.data.address;
-          setAddrStreet([addr.house_number, addr.road || addr.pedestrian || addr.footway].filter(Boolean).join(", "));
-          setAddrArea([addr.neighbourhood || addr.suburb || addr.quarter, addr.city || addr.town || addr.village || addr.county].filter(Boolean).join(", "));
-          setAddrPincode(addr.postcode || "");
-        } catch {
-          // silent — pin position is what matters, text is just a helper
-        } finally {
-          setFetchingLocation(false);
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.setView([latitude, longitude], 17);
         }
+        setMapDetecting(false);
       },
       (error) => {
-        setFetchingLocation(false);
+        setMapDetecting(false);
         if (error.code === 1) {
-          toast.error("Location permission denied. Please allow location access and try again.");
+          toast.error("Location permission denied. Please allow location access.");
         } else if (error.code === 2) {
-          toast.error("📍 Please turn ON Location/GPS in your phone settings, then tap this button again.");
-        } else if (error.code === 3) {
-          toast.error("Location request timed out — please try again.");
+          toast.error("📍 Please turn ON Location/GPS in your phone settings, then tap Locate Me again.");
         } else {
-          toast.error("Location error — please enter address manually.");
+          toast.error("Could not get location — please pan the map manually.");
         }
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
@@ -607,18 +637,17 @@ function Cart() {
                 <div className="cart-addr-form">
 
                   {/* Location detect button */}
-                  <button type="button" onClick={fetchLocation} disabled={fetchingLocation}
+                  <button type="button" onClick={() => setShowMapModal(true)}
                     style={{
                       width: "100%", marginBottom: "14px",
                       padding: "12px", borderRadius: "10px",
-                      background: fetchingLocation ? "#f3ecff" : "#1e0a3c",
-                      color: fetchingLocation ? "#5e2080" : "#c9a84c",
+                      background: "#1e0a3c", color: "#c9a84c",
                       border: "none", fontWeight: 700, fontSize: "14px",
-                      cursor: fetchingLocation ? "not-allowed" : "pointer",
+                      cursor: "pointer",
                       display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
                       touchAction: "manipulation",
                     }}>
-                    {fetchingLocation ? "⏳ Detecting location..." : "📍 Auto-detect My Location"}
+                    📍 Set Location on Map
                   </button>
 
                   <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
@@ -684,26 +713,51 @@ function Cart() {
           </div>
         )}
         {showMapModal && (
-          <div
-            style={{
-              position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)",
-              display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2000, padding: "16px"
-            }}
-          >
-            <div className="app-card" style={{ maxWidth: "420px", width: "100%" }}>
-              <h3 style={{ marginTop: 0 }}>📍 Confirm Your Exact Location</h3>
-              <p style={{ fontSize: "13px", color: "#666", marginBottom: "10px" }}>
-                Drag the pin to your exact house for accurate delivery
-              </p>
-              <div
-                ref={mapContainerRef}
-                style={{ width: "100%", height: "300px", borderRadius: "10px", overflow: "hidden" }}
-              />
+          <div style={{
+            position: "fixed", inset: 0, background: "#000", zIndex: 3000,
+            display: "flex", flexDirection: "column"
+          }}>
+            <div style={{ position: "relative", flex: 1 }}>
+              <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
+
+              <div style={{
+                position: "absolute", top: "50%", left: "50%",
+                transform: "translate(-50%, -100%)", pointerEvents: "none",
+                fontSize: "38px", zIndex: 10, filter: "drop-shadow(0 3px 4px rgba(0,0,0,0.4))"
+              }}>
+                📍
+              </div>
+
+              <button
+                type="button"
+                onClick={locateMe}
+                disabled={mapDetecting}
+                style={{
+                  position: "absolute", bottom: "20px", right: "16px",
+                  width: "48px", height: "48px", borderRadius: "50%",
+                  background: "#1e0a3c", color: "#c9a84c", border: "none",
+                  fontSize: "20px", display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.3)", cursor: "pointer"
+                }}
+              >
+                {mapDetecting ? "⏳" : "🎯"}
+              </button>
+
+              <div style={{
+                position: "absolute", top: 0, left: 0, right: 0,
+                padding: "14px 16px", background: "linear-gradient(rgba(0,0,0,0.5), transparent)",
+                color: "#fff", fontWeight: 700, fontSize: "14px"
+              }}>
+                Drag the map to move the pin to your exact location
+              </div>
+            </div>
+
+            <div style={{ background: "#fff", padding: "16px" }}>
               <button
                 className="primary-btn"
                 onClick={() => setShowMapModal(false)}
                 type="button"
-                style={{ marginTop: "12px", width: "100%" }}
+                style={{ width: "100%" }}
               >
                 ✅ Confirm This Location
               </button>
