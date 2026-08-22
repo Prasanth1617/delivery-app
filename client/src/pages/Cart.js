@@ -1,30 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import CouponSection from "../components/CouponSection";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import { Capacitor } from "@capacitor/core";
 import "./Cart.css";
-
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
-
-const loadRazorpayScript = () => {
-  return new Promise((resolve) => {
-    if (window.Razorpay) return resolve(true);
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-};
 
 function Cart() {
   const navigate = useNavigate();
@@ -35,33 +14,23 @@ function Cart() {
 
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("COD");
-
   const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const [userPoints, setUserPoints] = useState(0);
-  const [pointsApplied, setPointsApplied] = useState(false);
 
+  // Address state
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressIdx, setSelectedAddressIdx] = useState(null);
-  const [saveToProfile, setSaveToProfile] = useState(false);
   const [showNewForm, setShowNewForm] = useState(false);
+  const [saveToProfile, setSaveToProfile] = useState(false);
 
+  // Structured fields
   const [addrName, setAddrName] = useState("");
   const [addrPhone, setAddrPhone] = useState("");
   const [addrStreet, setAddrStreet] = useState("");
   const [addrArea, setAddrArea] = useState("");
   const [addrLandmark, setAddrLandmark] = useState("");
   const [addrPincode, setAddrPincode] = useState("");
-  const [addrLat, setAddrLat] = useState(null);
-  const [addrLng, setAddrLng] = useState(null);
 
-  const [profileName, setProfileName] = useState("");
-  const [profilePhone, setProfilePhone] = useState("");
-
-  const [showMapModal, setShowMapModal] = useState(false);
-  const [mapDetecting, setMapDetecting] = useState(false);
-  const mapContainerRef = useRef(null);
-  const mapInstanceRef = useRef(null);
-
+  // Fetch saved addresses
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
@@ -73,10 +42,6 @@ function Cart() {
         );
         const addrs = res.data.addresses || [];
         setSavedAddresses(addrs);
-        setProfileName(res.data.name || "");
-        setProfilePhone(res.data.phone || "");
-        setAddrName(res.data.name || "");
-        setAddrPhone(res.data.phone || "");
         if (addrs.length > 0) {
           setSelectedAddressIdx(0);
           setShowNewForm(false);
@@ -90,86 +55,20 @@ function Cart() {
     fetchAddresses();
   }, []);
 
-  useEffect(() => {
-    if (showNewForm) {
-      if (!addrName) setAddrName(profileName);
-      if (!addrPhone) setAddrPhone(profilePhone);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showNewForm]);
-
-  useEffect(() => {
-    if (!showMapModal || !mapContainerRef.current) return;
-
-    const defaultCenter = addrLat && addrLng ? [addrLat, addrLng] : [10.0104, 77.4768]; // Theni
-    const map = L.map(mapContainerRef.current, { zoomControl: false }).setView(defaultCenter, 15);
-    mapInstanceRef.current = map;
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "&copy; OpenStreetMap contributors",
-    }).addTo(map);
-
-    const reverseGeocode = async (lat, lng) => {
-      try {
-        const res = await axios.get(
-          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
-          { headers: { "Accept-Language": "en" } }
-        );
-        const addr = res.data.address;
-        setAddrStreet([addr.house_number, addr.road || addr.pedestrian || addr.footway].filter(Boolean).join(", "));
-        setAddrArea([addr.neighbourhood || addr.suburb || addr.quarter, addr.city || addr.town || addr.village || addr.county].filter(Boolean).join(", "));
-        setAddrPincode(addr.postcode || "");
-      } catch {
-        // pin position is the source of truth, text is just a helper
-      }
-    };
-
-    const handleMoveEnd = () => {
-      const center = map.getCenter();
-      setAddrLat(center.lat);
-      setAddrLng(center.lng);
-      reverseGeocode(center.lat, center.lng);
-    };
-
-    map.on("moveend", handleMoveEnd);
-
-    const initCenter = map.getCenter();
-    setAddrLat(initCenter.lat);
-    setAddrLng(initCenter.lng);
-
-    locateMe();
-
-    return () => {
-      map.off("moveend", handleMoveEnd);
-      map.remove();
-      mapInstanceRef.current = null;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showMapModal]);
-
   const saveCart = (updatedCart) => {
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("cartUpdated"));
   };
 
-  const increaseQuantity = (id) => {
-    const updatedCart = cart.map((item) =>
-      item._id === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    saveCart(updatedCart);
-  };
+  const increaseQuantity = (id) =>
+    saveCart(cart.map((item) => item._id === id ? { ...item, quantity: item.quantity + 1 } : item));
 
-  const decreaseQuantity = (id) => {
-    const updatedCart = cart.map((item) =>
-      item._id === id ? { ...item, quantity: Math.max(1, item.quantity - 1) } : item
-    );
-    saveCart(updatedCart);
-  };
+  const decreaseQuantity = (id) =>
+    saveCart(cart.map((item) => item._id === id ? { ...item, quantity: Math.max(1, item.quantity - 1) } : item));
 
   const removeItem = (id) => {
-    const updatedCart = cart.filter((item) => item._id !== id);
-    saveCart(updatedCart);
+    saveCart(cart.filter((item) => item._id !== id));
     toast.success("Item removed from cart");
   };
 
@@ -177,113 +76,54 @@ function Cart() {
     localStorage.removeItem("cart");
     setCart([]);
     window.dispatchEvent(new Event("cartUpdated"));
-    toast.success("Cart cleared successfully");
+    toast.success("Cart cleared");
   };
 
-  const locateMe = () => {
-    if (!navigator.geolocation) {
-      toast.error("Geolocation not supported on this device");
-      return;
-    }
-    setMapDetecting(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.setView([latitude, longitude], 17);
-        }
-        setMapDetecting(false);
-      },
-      (error) => {
-        setMapDetecting(false);
-        if (error.code === 1) {
-          toast.error("Location permission denied. Please allow location access.");
-        } else if (error.code === 2) {
-          toast.error("📍 Please turn ON Location/GPS in your phone settings, then tap Locate Me again.");
-        } else {
-          toast.error("Could not get location — please pan the map manually.");
-        }
-      },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-    );
-  };
-
-  const totalAmount = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-
+  const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalItems  = cart.reduce((sum, item) => sum + item.quantity, 0);
   const deliveryFee = totalAmount >= 500 ? 0 : 40;
-
   const discountAmount      = appliedCoupon?.discountAmount || 0;
   const deliveryAfterCoupon = appliedCoupon?.freeDelivery ? 0 : deliveryFee;
-  const amountAfterCoupon   = Math.max(0, totalAmount + deliveryAfterCoupon - discountAmount);
-
-  const maxPointsValue    = Math.floor(userPoints / 10);            // ₹ value of all points
-  const pointsDiscount    = pointsApplied ? Math.min(maxPointsValue, amountAfterCoupon) : 0;
-  const pointsUsed        = pointsDiscount * 10;                    // actual points consumed
-
-  const finalAmount = Math.max(0, amountAfterCoupon - pointsDiscount);
-
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const finalAmount = Math.max(0, totalAmount + deliveryAfterCoupon - discountAmount);
 
   const buildAddressString = () => {
     if (selectedAddressIdx !== null && savedAddresses[selectedAddressIdx]) {
       const a = savedAddresses[selectedAddressIdx];
-      return `${a.name}, ${a.phone}, ${a.street}, ${a.area}${a.landmark ? `, Near: ${a.landmark}` : ""}${a.pincode ? `, PIN: ${a.pincode}` : ""}`;
+      return [a.name, a.phone, a.street, a.area, a.landmark, a.pincode].filter(Boolean).join(", ");
     }
-    const parts = [addrName, addrPhone, addrStreet, addrArea, addrLandmark, addrPincode].filter(Boolean);
-    return parts.join(", ");
-  };
-
-  const validateBeforeCheckout = () => {
-    const token = localStorage.getItem("token");
-    if (!token) { navigate("/"); return null; }
-    if (cart.length === 0) { toast.warning("Cart is empty 🛒"); return null; }
-
-    const deliveryAddress = buildAddressString();
-    if (!deliveryAddress.trim()) { toast.warning("Please enter your delivery address"); return null; }
-
-    return token;
-  };
-
-  const finalizeOrder = async () => {
-    localStorage.removeItem("cart");
-    setCart([]);
-    setAppliedCoupon(null);
-    setSelectedAddressIdx(null);
-    setSaveToProfile(false);
-    setAddrName(""); setAddrPhone(""); setAddrStreet(""); setAddrArea(""); setAddrLandmark(""); setAddrPincode("");
-    window.dispatchEvent(new Event("cartUpdated"));
-    toast.success("Order placed successfully ✅");
-    navigate("/orders");
+    return [addrName, addrPhone, addrStreet, addrArea, addrLandmark, addrPincode].filter(Boolean).join(", ");
   };
 
   const handleCheckout = async () => {
-    const token = validateBeforeCheckout();
-    if (!token) return;
+    const token = localStorage.getItem("token");
+    if (!token) { navigate("/"); return; }
+    if (cart.length === 0) { toast.warning("Cart is empty"); return; }
 
-    if (saveToProfile) {
+    if (showNewForm && selectedAddressIdx === null) {
+      if (!addrName.trim())   { toast.warning("Enter your name"); return; }
+      if (!addrPhone.trim())  { toast.warning("Enter your phone number"); return; }
+      if (!addrStreet.trim()) { toast.warning("Enter your street / house number"); return; }
+      if (!addrArea.trim())   { toast.warning("Enter your area"); return; }
+    }
+
+    if (!showNewForm && selectedAddressIdx === null) {
+      toast.warning("Please select a delivery address");
+      return;
+    }
+
+    if (showNewForm && saveToProfile) {
       try {
         await axios.post(
           `${process.env.REACT_APP_API_URL}/api/auth/addresses`,
-          { name: addrName, phone: addrPhone, street: addrStreet, area: addrArea, landmark: addrLandmark, pincode: addrPincode, lat: addrLat, lng: addrLng },
+          { name: addrName, phone: addrPhone, street: addrStreet, area: addrArea, landmark: addrLandmark, pincode: addrPincode },
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } catch { /* non-blocking */ }
     }
 
-    if (paymentMethod === "Online") {
-      await handleRazorpayPayment(token);
-      return;
-    }
-
     try {
       setLoading(true);
       const address = buildAddressString();
-      const selectedSaved = selectedAddressIdx !== null ? savedAddresses[selectedAddressIdx] : null;
-      const deliveryLat = selectedSaved ? selectedSaved.lat : addrLat;
-      const deliveryLng = selectedSaved ? selectedSaved.lng : addrLng;
       const payload = {
         items: cart.map((p) => ({ productId: p._id, name: p.name, price: p.price, quantity: p.quantity })),
         totalAmount: finalAmount,
@@ -291,133 +131,19 @@ function Cart() {
         deliveryFee: deliveryAfterCoupon,
         discountAmount,
         address,
-        deliveryLat,
-        deliveryLng,
         paymentMethod,
         couponCode: appliedCoupon?.code || null,
-        pointsUsed,
       };
       await axios.post(`${process.env.REACT_APP_API_URL}/api/orders/create`, payload, { headers: { Authorization: `Bearer ${token}` } });
-      await finalizeOrder();
+      localStorage.removeItem("cart");
+      setCart([]);
+      setAppliedCoupon(null);
+      window.dispatchEvent(new Event("cartUpdated"));
+      toast.success("Order placed successfully ✅");
+      navigate("/orders");
     } catch (err) {
       toast.error(err.response?.data?.message || "Checkout failed ❌");
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRazorpayPayment = async (token) => {
-    try {
-      setLoading(true);
-
-      const { data } = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/orders/razorpay/create-order`,
-        { amount: finalAmount },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      const address = buildAddressString();
-      const phoneForPrefill = selectedAddressIdx !== null && savedAddresses[selectedAddressIdx]
-        ? savedAddresses[selectedAddressIdx].phone
-        : addrPhone;
-      const nameForPrefill = selectedAddressIdx !== null && savedAddresses[selectedAddressIdx]
-        ? savedAddresses[selectedAddressIdx].name
-        : addrName;
-
-      const verifyAndFinalize = async (razorpay_order_id, razorpay_payment_id, razorpay_signature) => {
-        const verifyPayload = {
-          razorpayOrderId: razorpay_order_id,
-          razorpayPaymentId: razorpay_payment_id,
-          razorpaySignature: razorpay_signature,
-          items: cart.map((p) => ({ productId: p._id, name: p.name, price: p.price, quantity: p.quantity })),
-          totalAmount: finalAmount,
-          subtotal: totalAmount,
-          deliveryFee: deliveryAfterCoupon,
-          discountAmount,
-          address,
-          couponCode: appliedCoupon?.code || null,
-          pointsUsed,
-        };
-        await axios.post(
-          `${process.env.REACT_APP_API_URL}/api/orders/razorpay/verify`,
-          verifyPayload,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        await finalizeOrder();
-      };
-
-      if (Capacitor.isNativePlatform()) {
-        // Native Android app — use Razorpay's native SDK via the Capacitor plugin
-        // for full UPI app support (GPay, PhonePe, etc.)
-        const { Checkout } = await import("capacitor-razorpay");
-
-        const options = {
-          key: data.keyId,
-          amount: String(data.amount),
-          currency: data.currency,
-          order_id: data.orderId,
-          name: "V2 Mart",
-          description: "Grocery Order Payment",
-          prefill: { name: nameForPrefill, contact: phoneForPrefill },
-          theme: { color: "#5e2080" },
-        };
-
-        try {
-          const result = await Checkout.open(options);
-          const response = typeof result.response === "string" ? JSON.parse(result.response) : result.response;
-          await verifyAndFinalize(
-            response.razorpay_order_id,
-            response.razorpay_payment_id,
-            response.razorpay_signature
-          );
-        } catch (err) {
-          toast.error("Payment cancelled or failed");
-          setLoading(false);
-        }
-      } else {
-        // Web (Vercel) — existing web checkout script
-        const scriptLoaded = await loadRazorpayScript();
-        if (!scriptLoaded) {
-          toast.error("Unable to load payment gateway. Check your connection.");
-          setLoading(false);
-          return;
-        }
-
-        const options = {
-          key: data.keyId,
-          amount: data.amount,
-          currency: data.currency,
-          order_id: data.orderId,
-          name: "V2 Mart",
-          description: "Grocery Order Payment",
-          prefill: { name: nameForPrefill, contact: phoneForPrefill },
-          theme: { color: "#5e2080" },
-          handler: async (response) => {
-            try {
-              await verifyAndFinalize(
-                response.razorpay_order_id,
-                response.razorpay_payment_id,
-                response.razorpay_signature
-              );
-            } catch (err) {
-              toast.error(err.response?.data?.message || "Payment verification failed ❌");
-            } finally {
-              setLoading(false);
-            }
-          },
-          modal: {
-            ondismiss: () => {
-              setLoading(false);
-              toast.info("Payment cancelled");
-            },
-          },
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Unable to start payment ❌");
       setLoading(false);
     }
   };
@@ -431,15 +157,12 @@ function Cart() {
               <div className="cart-top-pill">🛒 Premium Cart Experience</div>
               <h2 className="cart-top-title">Your Cart</h2>
               <p className="cart-top-subtitle">
-                {cart.length} item{cart.length !== 1 ? "s" : ""} · 
+                {cart.length} item{cart.length !== 1 ? "s" : ""} ·{" "}
                 {appliedCoupon ? (
                   <>₹{totalAmount} - ₹{discountAmount} = <span style={{ color: "#c9a84c", fontWeight: 700 }}>₹{finalAmount}</span></>
-                ) : (
-                  <>₹{totalAmount} total</>
-                )}
+                ) : <>₹{totalAmount} total</>}
               </p>
             </div>
-
             <div className="cart-top-actions">
               <Link to="/products" className="cart-top-link">
                 <button className="secondary-btn cart-top-btn" type="button">Back to Products</button>
@@ -455,16 +178,13 @@ function Cart() {
           <div className="app-card empty-state cart-empty-card">
             <div className="cart-empty-icon">🛒</div>
             <h3 className="cart-empty-title">Your cart is empty</h3>
-            <p className="cart-empty-text">Add some amazing products to continue your shopping journey.</p>
+            <p className="cart-empty-text">Add some amazing products to continue.</p>
             <div className="cart-empty-action">
-              <Link to="/products">
-                <button className="primary-btn" type="button">Browse Products</button>
-              </Link>
+              <Link to="/products"><button className="primary-btn" type="button">Browse Products</button></Link>
             </div>
           </div>
         ) : (
           <div className="cart-grid">
-
             {/* Cart Items */}
             <div className="cart-items-card">
               <h3 className="cart-section-title">Cart Items</h3>
@@ -472,9 +192,7 @@ function Cart() {
                 <div key={item._id} className="cart-item-card">
                   <div className="cart-item-main">
                     <div className="cart-item-image-wrap">
-                      {item.image ? (
-                        <img src={item.image} alt={item.name} className="cart-item-image" />
-                      ) : "📦"}
+                      {item.image ? <img src={item.image} alt={item.name} className="cart-item-image" /> : "📦"}
                     </div>
                     <div className="cart-item-content">
                       <h4 className="cart-item-name">{item.name}</h4>
@@ -482,31 +200,14 @@ function Cart() {
                       <p className="cart-item-subtotal">Subtotal: ₹{item.price * item.quantity}</p>
                     </div>
                   </div>
-                  <div className="cart-item-actions" style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:"8px", flexWrap:"nowrap"}}>
+                  <div className="cart-item-actions" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", flexWrap: "nowrap" }}>
                     <div className="cart-qty-box">
                       <button onClick={() => decreaseQuantity(item._id)} className="cart-qty-btn cart-qty-btn-minus" type="button">−</button>
                       <span className="cart-qty-value">{item.quantity}</span>
                       <button onClick={() => increaseQuantity(item._id)} className="cart-qty-btn cart-qty-btn-plus" type="button">+</button>
                     </div>
-                    <button 
-                      onClick={() => removeItem(item._id)} 
-                      className="cart-remove-btn" 
-                      type="button"
-                      style={{
-                        padding: "6px 10px",
-                        borderRadius: "7px",
-                        background: "#fff5f5",
-                        border: "0.5px solid #fecaca",
-                        color: "#dc2626",
-                        fontSize: "11px",
-                        fontWeight: "600",
-                        cursor: "pointer",
-                        minHeight: "unset",
-                        whiteSpace: "nowrap",
-                        width: "auto",
-                        flexShrink: 0
-                      }}
-                    >
+                    <button onClick={() => removeItem(item._id)} type="button"
+                      style={{ padding: "6px 10px", borderRadius: "7px", background: "#fff5f5", border: "0.5px solid #fecaca", color: "#dc2626", fontSize: "11px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
                       ✕ Remove
                     </button>
                   </div>
@@ -517,32 +218,16 @@ function Cart() {
             {/* Order Summary */}
             <div className="cart-summary-card">
               <h3 className="cart-section-title">Order Summary</h3>
-
               <div className="cart-summary-box">
-                <div className="cart-summary-row">
-                  <span>Total Unique Items</span>
-                  <span>{cart.length}</span>
-                </div>
-                <div className="cart-summary-row">
-                  <span>Total Quantity</span>
-                  <span>{totalItems}</span>
-                </div>
+                <div className="cart-summary-row"><span>Total Unique Items</span><span>{cart.length}</span></div>
+                <div className="cart-summary-row"><span>Total Quantity</span><span>{totalItems}</span></div>
                 <div className="cart-summary-row">
                   <span>Delivery Fee</span>
-                  <span>{deliveryFee === 0 ? (
-                    <span style={{ color: "#16a34a", fontWeight: 600 }}>FREE</span>
-                  ) : `₹${deliveryFee}`}</span>
+                  <span>{deliveryFee === 0 ? <span style={{ color: "#16a34a", fontWeight: 600 }}>FREE</span> : `₹${deliveryFee}`}</span>
                 </div>
                 {appliedCoupon && (
                   <div className="cart-summary-row cart-summary-discount">
-                    <span>Coupon Discount</span>
-                    <span>-₹{discountAmount}</span>
-                  </div>
-                )}
-                {pointsApplied && pointsDiscount > 0 && (
-                  <div className="cart-summary-row cart-summary-discount">
-                    <span>Points Redeemed</span>
-                    <span>-₹{pointsDiscount}</span>
+                    <span>Discount</span><span>-₹{discountAmount}</span>
                   </div>
                 )}
                 <div className="cart-summary-row cart-summary-total">
@@ -559,207 +244,95 @@ function Cart() {
                 onRemoveCoupon={() => setAppliedCoupon(null)}
               />
 
-              {userPoints >= 10 && (
-                <div style={{
-                  marginTop: "14px", background: "#fff9ec", border: "1px solid #f5e6bf",
-                  borderRadius: "12px", padding: "12px 14px", display: "flex",
-                  alignItems: "center", justifyContent: "space-between", gap: "10px"
-                }}>
-                  <div>
-                    <p style={{ margin: 0, fontWeight: 700, fontSize: "13px", color: "#a3853a" }}>
-                      🎁 You have {userPoints} points
-                    </p>
-                    <p style={{ margin: "2px 0 0", fontSize: "12px", color: "#8a7030" }}>
-                      Redeemable for ₹{maxPointsValue} off
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setPointsApplied(!pointsApplied)}
-                    className={pointsApplied ? "secondary-btn" : "primary-btn"}
-                    style={{ padding: "8px 14px", fontSize: "12px", whiteSpace: "nowrap" }}
-                  >
-                    {pointsApplied ? `✓ ₹${pointsDiscount} Applied` : "Redeem Points"}
-                  </button>
-                </div>
-              )}
-
               {/* Payment Method */}
-              <label className="label-text" style={{ marginTop: "16px", display: "block" }}>
-                Payment Method
-              </label>
-
+              <label className="label-text" style={{ marginTop: "16px", display: "block" }}>Payment Method</label>
               <div className="cart-payment-options">
-                <div
-                  className={`cart-payment-option ${paymentMethod === "COD" ? "active" : ""}`}
-                  onClick={() => setPaymentMethod("COD")}
-                >
+                <div className={`cart-payment-option ${paymentMethod === "COD" ? "active" : ""}`} onClick={() => setPaymentMethod("COD")}>
                   <span className="cart-payment-icon">💵</span>
-                  <div>
-                    <p className="cart-payment-title">Cash on Delivery</p>
-                    <p className="cart-payment-desc">Pay when your order arrives</p>
-                  </div>
+                  <div><p className="cart-payment-title">Cash on Delivery</p><p className="cart-payment-desc">Pay when your order arrives</p></div>
                   {paymentMethod === "COD" && <span className="cart-payment-check">✓</span>}
                 </div>
-
-                <div className={`cart-payment-option ${paymentMethod === "Online" ? "active" : ""}`} onClick={() => setPaymentMethod("Online")}>
+                <div className="cart-payment-option disabled" style={{ opacity: 0.5, cursor: "not-allowed" }}>
                   <span className="cart-payment-icon">💳</span>
-                  <div><p className="cart-payment-title">Online Payment</p><p className="cart-payment-desc">UPI, GPay, Cards via Razorpay</p></div>
-                  {paymentMethod === "Online" && <span className="cart-payment-check">✓</span>}
+                  <div><p className="cart-payment-title">Online Payment</p><p className="cart-payment-desc">UPI, GPay, Cards — Coming Soon</p></div>
                 </div>
               </div>
 
-              {/* ── Delivery Address ── */}
+              {/* Delivery Address */}
               <div style={{ marginTop: "20px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+                  <label className="label-text" style={{ margin: 0 }}>📍 Delivery Address</label>
+                  {savedAddresses.length > 0 && (
+                    <button type="button"
+                      onClick={() => { setShowNewForm(!showNewForm); setSelectedAddressIdx(showNewForm ? 0 : null); }}
+                      style={{ background: "none", border: "none", color: "#5e2080", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+                      {showNewForm ? "← Use Saved" : "+ New Address"}
+                    </button>
+                  )}
+                </div>
 
-                <label className="label-text" style={{ margin: 0, display: "block", marginBottom: "10px" }}>📍 Delivery Address</label>
-
-                {/* Saved addresses - always visible if any exist */}
-                {savedAddresses.length > 0 && (
-                  <div className="cart-saved-addresses" style={{ marginBottom: "12px" }}>
+                {/* Saved address picker */}
+                {!showNewForm && savedAddresses.length > 0 && (
+                  <div className="cart-saved-addresses">
                     {savedAddresses.map((addr, idx) => (
                       <div key={idx}
-                        className={"cart-saved-addr-card" + (selectedAddressIdx === idx ? " selected" : "")}
-                        onClick={() => { setSelectedAddressIdx(idx); setAddrName(""); setAddrPhone(""); setAddrStreet(""); setAddrArea(""); setAddrLandmark(""); setAddrPincode(""); }}>
+                        className={`cart-saved-addr-card ${selectedAddressIdx === idx ? "selected" : ""}`}
+                        onClick={() => setSelectedAddressIdx(idx)}>
                         <div className="cart-addr-radio">{selectedAddressIdx === idx ? "🔵" : "⚪"}</div>
                         <div className="cart-addr-details">
                           <p className="cart-addr-name">{addr.name} · {addr.phone}</p>
                           <p className="cart-addr-line">{addr.street}, {addr.area}</p>
                           {addr.landmark && <p className="cart-addr-line">Near: {addr.landmark}</p>}
-                          {addr.pincode  && <p className="cart-addr-line">PIN: {addr.pincode}</p>}
+                          {addr.pincode && <p className="cart-addr-line">PIN: {addr.pincode}</p>}
                         </div>
                       </div>
                     ))}
+                    <button type="button" onClick={() => { setShowNewForm(true); setSelectedAddressIdx(null); }} className="cart-add-new-addr-btn">
+                      + Add New Address
+                    </button>
                   </div>
                 )}
 
-                {/* Manual entry form - always visible */}
-                <div className="cart-addr-form">
-
-                  {/* Location detect button */}
-                  <button type="button" onClick={() => setShowMapModal(true)}
-                    style={{
-                      width: "100%", marginBottom: "14px",
-                      padding: "12px", borderRadius: "10px",
-                      background: "#1e0a3c", color: "#c9a84c",
-                      border: "none", fontWeight: 700, fontSize: "14px",
-                      cursor: "pointer",
-                      display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-                      touchAction: "manipulation",
-                    }}>
-                    📍 Set Location on Map
-                  </button>
-
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
-                    <div style={{ flex: 1, height: "1px", background: "#e2d5f5" }} />
-                    <span style={{ fontSize: "11px", color: "#9d7bb0", fontWeight: 500 }}>or enter manually</span>
-                    <div style={{ flex: 1, height: "1px", background: "#e2d5f5" }} />
-                  </div>
-
-                  <div className="cart-addr-form-grid">
-                    <div className="cart-addr-field">
-                      <label className="label-text">Full Name *</label>
-                      <input className="input-field cart-addr-input" placeholder="e.g. Prasanth Kumar"
-                        value={addrName} onChange={(e) => { setAddrName(e.target.value); setSelectedAddressIdx(null); }} />
+                {/* New address form */}
+                {showNewForm && (
+                  <div className="cart-addr-form">
+                    <div className="cart-addr-form-grid">
+                      <div className="cart-addr-field">
+                        <label className="label-text">Full Name *</label>
+                        <input className="input-field cart-addr-input" placeholder="e.g. Prasanth Kumar" value={addrName} onChange={(e) => setAddrName(e.target.value)} />
+                      </div>
+                      <div className="cart-addr-field">
+                        <label className="label-text">Phone Number *</label>
+                        <input className="input-field cart-addr-input" placeholder="e.g. 9876543210" inputMode="numeric" maxLength={10} value={addrPhone} onChange={(e) => setAddrPhone(e.target.value.replace(/\D/g, ""))} />
+                      </div>
+                      <div className="cart-addr-field cart-addr-field-full">
+                        <label className="label-text">House No / Street *</label>
+                        <input className="input-field cart-addr-input" placeholder="e.g. 12/3, Gandhi Street" value={addrStreet} onChange={(e) => setAddrStreet(e.target.value)} />
+                      </div>
+                      <div className="cart-addr-field cart-addr-field-full">
+                        <label className="label-text">Area / Town *</label>
+                        <input className="input-field cart-addr-input" placeholder="e.g. Cumbum, Theni" value={addrArea} onChange={(e) => setAddrArea(e.target.value)} />
+                      </div>
+                      <div className="cart-addr-field">
+                        <label className="label-text">Landmark</label>
+                        <input className="input-field cart-addr-input" placeholder="e.g. Near Temple" value={addrLandmark} onChange={(e) => setAddrLandmark(e.target.value)} />
+                      </div>
+                      <div className="cart-addr-field">
+                        <label className="label-text">Pincode</label>
+                        <input className="input-field cart-addr-input" placeholder="e.g. 625516" inputMode="numeric" maxLength={6} value={addrPincode} onChange={(e) => setAddrPincode(e.target.value.replace(/\D/g, ""))} />
+                      </div>
                     </div>
-                    <div className="cart-addr-field">
-                      <label className="label-text">Phone Number *</label>
-                      <input className="input-field cart-addr-input" placeholder="e.g. 9876543210"
-                        inputMode="numeric" maxLength={10}
-                        value={addrPhone} onChange={(e) => { setAddrPhone(e.target.value.replace(/\D/g, "")); setSelectedAddressIdx(null); }} />
-                    </div>
-                    <div className="cart-addr-field cart-addr-field-full">
-                      <label className="label-text">House No / Street *</label>
-                      <input className="input-field cart-addr-input" placeholder="e.g. 12/3, Gandhi Street"
-                        value={addrStreet} onChange={(e) => { setAddrStreet(e.target.value); setSelectedAddressIdx(null); }} />
-                    </div>
-                    <div className="cart-addr-field cart-addr-field-full">
-                      <label className="label-text">Area / Town *</label>
-                      <input className="input-field cart-addr-input" placeholder="e.g. Cumbum, Theni"
-                        value={addrArea} onChange={(e) => { setAddrArea(e.target.value); setSelectedAddressIdx(null); }} />
-                    </div>
-                    <div className="cart-addr-field">
-                      <label className="label-text">Landmark</label>
-                      <input className="input-field cart-addr-input" placeholder="Near Temple"
-                        value={addrLandmark} onChange={(e) => { setAddrLandmark(e.target.value); setSelectedAddressIdx(null); }} />
-                    </div>
-                    <div className="cart-addr-field">
-                      <label className="label-text">Pincode</label>
-                      <input className="input-field cart-addr-input" placeholder="e.g. 625516"
-                        inputMode="numeric" maxLength={6}
-                        value={addrPincode} onChange={(e) => { setAddrPincode(e.target.value.replace(/\D/g, "")); setSelectedAddressIdx(null); }} />
+                    <div className="cart-save-addr-toggle" onClick={() => setSaveToProfile(!saveToProfile)}>
+                      <div className={`cart-save-checkbox ${saveToProfile ? "checked" : ""}`}>{saveToProfile && "✓"}</div>
+                      <span>Save this address to my profile for future orders</span>
                     </div>
                   </div>
-
-                  {/* Save to profile toggle */}
-                  <div className="cart-save-addr-toggle" onClick={() => setSaveToProfile(!saveToProfile)}>
-                    <div className={"cart-save-checkbox" + (saveToProfile ? " checked" : "")}>
-                      {saveToProfile && "✓"}
-                    </div>
-                    <span>Save this address to my profile for future orders</span>
-                  </div>
-                </div>
+                )}
               </div>
 
-              <button
-                onClick={handleCheckout}
-                disabled={loading}
-                className={`primary-btn cart-checkout-btn ${loading ? "loading" : ""}`}
-                type="button"
-              >
+              <button onClick={handleCheckout} disabled={loading}
+                className={`primary-btn cart-checkout-btn ${loading ? "loading" : ""}`} type="button">
                 {loading ? "Placing Order..." : `Place Order — ${paymentMethod} ✅`}
-              </button>
-            </div>
-          </div>
-        )}
-        {showMapModal && (
-          <div style={{
-            position: "fixed", inset: 0, background: "#000", zIndex: 3000,
-            display: "flex", flexDirection: "column"
-          }}>
-            <div style={{ position: "relative", flex: 1 }}>
-              <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
-
-              <div style={{
-                position: "absolute", top: "50%", left: "50%",
-                transform: "translate(-50%, -100%)", pointerEvents: "none",
-                fontSize: "38px", zIndex: 10, filter: "drop-shadow(0 3px 4px rgba(0,0,0,0.4))"
-              }}>
-                📍
-              </div>
-
-              <button
-                type="button"
-                onClick={locateMe}
-                disabled={mapDetecting}
-                style={{
-                  position: "absolute", bottom: "20px", right: "16px",
-                  width: "48px", height: "48px", borderRadius: "50%",
-                  background: "#1e0a3c", color: "#c9a84c", border: "none",
-                  fontSize: "20px", display: "flex", alignItems: "center", justifyContent: "center",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.3)", cursor: "pointer"
-                }}
-              >
-                {mapDetecting ? "⏳" : "🎯"}
-              </button>
-
-              <div style={{
-                position: "absolute", top: 0, left: 0, right: 0,
-                padding: "14px 16px", background: "linear-gradient(rgba(0,0,0,0.5), transparent)",
-                color: "#fff", fontWeight: 700, fontSize: "14px"
-              }}>
-                Drag the map to move the pin to your exact location
-              </div>
-            </div>
-
-            <div style={{ background: "#fff", padding: "16px" }}>
-              <button
-                className="primary-btn"
-                onClick={() => setShowMapModal(false)}
-                type="button"
-                style={{ width: "100%" }}
-              >
-                ✅ Confirm This Location
               </button>
             </div>
           </div>
