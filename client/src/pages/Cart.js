@@ -1,9 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import CouponSection from "../components/CouponSection";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import "./Cart.css";
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
 
 function Cart() {
   const navigate = useNavigate();
@@ -13,24 +22,32 @@ function Cart() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("COD");
+  const [paymentMethod] = useState("COD");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
 
-  // Address state
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressIdx, setSelectedAddressIdx] = useState(null);
   const [showNewForm, setShowNewForm] = useState(false);
   const [saveToProfile, setSaveToProfile] = useState(false);
 
-  // Structured fields
   const [addrName, setAddrName] = useState("");
   const [addrPhone, setAddrPhone] = useState("");
   const [addrStreet, setAddrStreet] = useState("");
   const [addrArea, setAddrArea] = useState("");
   const [addrLandmark, setAddrLandmark] = useState("");
   const [addrPincode, setAddrPincode] = useState("");
+  const [addrLat, setAddrLat] = useState(null);
+  const [addrLng, setAddrLng] = useState(null);
 
-  // Fetch saved addresses
+  const [profileName, setProfileName] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
+
+  const [showMapModal, setShowMapModal] = useState(false);
+  const [mapDetecting, setMapDetecting] = useState(false);
+  const [locationError, setLocationError] = useState(null);
+  const mapContainerRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
@@ -42,6 +59,10 @@ function Cart() {
         );
         const addrs = res.data.addresses || [];
         setSavedAddresses(addrs);
+        setProfileName(res.data.name || "");
+        setProfilePhone(res.data.phone || "");
+        setAddrName(res.data.name || "");
+        setAddrPhone(res.data.phone || "");
         if (addrs.length > 0) {
           setSelectedAddressIdx(0);
           setShowNewForm(false);
@@ -54,6 +75,93 @@ function Cart() {
     };
     fetchAddresses();
   }, []);
+
+  useEffect(() => {
+    if (showNewForm) {
+      if (!addrName) setAddrName(profileName);
+      if (!addrPhone) setAddrPhone(profilePhone);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showNewForm]);
+
+  const locateMe = () => {
+    if (!navigator.geolocation) {
+      setLocationError("Location isn't supported on this device. Please move the map manually.");
+      return;
+    }
+    setMapDetecting(true);
+    setLocationError(null);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.setView([latitude, longitude], 17);
+        }
+        setMapDetecting(false);
+        setLocationError(null);
+      },
+      (error) => {
+        setMapDetecting(false);
+        if (error.code === 1) {
+          setLocationError("Location permission denied. Please allow location access for this site, then tap Retry.");
+        } else if (error.code === 2) {
+          setLocationError("Your phone's Location/GPS is turned OFF. Please turn it ON in phone settings, then tap Retry.");
+        } else {
+          setLocationError("Couldn't get your location. You can drag the map manually, or tap Retry.");
+        }
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+  };
+
+  useEffect(() => {
+    if (!showMapModal || !mapContainerRef.current) return;
+
+    const defaultCenter = addrLat && addrLng ? [addrLat, addrLng] : [10.0104, 77.4768];
+    const map = L.map(mapContainerRef.current, { zoomControl: false }).setView(defaultCenter, 15);
+    mapInstanceRef.current = map;
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(map);
+
+    const reverseGeocode = async (lat, lng) => {
+      try {
+        const res = await axios.get(
+          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+          { headers: { "Accept-Language": "en" } }
+        );
+        const addr = res.data.address;
+        setAddrStreet([addr.house_number, addr.road || addr.pedestrian || addr.footway].filter(Boolean).join(", "));
+        setAddrArea([addr.neighbourhood || addr.suburb || addr.quarter, addr.city || addr.town || addr.village || addr.county].filter(Boolean).join(", "));
+        setAddrPincode(addr.postcode || "");
+      } catch {
+        // pin position is the source of truth, text is just a helper
+      }
+    };
+
+    const handleMoveEnd = () => {
+      const center = map.getCenter();
+      setAddrLat(center.lat);
+      setAddrLng(center.lng);
+      reverseGeocode(center.lat, center.lng);
+    };
+
+    map.on("moveend", handleMoveEnd);
+
+    const initCenter = map.getCenter();
+    setAddrLat(initCenter.lat);
+    setAddrLng(initCenter.lng);
+
+    locateMe();
+
+    return () => {
+      map.off("moveend", handleMoveEnd);
+      map.remove();
+      mapInstanceRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showMapModal]);
 
   const saveCart = (updatedCart) => {
     setCart(updatedCart);
@@ -115,7 +223,7 @@ function Cart() {
       try {
         await axios.post(
           `${process.env.REACT_APP_API_URL}/api/auth/addresses`,
-          { name: addrName, phone: addrPhone, street: addrStreet, area: addrArea, landmark: addrLandmark, pincode: addrPincode },
+          { name: addrName, phone: addrPhone, street: addrStreet, area: addrArea, landmark: addrLandmark, pincode: addrPincode, lat: addrLat, lng: addrLng },
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } catch { /* non-blocking */ }
@@ -124,6 +232,9 @@ function Cart() {
     try {
       setLoading(true);
       const address = buildAddressString();
+      const selectedSaved = selectedAddressIdx !== null ? savedAddresses[selectedAddressIdx] : null;
+      const deliveryLat = selectedSaved ? selectedSaved.lat : addrLat;
+      const deliveryLng = selectedSaved ? selectedSaved.lng : addrLng;
       const payload = {
         items: cart.map((p) => ({ productId: p._id, name: p.name, price: p.price, quantity: p.quantity })),
         totalAmount: finalAmount,
@@ -131,6 +242,8 @@ function Cart() {
         deliveryFee: deliveryAfterCoupon,
         discountAmount,
         address,
+        deliveryLat,
+        deliveryLng,
         paymentMethod,
         couponCode: appliedCoupon?.code || null,
       };
@@ -150,11 +263,10 @@ function Cart() {
 
   return (
     <div className="app-page cart-page">
-      <div className="app-container cart-container">
+      <div className="app-container cart-container" style={{ paddingBottom: "90px" }}>
         <div className="cart-top-card">
           <div className="cart-top-inner">
             <div className="cart-top-left">
-              <div className="cart-top-pill">🛒 Premium Cart Experience</div>
               <h2 className="cart-top-title">Your Cart</h2>
               <p className="cart-top-subtitle">
                 {cart.length} item{cart.length !== 1 ? "s" : ""} ·{" "}
@@ -185,7 +297,6 @@ function Cart() {
           </div>
         ) : (
           <div className="cart-grid">
-            {/* Cart Items */}
             <div className="cart-items-card">
               <h3 className="cart-section-title">Cart Items</h3>
               {cart.map((item) => (
@@ -199,23 +310,31 @@ function Cart() {
                       <p className="cart-item-price">Price: ₹{item.price}</p>
                       <p className="cart-item-subtotal">Subtotal: ₹{item.price * item.quantity}</p>
                     </div>
+                    <button
+                      onClick={() => removeItem(item._id)}
+                      type="button"
+                      aria-label="Remove item"
+                      style={{
+                        width: "28px", height: "28px", flexShrink: 0,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        background: "#fff5f5", border: "1px solid #fecaca", color: "#dc2626",
+                        borderRadius: "8px", fontSize: "13px", cursor: "pointer", padding: 0
+                      }}
+                    >
+                      🗑
+                    </button>
                   </div>
-                  <div className="cart-item-actions" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", flexWrap: "nowrap" }}>
+                  <div className="cart-item-actions" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <div className="cart-qty-box">
                       <button onClick={() => decreaseQuantity(item._id)} className="cart-qty-btn cart-qty-btn-minus" type="button">−</button>
                       <span className="cart-qty-value">{item.quantity}</span>
                       <button onClick={() => increaseQuantity(item._id)} className="cart-qty-btn cart-qty-btn-plus" type="button">+</button>
                     </div>
-                    <button onClick={() => removeItem(item._id)} type="button"
-                      style={{ padding: "6px 10px", borderRadius: "7px", background: "#fff5f5", border: "0.5px solid #fecaca", color: "#dc2626", fontSize: "11px", fontWeight: "600", cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
-                      ✕ Remove
-                    </button>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Order Summary */}
             <div className="cart-summary-card">
               <h3 className="cart-section-title">Order Summary</h3>
               <div className="cart-summary-box">
@@ -244,23 +363,20 @@ function Cart() {
                 onRemoveCoupon={() => setAppliedCoupon(null)}
               />
 
-              {/* Payment Method */}
               <label className="label-text" style={{ marginTop: "16px", display: "block" }}>Payment Method</label>
               <div className="cart-payment-options">
-                <div className={`cart-payment-option ${paymentMethod === "COD" ? "active" : ""}`} onClick={() => setPaymentMethod("COD")}>
+                <div className="cart-payment-option active">
                   <span className="cart-payment-icon">💵</span>
                   <div><p className="cart-payment-title">Cash on Delivery</p><p className="cart-payment-desc">Pay when your order arrives</p></div>
-                  {paymentMethod === "COD" && <span className="cart-payment-check">✓</span>}
-                </div>
-                <div className="cart-payment-option disabled" style={{ opacity: 0.5, cursor: "not-allowed" }}>
-                  <span className="cart-payment-icon">💳</span>
-                  <div><p className="cart-payment-title">Online Payment</p><p className="cart-payment-desc">UPI, GPay, Cards — Coming Soon</p></div>
+                  <span className="cart-payment-check">✓</span>
                 </div>
               </div>
+              <p style={{ fontSize: "11px", color: "#9d7bb0", marginTop: "6px" }}>
+                💳 Online payments (UPI/GPay/Cards) launching soon
+              </p>
 
-              {/* Delivery Address */}
               <div style={{ marginTop: "20px" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px", flexWrap: "wrap", gap: "6px" }}>
                   <label className="label-text" style={{ margin: 0 }}>📍 Delivery Address</label>
                   {savedAddresses.length > 0 && (
                     <button type="button"
@@ -271,7 +387,6 @@ function Cart() {
                   )}
                 </div>
 
-                {/* Saved address picker */}
                 {!showNewForm && savedAddresses.length > 0 && (
                   <div className="cart-saved-addresses">
                     {savedAddresses.map((addr, idx) => (
@@ -284,6 +399,7 @@ function Cart() {
                           <p className="cart-addr-line">{addr.street}, {addr.area}</p>
                           {addr.landmark && <p className="cart-addr-line">Near: {addr.landmark}</p>}
                           {addr.pincode && <p className="cart-addr-line">PIN: {addr.pincode}</p>}
+                          {addr.lat && <p className="cart-addr-line" style={{ color: "#1a7a3c" }}>✅ Exact location saved</p>}
                         </div>
                       </div>
                     ))}
@@ -293,9 +409,22 @@ function Cart() {
                   </div>
                 )}
 
-                {/* New address form */}
                 {showNewForm && (
                   <div className="cart-addr-form">
+                    <button type="button" onClick={() => setShowMapModal(true)}
+                      style={{
+                        width: "100%", marginBottom: "14px",
+                        padding: "12px", borderRadius: "10px",
+                        background: addrLat ? "#e8f9ee" : "#1e0a3c",
+                        color: addrLat ? "#1a7a3c" : "#c9a84c",
+                        border: addrLat ? "1px solid #bce8cb" : "none", fontWeight: 700, fontSize: "14px",
+                        cursor: "pointer",
+                        display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+                        touchAction: "manipulation",
+                      }}>
+                      {addrLat ? "✅ Location Set — Tap to Adjust" : "📍 Set Location on Map"}
+                    </button>
+
                     <div className="cart-addr-form-grid">
                       <div className="cart-addr-field">
                         <label className="label-text">Full Name *</label>
@@ -329,15 +458,118 @@ function Cart() {
                   </div>
                 )}
               </div>
-
-              <button onClick={handleCheckout} disabled={loading}
-                className={`primary-btn cart-checkout-btn ${loading ? "loading" : ""}`} type="button">
-                {loading ? "Placing Order..." : `Place Order — ${paymentMethod} ✅`}
-              </button>
             </div>
           </div>
         )}
       </div>
+
+      {cart.length > 0 && (
+        <div style={{
+          position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 500,
+          background: "#fff", borderTop: "1px solid #eee",
+          padding: "10px 16px calc(10px + env(safe-area-inset-bottom, 0px))",
+          display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px",
+          boxShadow: "0 -4px 14px rgba(0,0,0,0.08)"
+        }}>
+          <div>
+            <p style={{ margin: 0, fontSize: "11px", color: "#9d7bb0", fontWeight: 600 }}>Total</p>
+            <p style={{ margin: 0, fontSize: "18px", fontWeight: 800, color: "#1e0a3c" }}>₹{finalAmount}</p>
+          </div>
+          <button onClick={handleCheckout} disabled={loading}
+            className={`primary-btn ${loading ? "loading" : ""}`} type="button"
+            style={{ flex: 1, maxWidth: "220px" }}>
+            {loading ? "Placing Order..." : "Place Order ✅"}
+          </button>
+        </div>
+      )}
+
+      {showMapModal && (
+        <div style={{
+          position: "fixed", inset: 0, background: "#000", zIndex: 3000,
+          display: "flex", flexDirection: "column"
+        }}>
+          <div style={{ position: "relative", flex: 1 }}>
+            <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
+
+            <div style={{
+              position: "absolute", top: "50%", left: "50%",
+              transform: "translate(-50%, -100%)", pointerEvents: "none",
+              fontSize: "38px", zIndex: 3010, filter: "drop-shadow(0 3px 4px rgba(0,0,0,0.4))"
+            }}>
+              📍
+            </div>
+
+            <button
+              type="button"
+              onClick={locateMe}
+              disabled={mapDetecting}
+              style={{
+                position: "absolute", bottom: "20px", right: "16px",
+                width: "52px", height: "52px", borderRadius: "50%",
+                background: "#1e0a3c", color: "#c9a84c", border: "2px solid #c9a84c",
+                fontSize: "22px", display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 4px 14px rgba(0,0,0,0.5)", cursor: "pointer", zIndex: 3010
+              }}
+            >
+              {mapDetecting ? "⏳" : "🎯"}
+            </button>
+
+            <div style={{
+              position: "absolute", top: 0, left: 0, right: 0, zIndex: 3010,
+              padding: "14px 16px", background: "linear-gradient(rgba(0,0,0,0.6), transparent)",
+              color: "#fff", fontWeight: 700, fontSize: "14px"
+            }}>
+              Drag the map to move the pin to your exact location
+            </div>
+
+            {locationError && (
+              <div style={{
+                position: "absolute", top: "56px", left: "12px", right: "12px", zIndex: 3020,
+                background: "#fff3e0", border: "2px solid #f5a623", borderRadius: "10px",
+                padding: "12px 14px", boxShadow: "0 4px 14px rgba(0,0,0,0.3)"
+              }}>
+                <p style={{ margin: "0 0 8px", fontSize: "13px", fontWeight: 700, color: "#8a4b00" }}>
+                  ⚠️ {locationError}
+                </p>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button
+                    type="button"
+                    onClick={locateMe}
+                    disabled={mapDetecting}
+                    style={{
+                      flex: 1, padding: "8px", borderRadius: "8px", border: "none",
+                      background: "#1e0a3c", color: "#fff", fontWeight: 700, fontSize: "12px", cursor: "pointer"
+                    }}
+                  >
+                    {mapDetecting ? "Checking..." : "🔄 Retry"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLocationError(null)}
+                    style={{
+                      padding: "8px 14px", borderRadius: "8px", border: "1px solid #ccc",
+                      background: "#fff", fontWeight: 700, fontSize: "12px", cursor: "pointer"
+                    }}
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div style={{ background: "#fff", padding: "16px" }}>
+            <button
+              className="primary-btn"
+              onClick={() => setShowMapModal(false)}
+              type="button"
+              style={{ width: "100%" }}
+            >
+              ✅ Confirm This Location
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
